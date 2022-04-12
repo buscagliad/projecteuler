@@ -84,6 +84,8 @@ bool isPrime(long n)
 inline
 long next_prime(long n)
 {
+	if (n <= 2) return 3;
+	if (n <= 4) return 5;
 	if (n % 2 == 0) n++;
 	if (n % 5 == 0) n+=2;
 	if (isPrime(n)) return n;
