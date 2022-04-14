@@ -1,0 +1,72 @@
+Because of the length of this homework, I am going to make it worth 20
+pts.  Also, following this e-mail, I'll send my solution to the Fraction
+problem from the book (problem 8.1).  The solution will be with overloaded
+operators so you can see some more examples of how to overload operators.
+     
+
+                  B  I  G  I  N  T
+
+
+For this assignment, you will create a BigInt class which will allow
+the representation of an arbitrarily large POSITIVE number (it becomes
+a much more difficult problem to allow for SIGNED values, but if you
+are interested, you are encouraged to do so).  This assignment requires
+the overloading of the "+", "*", "==", "<", "^", "!" and "<<" operators.
+You must write ALL manager functions - including operator=.
+
+The operator! will compute the factorial of a BigInt, i.e.
+     BigInt   five(5);
+     cout << "5! = " << !five;    // should output::  5! = 120
+
+The operator^ will behave such that x ^ n  = x * x * ... * x (n times),
+i.e. x raised to the n power, e.g.
+     BigInt   two(2);
+     cout << "2 raise to the 4th power is "" << two ^ 4;
+				// should be 16
+
+All the other operators are as you would expect.
+
+As a suggestion, you should have constructors for int and char* types, 
+so that one could initialize a BigInt object with an integer value (providing
+it is non-negative, unless you have decided on implementing the SIGNED BigInt)
+or a char string like "1234123535134".  NOTE: I ran across a slight problem
+with these two constructors, if you do something like:
+
+    BigInt Zero(0);
+
+the compiler will complain because it does not know which constructor to
+call, 0 is both a valid int and a valid char* address.  So, the default
+constructor should set any variable to 0.
+
+You must develop the BigInt class, then with a driver program answer the 
+following questions:
+
+1.  FIBONACCI Sequence:  You start a rumor, such that at each second, the 
+number of new people to hear the rumor is equal to the number that
+learned it in the previous two seconds.
+
+Second	Already Know     Just Heard	Total
+   0         0                1           1
+   1         1                1           2
+   2         2                2           4
+   3         4                3           7
+   4         7                5          12
+
+                etc.
+
+Note that the "Just Heard" column forms the infamous fibonacci sequence.
+Lets assume the population of the Earth is exactly 5 billion people, how
+long will it take for everyone on Earth to know of this rumor?
+
+                                                    
+2.  A googol is a 1 followed by 100 zeroes, i.e., 10 raised to the power
+100.  Find the number N such that
+
+              N! < googol < (N+1)!
+
+In this exercise, you should create the googol with the following:
+
+    const BigInt googol = BigInt(10) ^ 100;
+
+
+

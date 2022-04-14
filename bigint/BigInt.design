@@ -1,0 +1,83 @@
+The algorithms for doing BigInt +, BigInt * , BigInt <, BigInt ==
+are as follows (all of the other operators can be derived from these,
+except for the << operator)
+
+I will assume that the BigInt's are represented by an array of int's with
+the name DIGIT and that there is a size called NUM_DIGITS that determines 
+the number of digits in the number.
+
+BigInt+ :: a + b
+
+    Create a BigInt c, of size MAX (a.NUM_DIGITS, b.NUM_DIGITS) + 1,
+        (if you add two numbers, with the largest being N digits, the
+		result can be no larger than N+1 digits)
+
+    zero out all of the digits of c
+
+    int	carry = 0 //  This will handle the case where we need to carry
+
+    for i = 0, i < c.NUM_DIGITS, i++
+
+        // you will need some logic here because you may be addressing
+	// outside the range of either a or b, I wrote an operator()
+	// for the BigInt object that did this, i.e.
+	// a(i) returned zero if i was outside the range of a.NUM_DIGITS
+	// otherwise it returned a.DIGIT[i]
+	// 
+	c.DIGIT[i] = a.DIGIT[i] + b.DIGIT[i] + carry
+
+	if c.DIGIT[i] > 10
+
+	    carry = 1
+	    c.DIGIT[i] -= 10
+
+	else
+
+	    carry = 0
+
+        endif
+
+	c.DIGIT[c.NUM_DIGITS - 1] += carry	// add final carry
+
+     endfor
+
+    
+    
+
+BigInt* :: a * b
+
+    Create a BigInt c, of size a.NUM_DIGITS + b.NUM_DIGITS + 1,
+        (if you multiply two numbers with N and M digits, then the
+		result can be no larger than N+M+1 digits)
+
+    zero out all of the digits of c
+
+    int	carry = 0 //  This will handle the case where we need to carry
+
+
+    // you will need some logic here because you may be addressing
+    // outside the range of either a or b, I wrote an operator()
+    // for the BigInt object that did this, i.e.
+    // a(i) returned zero if i was outside the range of a.NUM_DIGITS
+    // otherwise it returned a.DIGIT[i]
+    //
+    for i_a = 0, i_a < a.NUM_DIGITS, i_a++
+
+	for i_b = 0, i_b < b.NUM_DIGITS, i_b++
+
+	    c.DIGIT[i_a + i_b] = a.DIGIT[i_a] * b.DIGIT[i_b]
+	    if c.DIGIT[i_a + i_b] > 10
+
+		c.DIGIT[i_a + i_b + 1] += c.DIGIT[i_a + i_b] / 10;
+		c.DIGIT[i_a + i_b] = c.DIGIT[i_a + i_b] % 10
+
+	    endif
+
+	endfor
+
+    endfor
+
+
+
+For BigInt == and BigInt <, the numbers must be compared digit-by-digit.
+
