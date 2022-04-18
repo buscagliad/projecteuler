@@ -1,8 +1,8 @@
 //
-// File: BigInt.c
+// File: BigInt.h
 //
 // Description:
-//	This file supports the methods of the class BigInt.  This
+//	This file declares the methods of the class BigInt.  This
 //	class provides the user with infinite precision integer
 //	arithmetic.
 //
@@ -10,23 +10,113 @@
 //	
 //
 
-#include <iostream>
+#ifndef BIGINT_H
+#define BIGINT_H
 
-#include "BigInt.h"
+#include <iostream>
+#include <stdlib.h>
+#include <ctype.h>
+
+using namespace std;
+
+class BigInt
+{
+  	friend bool absLess(const BigInt& a, const BigInt& b);
+  	friend bool absEqual(const BigInt& a, const BigInt& b);
+
+  	friend BigInt absSum(const BigInt& a, const BigInt& b);
+  	friend BigInt absDiff(const BigInt& a, const BigInt& b);
+  	
+  	friend bool operator<(const BigInt&, const BigInt&);
+  	friend bool operator==(const BigInt&, const BigInt&);
+  	friend bool operator<=(const BigInt&, const BigInt&);
+  	friend bool operator>(const BigInt&, const BigInt&);
+  	friend bool operator>=(const BigInt&, const BigInt&);
+
+  	friend ostream& operator<<(ostream&, const BigInt&);
+
+  	friend BigInt operator+(const BigInt&, const BigInt&);
+  	friend BigInt operator-(const BigInt&, const BigInt&);
+  	friend BigInt operator*(const BigInt&, const BigInt&);
+
+    public:
+ 
+		BigInt(const char*);
+		BigInt(int = 0);
+		BigInt(const BigInt&);
+		const BigInt& operator=(const BigInt&);
+		
+		~BigInt();
+	  
+		BigInt& operator++();
+		BigInt operator++(int);
+		BigInt& operator--();
+		BigInt operator--(int);
+		BigInt operator-() const;
+		BigInt operator^(const BigInt&) const;
+		BigInt operator!() const;
+		inline BigInt operator*=(const BigInt&);
+		inline BigInt operator+=(const BigInt&);
+		int num_digits() { return length; };
+		int get_digit(int n) { if (n < 0 || n >= length) return 0; return data[n]; };
+		
+		enum OutputStyle {OS_Normal, OS_Space, 
+			OS_Comma, OS_Period, OS_Underscore};
+		enum SignStyle {SS_Normal, SS_ShowPlus};
+		
+		static	void setOutputStyle(OutputStyle);
+			static	void setSignStyle(SignStyle);
+			
+    private:
+    
+		int	operator()(int) const;
+		int&	operator()(int);
+		void	fix();
+		void	newLength(int);
+		void	zero();
+
+		enum 	Sign { Positive, Negative, Zero };
+		int* 	data;
+		int		length;
+		Sign 	sign;
+		
+		static	OutputStyle	BI_OutputStyle;
+		static	SignStyle	BI_SignStyle;
+};
+ 
+ 
+
+inline BigInt BigInt::operator*=(const BigInt& m)
+{
+	*this = *this * m;
+	return *this;
+}
+
+ 
+inline BigInt BigInt::operator+=(const BigInt& m)
+{
+	*this = *this + m;
+	return *this;
+}
+
+ 
+
 
 //
 // static member data
 //
-	BigInt::OutputStyle	BigInt::BI_OutputStyle = BigInt::OS_Comma;
+	BigInt::OutputStyle	BigInt::BI_OutputStyle = BigInt::OS_Normal;
 	BigInt::SignStyle	BigInt::BI_SignStyle = BigInt::SS_Normal;
 //
 // static functions
 //
+inline
 void	BigInt::setOutputStyle(OutputStyle os)
 {
 	BI_OutputStyle = os;
 }
 
+inline
 void	BigInt::setSignStyle(SignStyle ss)
 {
 	BI_SignStyle = ss;
@@ -40,6 +130,7 @@ void	BigInt::setSignStyle(SignStyle ss)
 //
 // returns nth digit of BigInt, 0 if digit is invalid
 //
+inline
 int	BigInt::operator()(int base_ten_digit) const
 {
 	if ( (base_ten_digit < 0) || (base_ten_digit >= length) ) 
@@ -51,6 +142,7 @@ int	BigInt::operator()(int base_ten_digit) const
 // in this version, we are returning access to the data structure,
 // we throw the exception InternalError
 //
+inline
 int&	BigInt::operator()(int base_ten_digit)
 {
 	if ( (base_ten_digit < 0) || (base_ten_digit >= length) )
@@ -65,6 +157,7 @@ int&	BigInt::operator()(int base_ten_digit)
 //
 // fix removes leading zeroes and sets sign if appropriate
 //
+inline
 void	BigInt::fix()
 {
 	// internal check for length
@@ -93,6 +186,7 @@ void	BigInt::fix()
 //
 // newLength will delete old data and assign a new array of specified length
 //
+inline
 void	BigInt::newLength(int l)
 {	
 	if (l < 1)
@@ -115,6 +209,7 @@ void	BigInt::newLength(int l)
 //
 // zero will set all digits equal to 0
 //
+inline
 void	BigInt::zero()
 {	
 	for (int i = 0; i < length; i++) data[i] = 0;
@@ -123,6 +218,7 @@ void	BigInt::zero()
 //
 // constructor from int to BigInt
 // 
+inline
 BigInt::BigInt(int i) : data(0), length(0)
 {
 	if ( i > 0 )
@@ -167,6 +263,7 @@ BigInt::BigInt(int i) : data(0), length(0)
 // create a BigInt from a string of character digits, allow for 
 // a leading + or -  and terminates at null or non-digit.
 //
+inline
 BigInt::BigInt(const char *s) : data(0), length(0)
 {
 	const char* ptr = s;
@@ -198,6 +295,7 @@ BigInt::BigInt(const char *s) : data(0), length(0)
 //
 // copy constructor  
 //
+inline
 BigInt::BigInt(const BigInt& b) : data(0), length(0)
 {
 	sign = b.sign;
@@ -210,6 +308,7 @@ BigInt::BigInt(const BigInt& b) : data(0), length(0)
 	fix();
 }
 
+inline
 BigInt::~BigInt()
 {
 	if (length < 1)
@@ -237,6 +336,7 @@ inline int max(int a, int b)
 // absLess
 //      returns true if |a| < |b| 
 //
+inline
 bool absLess(const BigInt& a, const BigInt& b)
 {
 	if ( a.length > b.length ) return false;
@@ -253,6 +353,7 @@ bool absLess(const BigInt& a, const BigInt& b)
 //
 // returns  a < b
 // 
+inline
 bool operator<(const BigInt& a, const BigInt& b)
 {
 //
@@ -289,6 +390,7 @@ bool operator<(const BigInt& a, const BigInt& b)
 //
 // absEqual returns |a| == |b|
 // 
+inline
 bool absEqual(const BigInt& a, const BigInt& b)
 {
 	if (a.length != b.length) return false;
@@ -303,6 +405,7 @@ bool absEqual(const BigInt& a, const BigInt& b)
 //
 // returns a == b
 // 
+inline
 bool operator==(const BigInt& a, const BigInt& b)
 {
 	if ( a.sign == BigInt::Zero && b.sign == BigInt::Zero ) return true;
@@ -313,6 +416,7 @@ bool operator==(const BigInt& a, const BigInt& b)
 //
 // returns  a > b
 // 
+inline
 bool operator> (const BigInt& a, const BigInt& b)
 {
 	return ( !(a == b) && !(a < b) );
@@ -321,6 +425,7 @@ bool operator> (const BigInt& a, const BigInt& b)
 //
 // returns a >= b
 //
+inline
 bool operator>= (const BigInt& a, const BigInt& b)
 {
 	return (a == b) || (a > b);
@@ -329,11 +434,13 @@ bool operator>= (const BigInt& a, const BigInt& b)
 //
 // returns a <= b
 //
+inline
 bool operator<= (const BigInt& a, const BigInt& b)
 {
 	return (a == b) || (a < b);
 }
 
+inline
 ostream& operator<< (ostream& os, const BigInt& a)
 {
 	if ( a.sign == BigInt::Zero )
@@ -371,6 +478,7 @@ ostream& operator<< (ostream& os, const BigInt& a)
 //
 //  absSum returns |a| + |b|
 //
+inline
 BigInt absSum(const BigInt& a, const BigInt& b)
 {
 	BigInt c;
@@ -400,6 +508,7 @@ BigInt absSum(const BigInt& a, const BigInt& b)
 //
 // absDiff - returns | |a| - |b| |
 //
+inline
 BigInt absDiff(const BigInt& a, const BigInt& b)
 {
 	BigInt C;	// defaults to zero
@@ -452,6 +561,7 @@ BigInt absDiff(const BigInt& a, const BigInt& b)
 //
 // operator+ returns a + b
 //
+inline
 BigInt operator+(const BigInt& a, const BigInt& b)
 {
 
@@ -491,6 +601,7 @@ BigInt operator+(const BigInt& a, const BigInt& b)
 //
 // returns the negative of the BigInt object
 //
+inline
 BigInt BigInt::operator-() const
 {
 	BigInt temp = *this;
@@ -504,6 +615,7 @@ BigInt BigInt::operator-() const
 //
 // returns a - b
 // 
+inline
 BigInt operator-(const BigInt& a, const BigInt& b)
 {
 
@@ -515,6 +627,7 @@ BigInt operator-(const BigInt& a, const BigInt& b)
 //
 // returns a * b
 //
+inline
 BigInt operator*(const BigInt& a, const BigInt& b)
 {
 	if (a.sign == BigInt::Zero) return BigInt();
@@ -545,6 +658,7 @@ BigInt operator*(const BigInt& a, const BigInt& b)
 //
 // assignment operator
 //
+inline
 const BigInt& BigInt::operator=(const BigInt& a)
 {
 	if (this != &a)  // check for self-assignment
@@ -564,6 +678,7 @@ const BigInt& BigInt::operator=(const BigInt& a)
 // operator^ will raise one BigInt to another
 //   x ^ n = x * x * . . . * x  (n times)
 //
+inline
 BigInt BigInt::operator^(const BigInt& exp) const
 {
 	BigInt RValue = 1;
@@ -584,6 +699,7 @@ BigInt BigInt::operator^(const BigInt& exp) const
 //  ! n = n * (n - 1) * . . . * 2 * 1
 //  if (n is negative) return 1
 //
+inline
 BigInt BigInt::operator!() const
 {
 	BigInt count = *this;
@@ -602,6 +718,7 @@ BigInt BigInt::operator!() const
 //
 // prefix increment operator
 //
+inline
 BigInt& BigInt::operator++()
 {
 	*this = *this + 1;
@@ -612,6 +729,7 @@ BigInt& BigInt::operator++()
 //
 // postfix increment operator
 //
+inline
 BigInt BigInt::operator++(int)
 {
 	BigInt d = *this;
@@ -623,6 +741,7 @@ BigInt BigInt::operator++(int)
 //
 // prefix decrement operator
 //
+inline
 BigInt& BigInt::operator--()
 {
 	*this = *this - 1;
@@ -633,9 +752,12 @@ BigInt& BigInt::operator--()
 //
 // postfix decrement operator
 //
+inline
 BigInt BigInt::operator--(int)
 {
 	BigInt d = *this;
 	*this = *this - 1;
 	return d;
 }
+
+#endif

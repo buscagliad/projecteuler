@@ -1,6 +1,6 @@
 // test.cpp
 #include <iostream>
-#include "BigInt.h"
+#include "bigint.h"
 
 void	test()
 {

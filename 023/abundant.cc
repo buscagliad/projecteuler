@@ -37,11 +37,11 @@ bool can_equal(vlong &v, long value)
 	vlong_it maxi = v.index_it(value);
 	if (maxi == v.end()) return true;
 	if (value < *(v.begin())) return false;
-	printf("Maxi: %ld  value: %ld\n", *maxi, value);
+	//printf("Maxi: %ld  value: %ld\n", *maxi, value);
 	//if (*maxi > value) return true;
 	for (vlong_it i = v.begin(); i != maxi; i++)
 	{
-		printf("i: %ld   max: %ld\n", *i, *maxi);
+		//printf("i: %ld   max: %ld\n", *i, *maxi);
 		for (vlong_it j = i; j != maxi; j++)
 		{
 			long sv = *i + *j;
@@ -74,7 +74,7 @@ int main()
 	abnums.out();
 	int index = 1;
 	long nonsum = 0;
-	test_index(abnums); return 1;
+	//test_index(abnums); return 1;
 	for (long i = 1; i < MAX_NON_ABUNDANT; i++)
 	{
 		if (!can_equal(abnums, i))
