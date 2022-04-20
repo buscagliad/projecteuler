@@ -33,6 +33,10 @@ void test(long la, long lb)
 	cout << a << " and " << b << "  avg -> " << c;
 	printf("\n %ld  and  %ld  =  %ld\n", la, lb, lc);
 	divide_unsigned(a, b, Q, R);
+	
+	R = a % b;
+	Q = a / b;
+	cout << a << " mod " << b << "  Q = " << Q << "  R = " << R << endl;
 }
 
 int main()
@@ -50,7 +54,6 @@ int main()
 		cout << "     mq + n = " << aab << endl;
 		cout << " absdiff(mq, n) = " << aa << endl;
 		cout << " absdiff(n, mq) = " << bb << endl;
-	return 1;
 	test(632, 10);
 	//test(123456789, 100);
 	return 1;

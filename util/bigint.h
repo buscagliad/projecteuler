@@ -38,8 +38,8 @@ class BigInt
   	friend BigInt operator+(const BigInt&, const BigInt&);
   	friend BigInt operator-(const BigInt&, const BigInt&);
   	friend BigInt operator*(const BigInt&, const BigInt&);
-  	friend BigInt operator%(const BigInt&, const long&);
-  	friend BigInt operator%(const BigInt&, const long&);
+  	friend BigInt operator%(const BigInt&, const BigInt&);
+  	friend BigInt operator/(const BigInt&, const BigInt&);
 	friend BigInt avg(BigInt &a, BigInt &b);
 	friend	bool    divide_unsigned(const BigInt& N, const BigInt& D,
 				BigInt &Q, BigInt &R);
@@ -62,6 +62,8 @@ class BigInt
 		BigInt operator!() const;
 		inline BigInt operator*=(const BigInt&);
 		inline BigInt operator+=(const BigInt&);
+		inline BigInt operator/=(const BigInt&);
+		inline BigInt operator%=(const BigInt&);
 		int num_digits() { return length; };
 		int get_digit(int n) { if (n < 0 || n >= length) return 0; return data[n]; };
 
@@ -119,7 +121,19 @@ inline BigInt BigInt::operator+=(const BigInt& m)
 	return *this;
 }
 
+ inline BigInt BigInt::operator/=(const BigInt& m)
+{
+	*this = *this / m;
+	return *this;
+}
+
  
+inline BigInt BigInt::operator%=(const BigInt& m)
+{
+	*this = *this % m;
+	return *this;
+}
+
 
 
 //
@@ -362,12 +376,15 @@ bool absLess(const BigInt& a, const BigInt& b)
 {
 	if ( a.length > b.length ) return false;
 	if ( a.length < b.length ) return true;
-
+	////cout << "Compare " << a << " < " << b << endl;
 	for(int i = a.length - 1; i >= 0; i--)
 	{
+		////printf("absLess(%d)  a(%d) < b(%d)\n", i, a.data[i], b.data[i]);
 	    if (a.data[i] < b.data[i]) return true;
+	    if (a.data[i] > b.data[i]) return false; 
 	}
-	return false;
+	////cout << " TRUE" << endl; 
+	return true;  // 
 }
 
 
@@ -576,6 +593,7 @@ BigInt absDiff(const BigInt& a, const BigInt& b)
 		else
 			borrow = 0;
 	}
+	printf("\n");
 	C.fix();
 	C.sign = BigInt::Positive;
 	return C;
@@ -603,9 +621,7 @@ BigInt operator+(const BigInt& a, const BigInt& b)
 	}
 	else if (a.sign == BigInt::Positive && b.sign == BigInt::Negative)
 	{
-		printf(" +++    ----\n");
 	    c = absDiff(a, b);
-	    cout << c << endl;
 	    if ( absLess(a, b) )
 	        c.sign = BigInt::Negative;
 	    else
@@ -613,9 +629,7 @@ BigInt operator+(const BigInt& a, const BigInt& b)
 	}
     else
 	{
-		printf(" ----     +++\n");
 	    c = absDiff(a, b);
-	    cout << c << endl;
 	    if ( absLess(a, b) )
 	        c.sign = BigInt::Positive;
 	    else
@@ -790,18 +804,6 @@ BigInt BigInt::operator--(int)
 
 //
 // remainder ...
-/*
-function divide_unsigned(N, D)
-  Q := 0; R := N
-  while R ≥ D do
-    Q := Q + 1
-    R := R − D
-  end
-  return (Q, R)
-end
-
-*/
-
 inline
 bool divide_unsigned(const BigInt& N, const BigInt& D,
 				BigInt &Q, BigInt &R)
@@ -815,23 +817,23 @@ bool divide_unsigned(const BigInt& N, const BigInt& D,
 	Q = avg(QP, QN);
 	R = N;
 	int step = 1;
-	cout << "N = " << N << endl;
-	cout << "D = " << D << endl;
-	cout << "    Step " << step << ":" << endl;
-	cout << "        R  = " << R << endl;
-	cout << "        Q  = " << Q << endl;
-	cout << "        QP = " << QP << endl;
-	cout << "        QN = " << QN << endl;
+	////cout << "N = " << N << endl;
+	////cout << "D = " << D << endl;
+	////cout << "    Step " << step << ":" << endl;
+	////cout << "        R  = " << R << endl;
+	////cout << "        Q  = " << Q << endl;
+	////cout << "        QP = " << QP << endl;
+	////cout << "        QN = " << QN << endl;
 	bool done = false;
 	while (!done)
 	{
 		Q = avg(QP, QN);
 		R = N - Q * D;
-		cout << "    Step " << ++step << ":" << endl;
-		cout << "        R  = " << R << endl;
-		cout << "        Q  = " << Q << endl;
-		cout << "        QN = " << QN << endl;
-		cout << "        QP = " << QP << endl;
+		////cout << "    Step " << ++step << ":" << endl;
+		////cout << "        R  = " << R << endl;
+		////cout << "        Q  = " << Q << endl;
+		////cout << "        QN = " << QN << endl;
+		////cout << "        QP = " << QP << endl;
 		if ( (R >= ZERO) && (R < D) )
 		{
 			done = true;
@@ -849,23 +851,27 @@ bool divide_unsigned(const BigInt& N, const BigInt& D,
 	return true;
 }
 
-
-
-
-/*
-
-function divide(N, D)
-  if D = 0 then error(DivisionByZero) end
-  if D < 0 then (Q, R) := divide(N, −D); return (−Q, R) end
-  if N < 0 then
-    (Q,R) := divide(−N, D)
-    if R = 0 then return (−Q, 0)
-    else return (−Q − 1, D − R) end
-  end
-  -- At this point, N ≥ 0 and D > 0
-  return divide_unsigned(N, D)
-end  
-
-*/
+//
+// returns a % b
+// where a % b = Q where Q * b + R = a, where 0 <= R < b
+//
+inline
+BigInt operator%(const BigInt& a, const BigInt& b)
+{
+	BigInt Q, R;
+	divide_unsigned(a, b, Q, R);
+	return R;
+}
+//
+// returns a / b
+// where a / b = Q where Q * b + R = a, where 0 <= R < b
+//
+inline
+BigInt operator/(const BigInt& a, const BigInt& b)
+{
+	BigInt Q, R;
+	divide_unsigned(a, b, Q, R);
+	return Q;
+}
 
 #endif
