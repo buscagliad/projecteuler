@@ -29,6 +29,7 @@ class BigInt
   	
   	friend bool operator<(const BigInt&, const BigInt&);
   	friend bool operator==(const BigInt&, const BigInt&);
+  	friend bool operator!=(const BigInt&, const BigInt&);
   	friend bool operator<=(const BigInt&, const BigInt&);
   	friend bool operator>(const BigInt&, const BigInt&);
   	friend bool operator>=(const BigInt&, const BigInt&);
@@ -41,7 +42,7 @@ class BigInt
   	friend BigInt operator%(const BigInt&, const BigInt&);
   	friend BigInt operator/(const BigInt&, const BigInt&);
 	friend BigInt avg(BigInt &a, BigInt &b);
-	friend	bool    divide_unsigned(const BigInt& N, const BigInt& D,
+	friend	bool    divide(const BigInt& N, const BigInt& D,
 				BigInt &Q, BigInt &R);
 
     public:
@@ -66,6 +67,8 @@ class BigInt
 		inline BigInt operator%=(const BigInt&);
 		int num_digits() { return length; };
 		int get_digit(int n) { if (n < 0 || n >= length) return 0; return data[n]; };
+		const string & to_string();
+		const char *c_str() {to_string(); return out.c_str(); };
 
 		enum OutputStyle {OS_Normal, OS_Space, 
 			OS_Comma, OS_Period, OS_Underscore};
@@ -85,10 +88,11 @@ class BigInt
 		enum 	Sign { Positive, Negative, Zero };
 		int* 	data;
 		int		length;
-		Sign 	sign;
+		mutable	Sign 	sign;  // made mutable so const versions can be abs valued
 		
 		static	OutputStyle	BI_OutputStyle;
 		static	SignStyle	BI_SignStyle;
+		string  out;
 };
 
 inline
@@ -450,7 +454,15 @@ bool operator==(const BigInt& a, const BigInt& b)
 	if ( a.sign != b.sign ) return false;
 	return absEqual(a, b);
 }
- 
+
+//
+// returns  a != b
+// 
+inline
+bool operator!= (const BigInt& a, const BigInt& b)
+{
+	return ( !(a == b) );
+} 
 //
 // returns  a > b
 // 
@@ -476,6 +488,42 @@ inline
 bool operator<= (const BigInt& a, const BigInt& b)
 {
 	return (a == b) || (a < b);
+}
+
+inline
+const string & BigInt::to_string()
+{
+	out = "";
+	if ( this->sign == BigInt::Zero )
+	    out += "0";
+	else
+	{
+	    if ( this->sign == BigInt::Negative ) 
+	        out += "-";
+	    else if (this->sign== BigInt::Positive && 
+			BigInt::BI_SignStyle == BigInt::SS_ShowPlus)
+	        out += "+";
+	        
+	    for(int i = this->length - 1; i >= 0; i--)
+	    {
+	        out += '0' + this->data[i];
+	        //
+	        // output separator if required
+	        //
+	        if ( i && (i / 3) * 3 == i )
+	        {
+	            switch(BigInt::BI_OutputStyle)
+	            {
+	            	case BigInt::OS_Normal: break; 		// do nothing
+	            	case BigInt::OS_Comma: out += ","; break;
+	            	case BigInt::OS_Period: out += "."; break;
+	            	case BigInt::OS_Underscore: out += "_"; break;
+	            	case BigInt::OS_Space: out += " "; break;
+	            }
+	        }
+	    }
+	}
+	return out;
 }
 
 inline
@@ -593,7 +641,6 @@ BigInt absDiff(const BigInt& a, const BigInt& b)
 		else
 			borrow = 0;
 	}
-	printf("\n");
 	C.fix();
 	C.sign = BigInt::Positive;
 	return C;
@@ -805,38 +852,32 @@ BigInt BigInt::operator--(int)
 //
 // remainder ...
 inline
-bool divide_unsigned(const BigInt& N, const BigInt& D,
+bool divide(const BigInt& N, const BigInt& D,
 				BigInt &Q, BigInt &R)
 {
 	BigInt ZERO(0l);
+	bool Nnegative = false;
+	bool Dnegative = false;
+	bool rv = false;
 	if (D == ZERO) return false;
-	if (N < ZERO) return false;
-	if (D < ZERO) return false;
+	if (N < ZERO) { Nnegative = true; N.sign = BigInt::Positive;}
+	if (D < ZERO) { Dnegative = true; D.sign = BigInt::Positive;}
 	BigInt QP(1l);
 	BigInt QN(N);
 	Q = avg(QP, QN);
 	R = N;
 	int step = 1;
-	////cout << "N = " << N << endl;
-	////cout << "D = " << D << endl;
-	////cout << "    Step " << step << ":" << endl;
-	////cout << "        R  = " << R << endl;
-	////cout << "        Q  = " << Q << endl;
-	////cout << "        QP = " << QP << endl;
-	////cout << "        QN = " << QN << endl;
+
 	bool done = false;
 	while (!done)
 	{
 		Q = avg(QP, QN);
 		R = N - Q * D;
-		////cout << "    Step " << ++step << ":" << endl;
-		////cout << "        R  = " << R << endl;
-		////cout << "        Q  = " << Q << endl;
-		////cout << "        QN = " << QN << endl;
-		////cout << "        QP = " << QP << endl;
+		
 		if ( (R >= ZERO) && (R < D) )
 		{
 			done = true;
+			rv = true;
 		}
 		else if (R < ZERO) // negative remainder
 		{
@@ -846,9 +887,19 @@ bool divide_unsigned(const BigInt& N, const BigInt& D,
 		{
 			QP = Q;
 		}
-		if (step > 1000) done = true;
+		if (step > 1000) {
+			done = true;
+			rv = false;
+		}
 	}
-	return true;
+	// return N/D to correct signs
+	if (Dnegative) D.sign = BigInt::Negative;
+	if (Nnegative) N.sign = BigInt::Negative;
+	if (rv) {
+		if (Nnegative) { if (R.sign != BigInt::Zero) R.sign = BigInt::Negative; }
+		if (Nnegative ^ Dnegative) { if (Q.sign != BigInt::Zero) Q.sign = BigInt::Negative; }
+	}
+	return rv;
 }
 
 //
@@ -859,7 +910,7 @@ inline
 BigInt operator%(const BigInt& a, const BigInt& b)
 {
 	BigInt Q, R;
-	divide_unsigned(a, b, Q, R);
+	divide(a, b, Q, R);
 	return R;
 }
 //
@@ -870,7 +921,7 @@ inline
 BigInt operator/(const BigInt& a, const BigInt& b)
 {
 	BigInt Q, R;
-	divide_unsigned(a, b, Q, R);
+	divide(a, b, Q, R);
 	return Q;
 }
 

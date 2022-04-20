@@ -32,7 +32,7 @@ void test(long la, long lb)
 	BigInt c = avg(a, b);
 	cout << a << " and " << b << "  avg -> " << c;
 	printf("\n %ld  and  %ld  =  %ld\n", la, lb, lc);
-	divide_unsigned(a, b, Q, R);
+	divide(a, b, Q, R);
 	
 	R = a % b;
 	Q = a / b;
