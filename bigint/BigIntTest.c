@@ -1,6 +1,6 @@
 // test.cpp
 #include <iostream>
-#include "BigInt.h"
+#include "bigint.h"
 
 void	test()
 {
@@ -111,8 +111,40 @@ void	Problem2(BigInt EarthPop)
 	cout << " " << EarthPop << "\n";
 }
 
+#define DO(op)	printf("a %s b = %ld\n", #op, a op b); \
+				printf("A %s B = %s\n", #op, (A op B).c_str());
+
+
+void test2(long a, long b) // test against long ints
+{
+	BigInt A(a);
+	BigInt B(b);
+	
+	printf("a = %ld  ", a);
+	printf("b = %ld\n", b);
+	printf("A = %s  ", A.c_str());
+	printf("B = %s\n", B.c_str());
+	
+	DO(+);
+	DO(*);
+	DO(-);
+	DO(/);
+	DO(%);
+	if ( ((a/b)*b + a%b) != a)
+		printf("LONG ERROR\n");
+	if ( ((A/B)*B + A%B) != A)
+		printf("BIGINT ERROR\n");
+	printf("\n\n");
+}
+
 int main()
 {
+	test2(4626987331561, 51);
+	test2(-4626987331561, 51);
+	test2(4626987331561, -51);
+	test2(-4626987331561, -51);
+	test2(9, 11);
+	return 0;
 	const BigInt googol = BigInt(10)^100;
 
 	test();
