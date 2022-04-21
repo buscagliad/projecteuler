@@ -867,8 +867,14 @@ bool divide(const BigInt& N, const BigInt& D,
 	Q = avg(QP, QN);
 	R = N;
 	int step = 1;
-
 	bool done = false;
+	if (D > N)
+	{
+		R = N;
+		Q = ZERO;
+		done = true;
+	}
+
 	while (!done)
 	{
 		Q = avg(QP, QN);

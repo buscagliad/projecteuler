@@ -1,3 +1,25 @@
+/*
+
+
+
+A unit fraction contains 1 in the numerator. The decimal representation of the unit fractions with denominators 2 to 10 are given:
+
+    1/2	= 	0.5
+    1/3	= 	0.(3)
+    1/4	= 	0.25
+    1/5	= 	0.2
+    1/6	= 	0.1(6)
+    1/7	= 	0.(142857)
+    1/8	= 	0.125
+    1/9	= 	0.(1)
+    1/10	= 	0.1 
+
+Where 0.1(6) means 0.166666..., and has a 1-digit recurring cycle. It can be seen that 1/7 has a 6-digit recurring cycle.
+
+Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
+
+
+*/
 #include <stdio.h>
 #include "factor.h"
 #include "prime.h"
@@ -5,21 +27,29 @@
 #include "bigint.h"
 using namespace std;
 
-void	bigfact(long p)
+bool	bigfact(long pl, int num_nines)
 {
 	BigInt k(9);
-	long n = 20;
+	BigInt p(pl);
+	int MAXN = num_nines;
+	long n = MAXN;
+	//printf("p = %s   ", p.c_str());
 	for (; n > 0; k = k*10 + 9)
 	{
-		if (k + p == (long) 0)
+
+		//printf("[n:%2.2ld] k: %s \n", n, k.c_str());
+
+		if (k % p == (long) 0)
 		{
-		    printf("p = %ld   ", p);
+		    printf("p = %s :: %d   ", p.c_str(), k.num_digits());
 		    cout << k;
 		    printf("\n");
-		    return;
+		    return true;
 		}
 		n--;
 	}
+	//printf("p = %s :: %d \n", p.c_str(), MAXN);
+	return false;
 }
 
 void test(long la, long lb)
@@ -41,22 +71,19 @@ void test(long la, long lb)
 
 int main()
 {
-	BigInt q(590);
-	BigInt n(632);
-	BigInt mq = -q;
-	BigInt mn = n + mq;
-	BigInt aab = mq + n;
-	BigInt aa = absDiff(mq, n);
-	BigInt bb = absDiff(n, mq);
-		cout << "         mq = " << mq << endl;
-		cout << "     n      = " << n << endl;
-		cout << "     n + mq = " << mn << endl;
-		cout << "     mq + n = " << aab << endl;
-		cout << " absdiff(mq, n) = " << aa << endl;
-		cout << " absdiff(n, mq) = " << bb << endl;
-	test(632, 10);
-	//test(123456789, 100);
-	return 1;
+
+	int num_complete = 0;
+	int num_nines = 10000;
+
 	for (int i = 0; i < plist_size; i++)
-	    bigfact(prime_list[i]);
+	{
+			if ( (prime_list[i] == 2) || 
+				 (prime_list[i] == 3) ||
+				 (prime_list[i] == 5) ) {
+				num_complete++; }
+			else
+			{
+				if (bigfact(prime_list[i], num_nines)) num_complete++;
+			}
+	}
 }

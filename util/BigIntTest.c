@@ -143,7 +143,7 @@ int main()
 	test2(-4626987331561, 51);
 	test2(4626987331561, -51);
 	test2(-4626987331561, -51);
-
+	test2(9, 11);
 	return 0;
 	const BigInt googol = BigInt(10)^100;
 
