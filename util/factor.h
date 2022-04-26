@@ -20,6 +20,7 @@ class	vlong : public vlong_t {
 	public:
 		vlong(vlong_t &v);
 		vlong();
+		bool exists(long n);
 		void add(long v);
 		long sum();
 		long product();
@@ -46,6 +47,16 @@ int  vlong::index(long value)
 	for (vlong_it i = this->begin(); i != this->end(); i++, n++)
 	    if (*i > value) return n;
 	return -1;
+}
+
+// return true if value exists in vector
+//
+inline
+bool  vlong::exists(long value) 
+{
+	for (vlong_it i = this->begin(); i != this->end(); i++)
+	    if (*i == value) return true;
+	return false;
 }
 
 inline

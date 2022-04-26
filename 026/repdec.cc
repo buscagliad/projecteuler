@@ -32,9 +32,9 @@ bool	bigfact(long pl, int num_nines)
 	BigInt k(9);
 	BigInt p(pl);
 	int MAXN = num_nines;
-	long n = MAXN;
+	long n = 1;
 	//printf("p = %s   ", p.c_str());
-	for (; n > 0; k = k*10 + 9)
+	for (; n < MAXN; k = k*10 + 9)
 	{
 
 		//printf("[n:%2.2ld] k: %s \n", n, k.c_str());
@@ -46,7 +46,7 @@ bool	bigfact(long pl, int num_nines)
 		    printf("\n");
 		    return true;
 		}
-		n--;
+		n++;
 	}
 	//printf("p = %s :: %d \n", p.c_str(), MAXN);
 	return false;
@@ -69,13 +69,69 @@ void test(long la, long lb)
 	cout << a << " mod " << b << "  Q = " << Q << "  R = " << R << endl;
 }
 
+int num_repeats(int p, string &repeat)
+{
+	vlong v;
+	int	n = 10;
+	//if (p > 10) n = 100;
+	//if (p > 100) n = 1000;
+	int d = n / p;  // always a single digit
+	repeat = "";
+	repeat += d + '0';
+	n = 10 * (n - d * p);
+	int saved_n = n;
+	int last_d = d;
+	v.add(n);
+	do {
+		d = n / p;
+		n = 10 * (n - d * p);
+		//printf("p: %d  n: %d  d: %d   saved: %d\n",
+		//	p, n, d, saved_n);
+		if ((n == 0) || v.exists(n) ) break;
+		v.add(n);
+		last_d = d;
+		repeat += d + '0';
+	} while (n != saved_n);
+	return repeat.size();
+}
+		
+int check(int n)
+{		
+	string str;
+	int r = num_repeats(n, str);
+	printf("Num repeates of %d is %d\n", n, r);
+	//printf("    repeat: %s\n", str.c_str());
+	return r;
+}
+
 int main()
 {
+	int max_n = 0;
+	int max_repeats = 0;
+	string max_str;
+	int n;
+	int r;
+	string rep;
+	for (n = 11; n < 1000; n++)
+	{
+		r = num_repeats(n, rep);
+		printf("Num repeats of %d is %d\n", n, r);
+		if (r > max_repeats)
+		{
+			max_n = n;
+			max_repeats = r;
+			max_str = rep;
+		}
+	}
+	printf("N: %d   Repeat Count: %d\n", max_n, max_repeats);
 
+// trying another way -- problem with assumption of 9's
+// use above solution only.
+	//exit(1);
 	int num_complete = 0;
 	int num_nines = 10000;
 
-	for (int i = 0; i < plist_size; i++)
+	for (int i = 0; prime_list[i] < 1000; i++)
 	{
 			if ( (prime_list[i] == 2) || 
 				 (prime_list[i] == 3) ||
