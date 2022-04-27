@@ -204,8 +204,26 @@ bool test4(long prime, long nnines)
 	return false;
 }
 
+void test5()
+{
+	BigInt v(2);
+	BigInt g(2);
+	if (g < v) printf("BAD <\n");
+	if (g > v) printf("BAD >\n");
+	if (g == v) printf("GOOD!!!\n");
+	for (long n = 0; n < 10; n++)
+	{
+		BigInt	x(n);
+		BigInt	a = v ^ x;
+		BigInt  b = v ^ n;
+		printf("v: %s   n: %ld   v^n: %s   v^N: %s\n", v.c_str(), n, b.c_str(), a.c_str());
+	}
+}
+
 int main()
 {
+	test5();
+	return 1;
 	test4(31, 15);
 	return 1;
 	test4(79, 13); 

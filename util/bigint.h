@@ -388,7 +388,7 @@ bool absLess(const BigInt& a, const BigInt& b)
 	    if (a.data[i] > b.data[i]) return false; 
 	}
 	////cout << " TRUE" << endl; 
-	return true;  // 
+	return false;  // we get here if |a| = |b|
 }
 
 
