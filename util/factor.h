@@ -2,6 +2,7 @@
 #define __FACTOR_H__
 
 #include <vector>
+#include <algorithm>
 #include "prime.h"
 #include "vlong.h"
 
@@ -46,6 +47,7 @@ class factor {
 							// valid after 'merge' is used
 		long	num();	// returns number of factors
 		vlong_t divisors(bool proper = true);
+		vlong_t common(factor &s);  // returns common factors for this and s
 	private:
 		factor();
 		fact_val_t	*find(long n);	// returns NULL if n does not exist as a factor
@@ -55,6 +57,27 @@ class factor {
 		bool	have_merged;
 		long	orig_number;
 };
+
+inline
+vlong_t factor::common(factor &s)  // returns common factors for this and s
+{
+	vlong_t  	rv;
+	fact_val_t	*ft;
+
+	for (size_t i = 0; i < s.facts.size(); i++)
+	{
+		if ((ft = find(s.facts[i].f)))
+		{
+			int nm = min(ft->dup, s.facts[i].dup);
+			while (nm)
+			{
+				rv.push_back(s.facts[i].f);
+				nm--;
+			}
+		}
+	}
+	return rv;
+}
 
 //
 // returns number of divisors of the given number
@@ -143,8 +166,11 @@ inline
 void	factor::out()
 {
 	printf("%s%ld = ", have_merged?"[merged]":"", product());
-	printf("%ld", facts[0].f);
-	if (facts[0].dup > 1) printf("^%d", facts[0].dup);
+	if (facts.size() > 0) 
+	{
+		printf("%ld", facts[0].f);
+		if (facts[0].dup > 1) printf("^%d", facts[0].dup);
+	}
 	for (size_t i = 1; i < facts.size(); i++)
 	{
 		printf(" * %ld", facts[i].f);

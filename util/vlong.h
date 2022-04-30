@@ -1,6 +1,7 @@
 #ifndef __V_LONG_H__
 #define __V_LONG_H__
 
+#include <vector>
 
 typedef std::vector<long> vlong_t;
 typedef std::vector<long>::iterator vlong_it;
@@ -122,4 +123,19 @@ long vlong::sum()
 	return ::sum(*this);
 }
 
+long product(vlong_t &v)
+{
+	long p = 1;
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		p *= v[i];
+	}
+	return p;
+}
+
+inline
+long vlong::product()
+{
+	return ::product(*this);
+}
 #endif
