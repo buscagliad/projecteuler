@@ -227,8 +227,8 @@ bool incIndex(int &d3, int &d7, int &d11, int &d13, int &d17)
 
 long addPanDigits(long n, long &sum)
 {
-	long d10 = 10000000000l;
-	long d09 = 1000000000l;
+	long d10 = 1000000000l;
+	long d09 = 100000000l;
 	//long d08 = 100000000l;
 	vlong_t	vn = get_digits(n);
 	vlong	nd(vn);

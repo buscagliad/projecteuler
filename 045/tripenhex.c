@@ -15,3 +15,41 @@ It can be verified that T285 = P165 = H143 = 40755.
 Find the next triangle number that is also pentagonal and hexagonal.
 
 #endif
+
+#include <stdio.h>
+
+#define T(n) ((n)*(n+1)/2)
+#define P(n) ((n)*(3*n-1)/2)
+#define H(n) ((n)*(2*n-1))
+
+// NOTE H(n) > P(n) > T(n), thus if H(n) == P(k) == T(m) then
+//     n < k < m
+
+int main()
+{
+	int tph = 0;
+	for (long m = 285; m < 1000000; m++)
+	{
+		long tm = T(m);
+		for (long n = 1; n < m; n++)
+		{
+			long pn = P(n);
+			if (pn > tm) break;
+			if (pn == tm)
+			{
+				for (long k = 1; k < n; k++)
+				{
+					long hk = H(k);
+					if (hk > tm) break;
+					if (hk == tm)
+					{
+						tph++;
+						printf("P(%ld) == %ld,  H(%ld) == %ld,  T(%ld) == %ld\n",
+							n, pn, k, hk, m, tm);
+						if (tph >= 2) return 1;
+					}
+				}
+			}
+		}
+	}
+}

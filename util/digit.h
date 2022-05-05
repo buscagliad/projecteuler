@@ -1,6 +1,8 @@
 #ifndef __DIGIT_H__
 #define __DIGIT_H__
 
+#include <math.h>
+
 #include "vlong.h"
 
 #define DIGIT_DEBUG 0
@@ -11,6 +13,15 @@ long	digit(long n, int d)
 	if (d < 0) return 0;
 	while ( (n > 0) && (d-- > 0) ) n /= 10;
 	return n % 10;
+}
+
+inline
+bool isSquare(long n)
+{
+	double sn = sqrt((double) n) + 0.2;
+	long   x = sn;
+	if (x * x == n) return true;
+	return false;
 }
 
 inline
