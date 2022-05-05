@@ -1,6 +1,10 @@
 #ifndef __DIGIT_H__
 #define __DIGIT_H__
 
+#include "vlong.h"
+
+#define DIGIT_DEBUG 0
+
 inline
 long	digit(long n, int d)
 {
@@ -9,5 +13,66 @@ long	digit(long n, int d)
 	return n % 10;
 }
 
+inline
+bool	isDigInNum(long n, int d)
+{
+	if (d < 0) return 0;
+	while (n > 0){
+		if (d == n%10) return true;
+		n /= 10;
+	}
+	return false;
+}
+
+inline
+vlong_t	get_digits(long n, long base = 10)
+{
+	vlong_t v;
+	while ( (n > 0) )
+	{
+		v.push_back(n%base);
+		n /= base;
+	}
+	return v;
+}
+
+inline
+bool	isPalindrome(vlong_t &v)
+{
+	size_t	vs = v.size();
+	size_t	vsd2 = vs/2;
+	for (size_t k = 0; k < vsd2; k++)
+	    if (v[k] != v[vs-1-k]) return false;
+	return true;
+}
+
+#define MAXTENDIGIT     9999999999l
+#define MINTENDIGIT     1000000000l
+#define MAXNINEDIGIT     999999999l
+#define MINNINEDIGIT     100000000l
+//                       123456789
+
+inline
+bool	isPandigital(long t, bool include_zero = false)
+{
+	if ( include_zero && ( (t < MINTENDIGIT)  || (t > MAXTENDIGIT) ) ) return false;
+	if (!include_zero && ( (t < MINNINEDIGIT) || (t > MAXNINEDIGIT) ) ) return false;
+	vlong v;
+	while ( (t > 0) )
+	{
+		long d = t % 10;
+		if (!include_zero && d == 0) { 
+			if (DIGIT_DEBUG) printf("Found a zero\n"); 
+			return false; 
+		}
+		if (v.exists(d)) { 
+			if (DIGIT_DEBUG) printf("%ld is a duplicate digit\n", d); 
+			return false;
+		}
+		v.add(d);
+		t /= 10;
+	}
+	return true;	
+}
 
 #endif

@@ -2,6 +2,7 @@
 #define __V_LONG_H__
 
 #include <vector>
+#include <stdio.h>
 
 typedef std::vector<long> vlong_t;
 typedef std::vector<long>::iterator vlong_it;
