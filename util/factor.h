@@ -46,6 +46,7 @@ class factor {
 							// returns true if original number was a prime, not
 							// valid after 'merge' is used
 		long	num();	// returns number of factors
+		long    numDistinctPrimes() { return facts.size(); };
 		vlong_t divisors(bool proper = true);
 		vlong_t common(factor &s);  // returns common factors for this and s
 	private:

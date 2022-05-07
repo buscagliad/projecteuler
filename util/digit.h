@@ -36,7 +36,7 @@ bool	isDigInNum(long n, int d)
 }
 
 inline
-vlong_t	get_digits(long n, long base = 10)
+vlong_t	getDigits(long n, long base = 10)
 {
 	vlong_t v;
 	while ( (n > 0) )
@@ -45,6 +45,30 @@ vlong_t	get_digits(long n, long base = 10)
 		n /= base;
 	}
 	return v;
+}
+
+inline
+bool	isPermutation(long a, long b)	// returns true if a and b are permuations
+{										// of one another
+	vlong_t	va = getDigits(a);
+	vlong_t vb = getDigits(b);
+	bool do_return = true;
+
+	if (va.size() != vb.size()) { return false; }
+	for (size_t i = 0; i < va.size(); i++)
+	{
+		do_return = true;
+		for (size_t j = 0; j < vb.size(); j++)
+		{
+			if (vb[j] == va[i]) {
+				vb[j] = 10;	// not a valid digit
+				do_return = false;
+				break;		// go to next va value
+			}
+		}
+		if (do_return) return false;	// if we get here, nothing match va[i]
+	}
+	return true;		// if we get here - all digits matched
 }
 
 inline
