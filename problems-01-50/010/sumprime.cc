@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 	if (argc == 2) num = atol(argv[1]);
 	while (!done)
 	{
-		prime = next_prime(prime+2);
+		prime = next_prime();
 		if (prime < num)
 		{
 			sum += prime;

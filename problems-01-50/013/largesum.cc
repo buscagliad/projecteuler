@@ -21,7 +21,7 @@ int main()
 	FILE *f = fopen("nums.txt", "r");
 	char lnum[NUM];
 	bool more = getnum(f, lnum);
-	BigInt sum = 0;
+	BigInt sum = 0l;
 
 	while (more)
 	{

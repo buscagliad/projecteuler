@@ -80,7 +80,6 @@ int num_repeats(int p, string &repeat)
 	repeat += d + '0';
 	n = 10 * (n - d * p);
 	int saved_n = n;
-	int last_d = d;
 	v.add(n);
 	do {
 		d = n / p;
@@ -89,7 +88,6 @@ int num_repeats(int p, string &repeat)
 		//	p, n, d, saved_n);
 		if ((n == 0) || v.exists(n) ) break;
 		v.add(n);
-		last_d = d;
 		repeat += d + '0';
 	} while (n != saved_n);
 	return repeat.size();
@@ -130,6 +128,7 @@ int main()
 	//exit(1);
 	int num_complete = 0;
 	int num_nines = 10000;
+	Prime p;	// reads in file
 
 	for (int i = 0; prime_list[i] < 1000; i++)
 	{

@@ -86,6 +86,7 @@ search(long MaxPrimeSum)
 	
 int main()
 {
+	Prime p;	// reads in file
 	search(100);
 	search(1000);
 	search(1000000);

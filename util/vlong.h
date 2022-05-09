@@ -2,7 +2,11 @@
 #define __V_LONG_H__
 
 #include <vector>
+#include <string>
+#include <algorithm>
 #include <stdio.h>
+
+#include "sequence.h"
 
 typedef std::vector<long> vlong_t;
 typedef std::vector<long>::iterator vlong_it;
@@ -23,10 +27,70 @@ class	vlong : public vlong_t {
 		int  index(long value); // return first index where cv[index] > value;
 								// -1 if no such index
 		vlong_it  index_it(long value); // return iterator to place where *it > value
+		
+		bool	  setPermutation(int n);	// sets up all permuations of n entris from this vlong
+										// false is returned if n < 1 or n > size()
+		vlong_t  getNextPerm();
+		// return next n-touple from list set by setPermuation subsequent calls return a differnt
+		//				list - until you exhaust combinations
+		 
 	private:
 		//vlong_t  cv;	// class value list
-		
+		int	choose;	// if > -1, we are in the middle of subChoose(), it will indicate which
+					// subchoose selection will be filled int
+		vlong_t		*ch;
+		int          ch_size;
 };
+
+// if n > size() - return null list
+// if n == size() = return full list
+// if n < size() = return first n-touple from list, subsequent calls return a differnt
+//				list - until you exhaust combinations
+inline
+bool	vlong::setPermutation(int n)
+{
+	choose = 0;
+	if (ch) delete [] ch;
+	if (n < 1 || n > (int)size()) return false;
+	ch_size = NchooseM(size(),n);
+	ch = new vlong_t[ch_size];
+	long k = 0;
+	// create a string with n 1's nad k 0's, where k = size() - n;
+	// if k == 0, then only 1 premutation
+	std::string s(n, '1');
+	for (size_t i = 0; i < size() - n; i++) s += '0';
+	std::sort(s.begin(), s.end());
+	do {
+		for (size_t j = 0; j < s.size(); j++)
+		{
+			if (s[j] == '1') ch[k].push_back((*this)[j]);
+		}
+		k++;
+	} while(std::next_permutation(s.begin(), s.end()));
+	if (k != ch_size)
+	{
+		printf("setPermutations - INTERNAL ERROR - s = %s  k = %ld  ch_size = %d\n", s.c_str(),
+												k, ch_size);
+		return false;
+	}
+	return true;
+}
+
+// return next n-touple from list set by setPermuation subsequent calls return a differnt
+//				list - until you exhaust combinations
+inline
+vlong_t  vlong::getNextPerm()
+{
+	vlong_t rv;
+	if (!ch) return rv;
+	if (choose >= ch_size)
+	{
+		delete [] ch;
+		ch = NULL;
+		return rv;
+	}
+	return ch[choose++];
+}
 
 // return first index where cv[index] > value;
 // -1 if no such index
@@ -63,12 +127,14 @@ vlong_it  vlong::index_it(long value)
 inline
 vlong::vlong()
 {
+	ch = NULL;
 }
 
 inline
 vlong::vlong(vlong_t &b)
 {
 	//
+	ch = NULL;
 	for (vlong_it it = b.begin(); it != b.end(); it++)
 	{
 		add(*it);
@@ -89,17 +155,14 @@ void	vlong::add(long v)
 
 void vl_out(vlong_t &v)
 {
-	long prod = 1;
-	long sum = 0;
-	printf("Factors: ");
+	printf("Elements: ");
 	for (size_t i = 0; i < v.size(); i++)
 	{
-		prod *= v[i];
-		sum += v[i];
 		printf(" %ld", v[i]);
 	}
-	printf("\nSum: %ld   Product: %ld\n", sum, prod);
+	printf("\n");
 }
+
 void vlong::out()
 {
 	for (size_t i = 0; i < this->size(); i++)
@@ -124,6 +187,9 @@ long vlong::sum()
 	return ::sum(*this);
 }
 
+// prodf will return the product of the long vector
+//
+
 long product(vlong_t &v)
 {
 	long p = 1;
@@ -139,4 +205,6 @@ long vlong::product()
 {
 	return ::product(*this);
 }
+
+
 #endif

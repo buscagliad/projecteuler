@@ -22,6 +22,7 @@ int	find_primes(int a, int b, vlong &vu, vlong &vl)
 
 int main()
 {
+	Prime p;
 	vlong vu, vl;
 	vlong maxLength;
 	int   maxLa = 0, maxLb = 0;

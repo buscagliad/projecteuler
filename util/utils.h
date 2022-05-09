@@ -15,3 +15,4 @@
 #include "vlong.h"
 
 #define YN(b)	((b)?"YES":"NO")
+
