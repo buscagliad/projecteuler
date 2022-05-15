@@ -27,6 +27,7 @@ class base10 {
 		long	value();							// returns value
 		int		count(int dv);						// returns number of digits having dv
 		int		dvalue(int d);						// returns d-th digit - 0 is ones, etc.
+		bool	sameDigits(base10 &v);				// returns true if v has same digits as *this
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
 		int		digLen;								// number of digits in dig
@@ -34,6 +35,25 @@ class base10 {
 		bool	valid;								// set to false if n <= 0
 		vlong	*perm;								// used for setChoose/getNext
 };
+
+inline
+bool	base10::sameDigits(base10 &v)				// returns true if v has same digits as *this
+{
+	if (v.digLen != this->digLen) return false;
+
+	std::vector<char> vdig (v.dig, v.dig+digLen);               
+	std::vector<char> tdig (this->dig, this->dig+digLen);       
+
+	// sort digits of passed in object
+	std::sort (vdig.begin(), vdig.end());      
+
+	// sort digits of this-> number
+	std::sort (tdig.begin(), tdig.end()); 
+
+	if (vdig == tdig) return true;	// if sorted arrays are equal, then they have the same digits
+	return false;
+}
+	
 
 inline
 long	base10::reset()
@@ -60,7 +80,7 @@ base10::base10(long n)
 inline
 base10::~base10()
 {
-	//if (perm) delete perm;
+	if (perm) delete perm;
 }
 
 inline

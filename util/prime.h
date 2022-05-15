@@ -36,7 +36,7 @@ void print_factors(vlong_t &pv);
 #define PRIME_FILE_SIZE 1000000
 #define PRIME_FILE_MAX  50  // currently only first 50 million primes
 #define PRIME_MAX_NUMBERS 50000000 // product of FILE_SIZE * FILE_MAX
-static	long prime_list[PRIME_FILE_SIZE];
+static	long prime_list[PRIME_MAX_NUMBERS];
 static	char prime_file_title[PRIME_TITLE_SIZE];
 static	char prime_file_name[PRIME_TITLE_SIZE];
 static	int  prime_file_index = 0;  // file 1 thru 50
@@ -44,10 +44,11 @@ static	int  prime_list_size;
 //static	int  prime_list_index;
 static	long  prime_min_value;
 static  long  prime_max_value;
+static	long  prime_max_index;
 
 class Prime {
 	public:
-		Prime();			// reads in first million primes, sets index to 0
+		Prime(bool load_all = false);			// reads in first million primes, sets index to 0
 		long operator[] (int n) { return get(n); };
 		bool isPrime(long p){ return ::isPrime(p); };  // returns true if 'p' is prime
 		long next();		  // returns next prime
@@ -65,32 +66,79 @@ inline
 bool	readFile(int n)
 {
 	#define MAX_LINE 1000
-	prime_list_size = 0;
+	if (n < 1 || n > PRIME_FILE_MAX) 
+	{
+		printf("ERROR - requested file exceeds allowed number (cur file:%d -  des file: %d)\n",
+			prime_file_index, n);
+		return false;
+	}
+	if (n == 1) prime_list_size = 0;
+	if (n <= prime_file_index) return true;
+	if (n - prime_file_index > 1)
+	{
+		printf("ERROR - cannot read into the middle of prime array (cur file:%d -  des file: %d)\n",
+			prime_file_index, n);
+		return false;
+	}
 	prime_file_index = n;
-	if (n < 1 || n > PRIME_FILE_MAX) return false;
 	sprintf(prime_file_name, "%sprimes%2.2d.txt", PRIME_FILE_DIRECTORY, prime_file_index);
 	char	line[MAX_LINE];
 	FILE *f = fopen(prime_file_name, "r");
 	if (!f) return false;
 	fgets(prime_file_title, PRIME_TITLE_SIZE, f);
 	fgets(line, MAX_LINE, f); // skip line
-	while (!feof(f) && prime_list_size < PRIME_FILE_SIZE)
+	while (!feof(f) && prime_list_size < n * PRIME_FILE_SIZE)
 	{
 		fscanf(f, "%ld", prime_list + prime_list_size);
 		prime_list_size++;
 	}
 	prime_min_value = prime_list[0];
-	prime_max_value = prime_list[PRIME_FILE_SIZE-1];
-	printf("ReadFile: %s    Min: %ld   Max: %ld\n",
-		prime_file_name, prime_min_value, prime_max_value);
+	prime_max_value = prime_list[prime_list_size-1];
+	prime_max_index = n * PRIME_FILE_SIZE;
+	printf("ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+		prime_file_name, prime_min_value, prime_max_value, prime_list_size);
+	fclose(f);
 	return true;
 }	
 
 inline
-Prime::Prime()
+Prime::Prime(bool load_all)
 {
 	readFile(1);
+	if (load_all)
+	{
+		for(int k = 2; k <= PRIME_FILE_MAX; k++)
+		    readFile(k);
+		#ifdef DEBUG_PRIME_FILE
+		FILE *f = fopen("/tmp/allprimes.txt", "w");
+		for (int i = 0; i < prime_max_index; i++)
+		    fprintf(f, "%9d   %20ld\n", i, prime_list[i]);
+		    
+		fclose(f);
+		#endif
+	}
 }	
+
+int binarySearch(long array[], int x, int low, int high) 
+{
+
+	// Repeat until the pointers low and high meet each other
+	while (low <= high) 
+	{
+		int mid = low + (high - low) / 2;
+
+		if (array[mid] == x)
+			return mid;
+
+		if (array[mid] < x)
+			low = mid + 1;
+
+		else
+			high = mid - 1;
+	}
+
+	return -1;
+}
 
 // isPrime uses the 50000000 primes defined in the file set
 // if those cannot find that it's a prime, the sieve method is 
@@ -116,9 +164,10 @@ bool isPrime(long n)
 		return isPrime(n);
 	}
 	int  k = 0;
-	while (k < PRIME_FILE_SIZE  &&  n > prime_list[k]) k++;
+	//while (k < PRIME_FILE_SIZE  &&  n > prime_list[k]) k++;
+	k = binarySearch(prime_list, n, 0, prime_max_index);
 	//printf("n = %ld  k = %d  P(k) = %ld \n", n, k, prime_list[k]);
-	if (n == prime_list[k])
+	if (k > -1)
 	{
 		//printf("isPrime:: %ld is prime from file: %d at index %d\n",
 		//	n, prime_file_index, k);
@@ -160,7 +209,7 @@ long next_prime()
 {
 	if (prime_next_index < 0) next_prime(1);
 	prime_next_index++;
-	if (prime_next_index >= PRIME_FILE_SIZE) 
+	if (prime_next_index >= prime_max_index) 
 	{
 		readFile(prime_file_index + 1);
 		prime_next_index = 0;

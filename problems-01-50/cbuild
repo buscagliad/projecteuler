@@ -1,0 +1,59 @@
+#!/bin/bash
+
+GG(){
+	echo "Building in $1 file $2"
+	cd $1; 
+	g++ -g -Wall -I../../util $2
+	cd ..
+	}
+
+GG 001  3sand5s.c
+GG 002  fib.c
+GG 003  prime.cc
+GG 004  palindrome.cc
+GG 005  smallestmult.cc
+GG 006  sumsqdif.cc
+GG 007  nthprime.cc
+GG 008  adjdigits.cc
+GG 009  pythtrips.cc
+GG 010  sumprime.cc
+GG 011  grid.cc
+GG 012  triangle.cc
+GG 013  largesum.cc
+GG 014  collatz.cc
+GG 015  gridpaths.cc
+GG 016  pwrdigsum.cc
+GG 017  numletcounts.cc
+GG 018  maxpath.cc
+GG 019  sundays.cc
+GG 020  factdigs.cc
+GG 021  amicable.cc
+GG 022  names.cc
+GG 023  abundant.cc
+GG 024  perm.cc
+GG 025  fibonacci.cc
+GG 026  repdec.cc
+GG 027  primequadratic.c
+GG 028  trisums.c
+GG 029  dpowers.c
+GG 030  power5.c
+GG 031  pence.c
+GG 032  pandig.c
+GG 033  digcanfracts.c
+GG 034  digfacts.c
+GG 035  circprimes.c
+GG 036  dblpalindromes.c
+GG 037  truncprimes.c
+GG 038  pandigmults.c
+GG 039  intrtri.c
+GG 040  champconst.c
+GG 041  panprime.c
+GG 042  codetrinums.c
+GG 043  substr.c
+GG 044  pentagon.c
+GG 045  tripenhex.c
+GG 046  goldbach.c
+GG 047  dpf.c
+GG 048  selfpowers.c
+GG 049  primeperms.c
+GG 050  consprimes.c

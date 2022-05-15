@@ -23,6 +23,7 @@ long sumcu(long n)
 }
 
 // returns n * (n-1) * (n-2) * ... * 2 * 1
+inline
 long  fact(long n)
 {
 	long rv = 1;
@@ -31,9 +32,10 @@ long  fact(long n)
 }
 
 // returns number of ways of choosing m things from a set of n items
+inline
 long	NchooseM(long n, long m)
 {
-	return fact(n)/fact(m)/fact(n-m);
+    if (m == 0) return 1;
+    return (n * NchooseM(n - 1, m - 1)) / m;
 }
-
 #endif
