@@ -28,6 +28,8 @@ class base10 {
 		int		count(int dv);						// returns number of digits having dv
 		int		dvalue(int d);						// returns d-th digit - 0 is ones, etc.
 		bool	sameDigits(base10 &v);				// returns true if v has same digits as *this
+		long    reverse();							// reverses digits of base10 object
+		bool    isPalindrome();						// returns true if number is a palindrome
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
 		int		digLen;								// number of digits in dig
@@ -90,6 +92,31 @@ bool	base10::unique()
 	for (int i = 0; i < digLen - 1; i++)
 		for (int j = i + 1; j < digLen; j++)
 		    if (dig[i] == dig[j]) return false;
+	return true;
+}
+
+// reverses a base10 objects digits
+inline
+long		base10::reverse()
+{
+	char  s;
+	for (int i = 0; i < digLen/2; i++)
+	{
+		s = dig[digLen - i - 1];
+		dig[digLen - i - 1] = dig[i];
+		dig[i] = s;
+	}
+	return value();
+}
+
+// reverses a base10 objects digits
+inline
+bool		base10::isPalindrome()
+{
+	for (int i = 0; i < digLen/2; i++)
+	{
+		if (dig[digLen - i - 1] != dig[i]) return false;
+	}
 	return true;
 }
 

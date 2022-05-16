@@ -14,10 +14,15 @@
 #define BIGINT_H
 
 #include <iostream>
+#include <algorithm>
+#include <sstream>
+#include <iomanip>
 #include <stdlib.h>
 #include <ctype.h>
+#include <limits.h>
 
 using namespace std;
+
 
 class BigInt
 {
@@ -60,50 +65,102 @@ class BigInt
 		BigInt operator--(int);
 		BigInt operator-() const;
 		BigInt operator^(const BigInt&) const;
+		BigInt operator^(long n) const;
 		BigInt operator!() const;
 		inline BigInt operator*=(const BigInt&);
 		inline BigInt operator+=(const BigInt&);
 		inline BigInt operator/=(const BigInt&);
 		inline BigInt operator%=(const BigInt&);
-		int num_digits() { return length; };
-		int get_digit(int n) { if (n < 0 || n >= length) return 0; return data[n]; };
-		const string & to_string();
-		const char *c_str() {to_string(); return out.c_str(); };
-
-		enum OutputStyle {OS_Normal, OS_Space, 
-			OS_Comma, OS_Period, OS_Underscore};
-		enum SignStyle {SS_Normal, SS_ShowPlus};
-		
-		static	void setOutputStyle(OutputStyle);
-			static	void setSignStyle(SignStyle);
+		int num_digits();
+		int get_digit(int n);
+		const string & to_string() const;
+		const char *c_str() const {to_string(); return out.c_str(); };
+		BigInt reverse()	// return number with digits reversed
+		{
+			string st = to_string();
+			//cout << "IN REVERSE: " << st << endl;
+			::reverse(st.begin(), st.end());
+			BigInt b(st.c_str());
+			//cout << "AFTER REVERSE: " << b << endl;
+			return b;
+		}
+		void debug(const char *s = "") const;
+		bool isPalindrome() {
+			string s = to_string();
+			size_t	n = s.size() - 1;
+			size_t  end = n / 2;
+			for (size_t i = 0; i < end; i++, n--)
+			    if (s[i] != s[n]) return false;
+			return true;
+		}
+			
 			
     private:
-    
-		int		operator()(int) const;
-		int&	operator()(int);
+		#define BASE_NUMBER 1000000000000l   // Must be a number of the form 10^N
+		#define BASE_NUMBER_ROOT 1000000l   // 10 ^ (BASE_EXPONENT/2)
+		#define BASE_EXPONENT  12
+		#define DATA_TYPE      long
+		#define ZERO		   BigInt(0l)
+
+		DATA_TYPE	operator[](int n) const { if ((n < 0) || (n >= length) ) return 0; 
+											return data[n]; };
+
 		void	fix();
 		void	newLength(int);
 		void	zero();
 
 		enum 	Sign { Positive, Negative, Zero };
-		int* 	data;
-		int		length;
+		DATA_TYPE* 	data;
+		int		length;			// number of elements in data array
 		mutable	Sign 	sign;  // made mutable so const versions can be abs valued
 		
-		static	OutputStyle	BI_OutputStyle;
-		static	SignStyle	BI_SignStyle;
-		string  out;
+		mutable string  out;
+		
 };
 
+inline
+int BigInt::num_digits() 
+{
+	int rv = (length - 1) * BASE_EXPONENT;
+	DATA_TYPE  d = data[length - 1];
+	while (d > 0)
+	{
+		d /= 10;
+		rv ++;
+	}
+	return rv;
+}
+
+inline
+int BigInt::get_digit(int n) { 
+	if (n < 0 || n >= num_digits()) return 0; 
+	DATA_TYPE d = data[n / BASE_EXPONENT];
+	int nd = n % BASE_EXPONENT;
+	while (nd > 0) { d /= 10; nd--; }
+	return d % 10;
+}
+
+
+
+inline
+void BigInt::debug(const char *s) const
+{
+	printf("%s  length = %d  ", s, length);
+	printf("Sign: %d\n", sign);
+	for (int i = 0; i < length; i++)
+	    printf("i: %2d    data: %ld\n", i, data[i]);
+	printf("NUM: %s\n", c_str());
+}		
+		
 inline
 BigInt	avg(BigInt &a, BigInt &b)
 {
 	BigInt	ans = a + b;
-	int carry = 0;
+	DATA_TYPE carry = 0;
 	bool fd1 = (ans.data[ans.length - 1] == 1);
 	for (int i = ans.length - 1; i >= 0; i--)
 	{
-		if (ans.data[i] % 2) { carry = 10; ans.data[i]--; }
+		if (ans.data[i] % 2) { carry = BASE_NUMBER; ans.data[i]--; }
 		else carry = 0;
 		if (i) ans.data[i-1] += carry;
 		ans.data[i] /= 2;
@@ -141,56 +198,9 @@ inline BigInt BigInt::operator%=(const BigInt& m)
 
 
 //
-// static member data
-//
-	BigInt::OutputStyle	BigInt::BI_OutputStyle = BigInt::OS_Normal;
-	BigInt::SignStyle	BigInt::BI_SignStyle = BigInt::SS_Normal;
-//
-// static functions
-//
-inline
-void	BigInt::setOutputStyle(OutputStyle os)
-{
-	BI_OutputStyle = os;
-}
-
-inline
-void	BigInt::setSignStyle(SignStyle ss)
-{
-	BI_SignStyle = ss;
-}
-
-
-//
 // HELPER functions
 //
 
-//
-// returns nth digit of BigInt, 0 if digit is invalid
-//
-inline
-int	BigInt::operator()(int base_ten_digit) const
-{
-	if ( (base_ten_digit < 0) || (base_ten_digit >= length) ) 
-	    return 0;
-	return data[base_ten_digit];
-}
-
-//
-// in this version, we are returning access to the data structure,
-// we throw the exception InternalError
-//
-inline
-int&	BigInt::operator()(int base_ten_digit)
-{
-	if ( (base_ten_digit < 0) || (base_ten_digit >= length) )
-	{
-	    cerr << "INTERNAL ERROR - access out of bounds\n";
-	    exit(0);
-	}
-	
-	return data[base_ten_digit];
-}
 
 //
 // fix removes leading zeroes and sets sign if appropriate
@@ -239,7 +249,8 @@ void	BigInt::newLength(int l)
 	    delete [] data;
 	}
 	length = l;
-	data = new int[length];
+	data = new DATA_TYPE [length];
+	for (int i = 0; i < length; i++)data[i] = 0;
 // cout << "Nl NEW Data @ " << (void *)data << "  Size = " << length << "\n";
 
 }
@@ -251,6 +262,7 @@ inline
 void	BigInt::zero()
 {	
 	for (int i = 0; i < length; i++) data[i] = 0;
+	//this->sign = BigInt::Zero;
 }
 
 //
@@ -279,7 +291,7 @@ BigInt::BigInt(long i) : data(0), length(0)
 	while ( tmp_i )
 	{
 	    length++;
-	    tmp_i /= 10;
+	    tmp_i /= BASE_NUMBER;
 	}
 
 //
@@ -287,13 +299,13 @@ BigInt::BigInt(long i) : data(0), length(0)
 // 
 	if (length == 0) length = 1;
 	
-	data = new int[length];	// set data to point to array
+	data = new DATA_TYPE [length];	// set data to point to array
 // cout << "Ci NEW Data @ " << (void *)data << "  Size = " << length << "\n";
 
 	for(int m = 0; m < length; m++)
 	{
-	    data[m] = i % 10;
-	    i /= 10;
+	    data[m] = i % BASE_NUMBER;
+	    i /= BASE_NUMBER;
 	}
 }
 
@@ -321,13 +333,32 @@ BigInt::BigInt(const char *s) : data(0), length(0)
 	int	non_zero_digit_count = 0;
 	while(isdigit(ptr[non_zero_digit_count])) non_zero_digit_count++;
 
-	newLength(non_zero_digit_count);
-
-	for(int j=0; j < length; j++)
+	newLength(non_zero_digit_count/BASE_EXPONENT + 1);
+//	printf("non_zero_digit_count: %d  length: %d\n", non_zero_digit_count, length);
+//
+// need to use BASE_EXPONENT to determine how to initialize
+	const char *ep = ptr + non_zero_digit_count;	// ep points to 'last' char
+	int d_index = -1;
+	int c_count = 0;
+	long mult_10 = 1;
+	do
 	{
-	    data[j] = ptr[length - j - 1] - '0';
+	    ep--;
+		if (c_count % BASE_EXPONENT == 0)
+		{
+			d_index++;
+			data[d_index] = 0;
+			mult_10 = 1;
+		}
+			
+		data[d_index] += ((*ep) - '0')*mult_10;
+		mult_10 *= 10;
+		//printf("length: %d d_index: %d   ep: %c   data[%d] : %ld\n", 
+		//	length, d_index, *ep, d_index, data[d_index]);
+	    c_count++;
 	}
-
+	while ( (ep != ptr) && (c_count < non_zero_digit_count) );
+	
 	fix();	// removes leading zeroes, sets sign
 }
 
@@ -388,7 +419,7 @@ bool absLess(const BigInt& a, const BigInt& b)
 	    if (a.data[i] > b.data[i]) return false; 
 	}
 	////cout << " TRUE" << endl; 
-	return false;  // we get here if |a| = |b|
+	return false;  //  we get here only when a == b 
 }
 
 
@@ -491,37 +522,23 @@ bool operator<= (const BigInt& a, const BigInt& b)
 }
 
 inline
-const string & BigInt::to_string()
+const string & BigInt::to_string() const
 {
 	out = "";
 	if ( this->sign == BigInt::Zero )
 	    out += "0";
 	else
 	{
-	    if ( this->sign == BigInt::Negative ) 
-	        out += "-";
-	    else if (this->sign== BigInt::Positive && 
-			BigInt::BI_SignStyle == BigInt::SS_ShowPlus)
-	        out += "+";
-	        
-	    for(int i = this->length - 1; i >= 0; i--)
+	    if ( this->sign == BigInt::Negative ) out += "-";
+  
+		stringstream ss;
+		ss << this->data[this->length - 1];
+	    for(int i = this->length - 2; i >= 0; i--)
 	    {
-	        out += '0' + this->data[i];
-	        //
-	        // output separator if required
-	        //
-	        if ( i && (i / 3) * 3 == i )
-	        {
-	            switch(BigInt::BI_OutputStyle)
-	            {
-	            	case BigInt::OS_Normal: break; 		// do nothing
-	            	case BigInt::OS_Comma: out += ","; break;
-	            	case BigInt::OS_Period: out += "."; break;
-	            	case BigInt::OS_Underscore: out += "_"; break;
-	            	case BigInt::OS_Space: out += " "; break;
-	            }
-	        }
+			DATA_TYPE d = this->data[i];
+			ss << setw(BASE_EXPONENT) << setfill('0') << d;
 	    }
+	    out += ss.str();
 	}
 	return out;
 }
@@ -529,35 +546,7 @@ const string & BigInt::to_string()
 inline
 ostream& operator<< (ostream& os, const BigInt& a)
 {
-	if ( a.sign == BigInt::Zero )
-	    os << "0";
-	else
-	{
-	    if ( a.sign == BigInt::Negative ) 
-	        os << "-";
-	    else if (a.sign== BigInt::Positive && 
-			BigInt::BI_SignStyle == BigInt::SS_ShowPlus)
-	        os << "+";
-	        
-	    for(int i = a.length - 1; i >= 0; i--)
-	    {
-	        os << a.data[i];
-	        //
-	        // output separator if required
-	        //
-	        if ( i && (i / 3) * 3 == i )
-	        {
-	            switch(BigInt::BI_OutputStyle)
-	            {
-	            	case BigInt::OS_Normal: break; 		// do nothing
-	            	case BigInt::OS_Comma: os << ","; break;
-	            	case BigInt::OS_Period: os << "."; break;
-	            	case BigInt::OS_Underscore: os << "_"; break;
-	            	case BigInt::OS_Space: os << " "; break;
-	            }
-	        }
-	    }
-	}
+	os << a.to_string();
 	return os;
 }
  
@@ -572,21 +561,23 @@ BigInt absSum(const BigInt& a, const BigInt& b)
 
 	c.newLength(c_length); // set c to size of a & b plus 1
 	c.zero();
+	if ( (a.sign == BigInt::Zero) && (b.sign == BigInt::Zero) ) return c;
 
 	int	carry = 0;
 	for (int i = 0; i < c.length; i++)
 	{
-	    c(i) = a(i) + b(i) + carry;
-	    if (c(i) >= 10)
+	    c.data[i] = a[i] + b[i] + carry;
+	    if (c.data[i] >= BASE_NUMBER)
 	    {
-		c(i) -= 10;
-		carry = 1;
+			c.data[i] -= BASE_NUMBER;
+			carry = 1;
 	    }
 	    else
 	        carry = 0;
 	}
 	c.data[c.length-1] += carry;
-
+	c.sign = BigInt::Positive;
+	c.fix();
 	return c;	// copy constructor is called, it will call fix
 }
  
@@ -606,36 +597,32 @@ BigInt absDiff(const BigInt& a, const BigInt& b)
 // assign A the bigger of a and b, B the other,
 //	making A and B const so correct version of () will be called
 //
-	BigInt A1 = a, B1 = b;
+	const	BigInt* A = &a;
+	const	BigInt* B = &b;
 	if ( absLess(a, b) )
 	{
- 	    A1 = b;
-	    B1 = a;
+ 	    A = &b;
+	    B = &a;
 	}
 
-//
-// A and B need to be constants so that the correct version of
-//    operator() is called.
-//
-	const	BigInt& A = A1;
-	const	BigInt& B = B1;
-
-	C.newLength(max(A.length, B.length));
+	C.newLength(max(A->length, B->length));
 	C.zero();
+	//C.debug();
 
-	if ( A.length < B.length )
+	if ( A->length < B->length )
 	{
 	    cerr << "INTERNAL ERROR - A/B length inconsistency\n";
 	    exit(1);
 	}
 	
 	int	borrow = 0;
-	for (int i = 0; i < A.length; i++)
+	for (int i = 0; i < A->length; i++)
 	{
-	    C(i) = A(i) - B(i) - borrow;
-		if (C(i) < 0)
+		DATA_TYPE bvalue = (i < B->length) ? B->data[i] : (DATA_TYPE)0;
+	    C.data[i] = A->data[i] - bvalue - borrow;
+		if (C.data[i] < 0)
 		{
-			C(i) += 10;
+			C.data[i] += BASE_NUMBER;
 			borrow = 1;
 		}
 		else
@@ -710,8 +697,35 @@ BigInt operator-(const BigInt& a, const BigInt& b)
 	if (b.sign == BigInt::Zero) return a;
 
 	return a + (-b);
+
 }
- 
+
+//
+// returns a * b where:    a < D and b < D, and B * B = D
+//		if  a = a1 * B + a0
+//			b = b1 * B + b0
+//
+//		then a * b = 
+//			a1 * b1 * B^2 +
+//			(a1 * b0 + a0 * b1) * B +
+//			a0 * b0
+//
+//     NOTE:  a1, a0, b1 and b0 are all less than B
+//				the B factor cannot exceed 2*D, and thus, DATA_TYPE
+//				must be able to store 2 * D as a number
+//
+inline
+void	mult64( DATA_TYPE a, DATA_TYPE b,
+				DATA_TYPE &h, DATA_TYPE &l)
+{
+	long a1 = a / BASE_NUMBER_ROOT;
+	long a0 = a % BASE_NUMBER_ROOT; 
+	long b1 = b / BASE_NUMBER_ROOT;
+	long b0 = b % BASE_NUMBER_ROOT; 
+	
+	l = a1 * b1;
+	h = (a1 * b0 + a0 * b1) * BASE_NUMBER_ROOT + a0 * b0;
+}
 //
 // returns a * b
 //
@@ -728,18 +742,28 @@ BigInt operator*(const BigInt& a, const BigInt& b)
 	
 	c.newLength(a.length + b.length);
 	c.zero();	// set all digits to zero
-
+	DATA_TYPE	p0, p1;
+	
 	for(int i = 0; i < a.length; i++)
-	    for(int j = 0; j < b.length; j++)
-	    {
-	        c(i+j) += a(i) * b(j);
-	        if ( c(i+j) >= 10 )
-	        {
-	            c(i+j+1) += c(i+j) / 10;
-	            c(i+j) = c(i+j) % 10;
-		}
+	{
+		for(int j = 0; j < b.length; j++)
+		{
+			mult64(a.data[i], b.data[j], p0, p1);   // a * b = p1 * BASE_NUMBER + p0
+			c.data[i+j] += p0;  	// 
+			c.data[i+j+1] += p1;	// add to the next 'digit'
+			if ( c.data[i+j] >= BASE_NUMBER )
+			{
+				c.data[i+j+1] += c.data[i+j] / BASE_NUMBER;
+				c.data[i+j] = c.data[i+j] % BASE_NUMBER;
+			}
+			if ( c.data[i+j+1] >= BASE_NUMBER )
+			{
+				c.data[i+j+2] += c.data[i+j+1] / BASE_NUMBER;
+				c.data[i+j+1] = c.data[i+j+1] % BASE_NUMBER;
+			}
 	    }
-
+	}
+	
 	return c;
 }
 
@@ -782,6 +806,24 @@ BigInt BigInt::operator^(const BigInt& exp) const
 }
 
 
+//
+// operator^ will raise one BigInt to another
+//   x ^ n = x * x * . . . * x  (n times)
+//
+inline
+BigInt BigInt::operator^(long exp) const
+{
+	BigInt RValue = 1;
+	long count = 0;
+
+	while (count < exp)
+	{
+	    RValue *= *this;
+	    count ++;
+	}
+
+	return RValue;
+}
 //
 // operator! will the factorial of a BigInt
 //  ! n = n * (n - 1) * . . . * 2 * 1
@@ -855,7 +897,6 @@ inline
 bool divide(const BigInt& N, const BigInt& D,
 				BigInt &Q, BigInt &R)
 {
-	BigInt ZERO(0l);
 	bool Nnegative = false;
 	bool Dnegative = false;
 	bool rv = false;
@@ -874,11 +915,13 @@ bool divide(const BigInt& N, const BigInt& D,
 		Q = ZERO;
 		done = true;
 	}
-
+	//printf("N = %s   D = %s  \n", N.c_str(), D.c_str());
 	while (!done)
 	{
 		Q = avg(QP, QN);
 		R = N - Q * D;
+		//printf("step: %d\n     Q = %s   R = %s  \n", step, Q.c_str(), R.c_str());
+		//printf("     QP = %s   QN = %s  \n", QP.c_str(), QN.c_str());
 		
 		if ( (R >= ZERO) && (R < D) )
 		{
@@ -893,7 +936,7 @@ bool divide(const BigInt& N, const BigInt& D,
 		{
 			QP = Q;
 		}
-		if (step > 1000) {
+		if (++step > 100000) {
 			done = true;
 			rv = false;
 		}
