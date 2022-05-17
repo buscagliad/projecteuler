@@ -14,6 +14,7 @@
 #define BIGINT_H
 
 #include <iostream>
+#include <algorithm>
 #include <sstream>
 #include <iomanip>
 #include <stdlib.h>
@@ -74,7 +75,24 @@ class BigInt
 		int get_digit(int n);
 		const string & to_string() const;
 		const char *c_str() const {to_string(); return out.c_str(); };
+		BigInt reverse()	// return number with digits reversed
+		{
+			string st = to_string();
+			cout << "IN REVERSE: " << st << endl;
+			::reverse(st.begin(), st.end());
+			BigInt b(st.c_str());
+			cout << "AFTER REVERSE: " << b << endl;
+			return b;
+		}
 		void debug(const char *s = "") const;
+		bool isPalindrome() {
+			string s = to_string();
+			size_t	n = s.size() - 1;
+			for (size_t i = 0; i < n/2; i++, n--)
+			    if (s[i] != s[n]) return false;
+			return true;
+		}
+			
 			
     private:
 		#define BASE_NUMBER 1000000000000l   // Must be a number of the form 10^N
@@ -231,6 +249,7 @@ void	BigInt::newLength(int l)
 	}
 	length = l;
 	data = new DATA_TYPE [length];
+	for (int i = 0; i < length; i++)data[i] = 0;
 // cout << "Nl NEW Data @ " << (void *)data << "  Size = " << length << "\n";
 
 }
@@ -320,6 +339,7 @@ BigInt::BigInt(const char *s) : data(0), length(0)
 	const char *ep = ptr + non_zero_digit_count;	// ep points to 'last' char
 	int d_index = -1;
 	int c_count = 0;
+	long mult_10 = 1;
 	do
 	{
 	    ep--;
@@ -327,9 +347,13 @@ BigInt::BigInt(const char *s) : data(0), length(0)
 		{
 			d_index++;
 			data[d_index] = 0;
+			mult_10 = 1;
 		}
 			
-		data[d_index] = 10 * data[d_index] + (*ep) - '0';
+		data[d_index] += ((*ep) - '0')*mult_10;
+		mult_10 *= 10;
+		//printf("length: %d d_index: %d   ep: %c   data[%d] : %ld\n", 
+		//	length, d_index, *ep, d_index, data[d_index]);
 	    c_count++;
 	}
 	while ( (ep != ptr) && (c_count < non_zero_digit_count) );

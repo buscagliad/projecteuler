@@ -204,17 +204,50 @@ bool test4(long prime, long nnines)
 	return false;
 }
 
+void revTest(const char *s, bool exp)
+{
+	BigInt b(s);
+	
+	if (b.isPalindrome())
+	{
+		if (exp)
+			cout << b << "  IS CORRECTLY A PALINDROME" << endl;
+		else
+			cout << b << "  IS INCORRECTLY A PALINDROME" << endl;
+	}
+	else
+	{
+		if (!exp)
+			cout << b << "  IS CORRECTLY  NOT A PALINDROME" << endl;
+		else
+			cout << b << "  IS INCORRECTLY NOT A PALINDROME" << endl;
+	}
+}
+
+void test5()
+{
+	revTest("2665342623", false);
+	revTest("586676685", true);
+	revTest("123456789012345678901234567898765432109876543210987654321", true);
+	
+	BigInt a("987654321987654321987654321987654321");
+	BigInt b = a.reverse();
+	cout << "a : " << a << endl;
+	cout << "b : " << b << endl;
+	cout << "a + b = " << a + b << endl;
+}
+
 int main()
 {
-	test4(31, 15);
+	test5();
 	return 1;
+	test4(31, 15);
 	test4(79, 13); 
 	test4(227, 226);
 	for (long i = 10; i < 1000; i++)
 	{
 		if (test4(i, i-1)) printf("Good number is: %ld\n", i);
 	}
-	return 1;
 	test3();
 	test2(-4626987331561, 51);
 	test2(4626987331561, 51);
