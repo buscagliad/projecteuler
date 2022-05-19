@@ -30,6 +30,9 @@ bool coPrime(long m, long n);
 // print_factors prints the list of factors and the composite number
 void print_factors(vlong_t &pv);
 
+//
+// next_prime() returns the next prime number (pointed to by prime_next_index)
+long next_prime();
 
 #define PRIME_FILE_DIRECTORY "/home/dave/projecteuler/primes/"
 #define PRIME_TITLE_SIZE 100
@@ -45,19 +48,25 @@ static	int  prime_list_size;
 static	long  prime_min_value;
 static  long  prime_max_value;
 static	long  prime_max_index;
+static 	int	  prime_next_index = -1;
 
 class Prime {
 	public:
+		Prime(long s);
 		Prime(bool load_all = false);			// reads in first million primes, sets index to 0
 		long operator[] (int n) { return get(n); };
 		bool isPrime(long p){ return ::isPrime(p); };  // returns true if 'p' is prime
 		long next();		  // returns next prime
-		void reset();		  // loads 1st million primes and sets index to 0
-								// returns true if n and m have no common factors
+		long value() {return prime_list[index];};			// returns value at index
 		bool coPrime(long n, long m) {return ::coPrime(n, m); };
 		vlong_t	factor(long n);	// returns factors 
-		long get(int n);		// if n < 0 or n >= 
+		long get(int n){if (n < 0) return 0;
+						if (n > prime_list_size) return -1;
+						return prime_list[n];};		// if n < 0 or n >=
+						
+		void setIndex(int n) {index = n;};
 	private:
+		int index;
 };
 
 #define INIT_FILE	if (prime_file_index == 0) readFile(1);
@@ -66,6 +75,7 @@ inline
 bool	readFile(int n)
 {
 	#define MAX_LINE 1000
+	if (n <= prime_file_index) return true;
 	if (n < 1 || n > PRIME_FILE_MAX) 
 	{
 		printf("ERROR - requested file exceeds allowed number (cur file:%d -  des file: %d)\n",
@@ -102,8 +112,25 @@ bool	readFile(int n)
 }	
 
 inline
+Prime::Prime(long n)
+{
+	isPrime(n);
+	index = prime_next_index;
+}
+
+
+inline
+long Prime::next()
+{
+	prime_next_index = index++;
+	return next_prime();
+}
+
+inline
 Prime::Prime(bool load_all)
 {
+	printf("ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+		prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 	readFile(1);
 	if (load_all)
 	{
@@ -117,15 +144,20 @@ Prime::Prime(bool load_all)
 		fclose(f);
 		#endif
 	}
-}	
+}
 
-int binarySearch(long array[], int x, int low, int high) 
+
+inline
+int binarySearch(long array[], int x, int low, int high, int &ix) 
 {
 
 	// Repeat until the pointers low and high meet each other
 	while (low <= high) 
 	{
 		int mid = low + (high - low) / 2;
+		ix = mid;
+		//printf("array[%d]: %ld   array[%d]: %ld   mid: %d   index: %d\n",
+		//	low, array[low], high, array[high], mid, ix);
 
 		if (array[mid] == x)
 			return mid;
@@ -140,6 +172,8 @@ int binarySearch(long array[], int x, int low, int high)
 	return -1;
 }
 
+
+
 // isPrime uses the 50000000 primes defined in the file set
 // if those cannot find that it's a prime, the sieve method is 
 // finally used for numbers greater than the 50000000th prime
@@ -148,24 +182,25 @@ bool isPrime(long n)
 {
 	INIT_FILE;
 	if ( n <= 1) return false;
-	// This is checked so that we can skip
-	// middle five numbers in below loop
-	if (n % 2 == 0 || n % 3 == 0)
-		return false;
 	
 	if ( (n < prime_min_value) && (prime_file_index > 1) )
 	{
+		printf("<isPrime(%ld) ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+			n, prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 		readFile(prime_file_index - 1);
 		return isPrime(n);
 	}
 	if ( (n > prime_max_value) && (prime_file_index < 50) )
 	{
+		printf(">isPrime(%ld) ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+			n, prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 		readFile(prime_file_index + 1);
 		return isPrime(n);
 	}
 	int  k = 0;
 	//while (k < PRIME_FILE_SIZE  &&  n > prime_list[k]) k++;
-	k = binarySearch(prime_list, n, 0, prime_max_index);
+	k = binarySearch(prime_list, n, 0, prime_max_index, prime_next_index);
+	
 	//printf("n = %ld  k = %d  P(k) = %ld \n", n, k, prime_list[k]);
 	if (k > -1)
 	{
@@ -181,7 +216,6 @@ bool isPrime(long n)
 // index of the prime point to point to the first
 // prime number after n 
 
-static int	prime_next_index = -1;
 inline
 long next_prime(long n)
 {
@@ -191,17 +225,21 @@ long next_prime(long n)
 	
 	if ( (n < prime_min_value) && (prime_file_index > 1) )
 	{
+		printf("<next_prime(%ld) ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+			n, prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 		readFile(prime_file_index - 1);
 		return next_prime(n);
 	}
 	if ( (n > prime_max_value) && (prime_file_index < 50) )
 	{
+		printf(">next_prime(%ld) ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+			n, prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 		readFile(prime_file_index + 1);
 		return next_prime(n);
 	}
 	int  k = 0;
 	while (k < PRIME_FILE_SIZE  &&  n >= prime_list[k]) k++;
-	printf("n = %ld  k = %d  P(k) = %ld \n", n, k, prime_list[k]);
+	//printf("n = %ld  k = %d  P(k) = %ld \n", n, k, prime_list[k]);
 	return prime_list[k];
 }
 
@@ -211,8 +249,8 @@ long next_prime()
 	prime_next_index++;
 	if (prime_next_index >= prime_max_index) 
 	{
+		printf("next_index: %d   max: %ld\n", prime_next_index, prime_max_index);
 		readFile(prime_file_index + 1);
-		prime_next_index = 0;
 	}
 	return prime_list[prime_next_index];
 }
