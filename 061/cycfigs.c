@@ -217,9 +217,6 @@ void out(const char *s, long *a) // added compression
 				perline = 0;
 				printf("\n");
 			}
-		}
-		if (comp != a)
-		{
 			*comp = *a;
 			comp++;
 		}
@@ -280,6 +277,7 @@ path::add(geonum_t ct, long num)
 	a.num = num;
 	a.low = LOW(num);
 	a.high = HIGH(num);
+	//printf("Adding num: %ld  type: %d\n", a.num, a.ct);
 	return add(a);
 }
 
@@ -287,9 +285,12 @@ bool
 path::add(geonum c)
 {
 	if (have[c.ct]) return false;
+	//printf("++1++Adding num: %ld  type: %d\n", c.num, c.ct);
 	if ((v.size() == 5) && (high_match != c.num)) return false;
-	if ((v.size() < 5) && high_match != HIGH(c.num)) return false;
-	printf("Adding num: %ld  type: %d\n", c.num, c.ct);
+	//printf("++2++Adding num: %ld  type: %d\n", c.num, c.ct);
+	if ((v.size() > 0) && (v.size() < 5) && (high_match != HIGH(c.num)))
+		return false;
+	//printf("++3++Adding num: %ld  type: %d\n", c.num, c.ct);
 	// if we get here, ct/num should be added
 	
 	have[c.ct] = true;
@@ -306,10 +307,13 @@ static int hep4Index = 0;
 
 bool createPath(path p)
 {
+	printf("createPath: p.size(): %lu\n", p.size());
 	if (p.size() == 0)
 	{
 		// start with heptagon ALWAYS
+	printf("createPath: index: %d adding %ld type: %d\n",hep4Index, hep4[hep4Index], Heptagon);
 		p.add(Heptagon, hep4[hep4Index++]);
+	printf("----createPath: p.size(): %lu\n", p.size());
 		return createPath(p);
 	}
 	else if (p.size() <= 5)
@@ -401,5 +405,8 @@ int main()
 		whatsleft();
 	}
 	path p;
+	for (int i = 0; hep4[i] >= 0; i++)
+		printf("i: %d   hep: %ld\n", i, hep4[i]);
+	printf("main: index: %d adding %ld type: %d\n",hep4Index, hep4[hep4Index], Heptagon);
 	createPath(p);
 }
