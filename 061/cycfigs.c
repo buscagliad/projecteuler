@@ -148,7 +148,7 @@ void	fill(long a[MAXN], int &n, long (*f)(long), const char *s)
 		fk = f(++k);
 	}
 	a[n] = -1;
-	
+	return;
 	printf("\n%s Numbers:\n", s);
 	for (int j = 0; j < n; j++)
 	{
@@ -158,8 +158,8 @@ void	fill(long a[MAXN], int &n, long (*f)(long), const char *s)
 	}
 }
 
-#define LOW(x)	(x)%100
-#define HIGH(x)	(x)/100
+#define LOW(x)	((x)%100)
+#define HIGH(x)	((x)/100)
 
 bool	low_check(long v, long *a)
 {
@@ -195,7 +195,7 @@ void remdigs(long *a, long *b, long *c, long *d, long *e, long *f)
 					 high_check(LOW(*a), d) || high_check(LOW(*a), e) ||
 					 high_check(LOW(*a), f);
 		if (!low_found || !high_found) { 
-			printf("%ld eliminated\n", *a); 
+			//printf("%ld eliminated\n", *a); 
 			*a = 0; 
 		}
 		a++;
@@ -246,16 +246,34 @@ class path{
 		void reset();
 		bool complete();	// returns true if path is complete 6 elements, 1 of each
 		size_t size() { return v.size(); };
-		void out() { for (size_t i = 0; i < v.size(); i++)
-					 {
+		void pop(int n) {
+			//printf("Pop(%d) - removing: %lu[%d]\n", n, v[v.size()-1]. num, v[v.size()-1]. ct); 
+				have[v[v.size()-1].ct] = false;
+						v.pop_back();  
+				high_match = LOW(v[v.size()-1].num);
+				printf("\n");
+				outl();
+				}; // remove last added
+		void out() { printf("ID: %d\n", id); int sum = 0;
+					 for (size_t i = 0; i < v.size(); i++)
+					 {   sum += v[i].num;
 						 printf("%d - num: %ld   low: %ld   high: %ld\n",
 							v[i].ct, v[i].num, v[i].low, v[i].high);
-					 }};
+					 } printf("\nSum is: %d\n", sum);};
+		void outl() { 
+					 for (size_t i = 0; i < v.size(); i++)
+					 {
+						 printf("%ld(%d) ",
+							v[i].num, v[i].ct);
+					 } };
 	private:
 		bool have[6];
 		int  high_match;
 		vector<geonum> v;
+		int  id;
 };
+
+static int path_id = 0;
 
 void	path::reset()
 {
@@ -267,6 +285,7 @@ void	path::reset()
 path::path()
 {
 	reset();
+	id = ++path_id;
 }
 
 bool
@@ -284,19 +303,22 @@ path::add(geonum_t ct, long num)
 bool
 path::add(geonum c)
 {
+	//printf("[%lu] Attempting to add num: %ld  type: %d\n", v.size(), c.num, c.ct);
 	if (have[c.ct]) return false;
 	//printf("++1++Adding num: %ld  type: %d\n", c.num, c.ct);
 	if ((v.size() == 5) && (high_match != c.num)) return false;
 	//printf("++2++Adding num: %ld  type: %d\n", c.num, c.ct);
 	if ((v.size() > 0) && (v.size() < 5) && (high_match != HIGH(c.num)))
 		return false;
-	//printf("++3++Adding num: %ld  type: %d\n", c.num, c.ct);
 	// if we get here, ct/num should be added
 	
 	have[c.ct] = true;
 	v.push_back(c);
-	if (v.size() == 5) high_match = c.num;
-	else high_match = LOW(c.num);
+	high_match = LOW(c.num);
+	printf("%ld(%d) ", c.num, c.ct);
+	if (v.size() == 5) {high_match = 100 * LOW(c.num) + HIGH(v[0].num);
+		printf("c.num: %ld   high_match = %d\n", c.num, high_match);}
+	//printf("++Adding [%lu] num: %ld  type: %d\n", v.size(), c.num, c.ct);
 	return true;
 }
 
@@ -311,18 +333,20 @@ bool createPath(path p)
 	if (p.size() == 0)
 	{
 		// start with heptagon ALWAYS
-	printf("createPath: index: %d adding %ld type: %d\n",hep4Index, hep4[hep4Index], Heptagon);
+	//printf("createPath: index: %d adding %ld type: %d\n",hep4Index, //hep4[hep4Index], Heptagon);
+	if (hep4[hep4Index] < 0) return true;
 		p.add(Heptagon, hep4[hep4Index++]);
-	printf("----createPath: p.size(): %lu\n", p.size());
-		return createPath(p);
+	//printf("----createPath: p.size(): %lu\n", p.size());
+		createPath(p);
 	}
 	else if (p.size() <= 5)
 	{
-		p.out();
+		if (p.size() == 5) p.out();
 		for (size_t i = 0; i < glist.size(); i++)
 		{
 			if (p.add(glist[i])) createPath(p);
 		}
+		printf("\nFAIL:\n"); p.out();
 		return false;
 	}
 		
@@ -363,9 +387,9 @@ void whatsleft()
 	out("Hexagon numbers:", hex4);
 	addthem(hex4, Hexagon);
 	out("Heptagon numbers:", hep4);
-	//addthem(hep4, Heptagon);
-	out("Octagon numbers:", tri4);
-	addthem(tri4, Octagon);
+	addthem(hep4, Heptagon);
+	out("Octagon numbers:", oct4);
+	addthem(oct4, Octagon);
 }
 
 
@@ -393,7 +417,7 @@ int main()
 	fill(hex4, hexc, getHexagonal, "Hexagon");
 	fill(hep4, hepc, getHeptagonal, "Heptagon");
 	fill(oct4, octc, getOctagonal, "Octagon");
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 0; i++)
 	{
 		remdigs(tri4, squ4, pen4, hex4, hep4, oct4);
 		remdigs(squ4, tri4, pen4, hex4, hep4, oct4);
@@ -404,9 +428,53 @@ int main()
 
 		whatsleft();
 	}
+	whatsleft();
 	path p;
-	for (int i = 0; hep4[i] >= 0; i++)
-		printf("i: %d   hep: %ld\n", i, hep4[i]);
-	printf("main: index: %d adding %ld type: %d\n",hep4Index, hep4[hep4Index], Heptagon);
-	createPath(p);
+	//for (int i = 0; hep4[i] >= 0; i++)
+	//	printf("i: %d   hep: %ld\n", i, hep4[i]);
+	//for (size_t i = 0; i < glist.size(); i++)
+	//	printf("i: %lu    %ld\n", i, glist[i].num);
+	printf("main: index: %d adding %ld type: %d\n",
+		hep4Index, hep4[hep4Index], Heptagon);
+	//while (!createPath(p));
+	
+	for (int r = 0; hep4[r] >= 0; r++)
+	{
+		p.reset();
+		p.add(Heptagon, hep4[r]);
+		for (size_t i = 0; i < glist.size(); i++)
+		{
+			if (p.add(glist[i]))
+			{
+				for (size_t j = 0; j < glist.size(); j++)
+				{
+					if (p.add(glist[j]))
+					{
+						for (size_t k = 0; k < glist.size(); k++)
+						{
+							if (p.add(glist[k]))
+							{
+								for (size_t l = 0; l < glist.size(); l++)
+								{
+									if (p.add(glist[l]))
+									{
+										for (size_t m = 0; m < glist.size(); m++)
+										{
+											if (p.add(glist[m])) { p.out(); fflush(stdout); return 1; }
+										}
+										p.pop(5);
+									}
+								}
+								p.pop(4);
+							}
+						}
+						p.pop(3);
+					}
+				}
+				p.pop(2);
+			}
+		}
+		p.pop(1);
+	}
 }
+

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html class="numbertheory" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Periodic Continued Fraction -- from Wolfram MathWorld</title>
+	
+<meta name="DC.Title" content="Periodic Continued Fraction">
+	
+<meta name="DC.Creator" content="Weisstein, Eric W.">
+	
+<meta name="DC.Description" content="A periodic continued fraction is a continued fraction (generally a regular continued fraction) whose terms eventually repeat from some point onwards. The minimal number of repeating terms is called the period of the continued fraction. All nontrivial periodic continued fractions represent irrational numbers. In general, an infinite simple fraction (periodic or otherwise) represents a unique irrational number, and each irrational number has a unique infinite continued fraction. The square...">
+	
+<meta name="description" content="A periodic continued fraction is a continued fraction (generally a regular continued fraction) whose terms eventually repeat from some point onwards. The minimal number of repeating terms is called the period of the continued fraction. All nontrivial periodic continued fractions represent irrational numbers. In general, an infinite simple fraction (periodic or otherwise) represents a unique irrational number, and each irrational number has a unique infinite continued fraction. The square...">
+	
+	
+<meta name="DC.Date.Created" scheme="W3CDTF" content="2003-11-28">
+	
+<meta name="DC.Date.Modified" scheme="W3CDTF" content="2004-03-08">
+	
+<meta name="DC.Subject" scheme="MathWorld" content="Mathematics:Number Theory:Continued Fractions">
+	
+<meta name="DC.Subject" scheme="MSC_2000" content="11A55">
+	
+<meta name="DC.Rights" content="Copyright 1999-2022 Wolfram Research, Inc.  See https://mathworld.wolfram.com/about/terms.html for a full terms of use statement.">
+	
+<meta name="DC.Format" scheme="IMT" content="text/html">
+	
+<meta name="DC.Identifier" scheme="URI" content="https://mathworld.wolfram.com/PeriodicContinuedFraction.html">
+	
+<meta name="DC.Language" scheme="RFC3066" content="en">
+	
+<meta name="DC.Publisher" content="Wolfram Research, Inc.">
+	
+<meta name="DC.Relation.IsPartOf" scheme="URI" content="https://mathworld.wolfram.com/">
+	
+<meta name="DC.Type" scheme="DCMIType" content="Text">
+	
+<meta name="Last-Modified" content="2004-03-08">
+	
+<meta property="og:image" content="https://mathworld.wolfram.com/images/socialmedia/share.png">
+    
+<meta property="og:url" content="https://mathworld.wolfram.com/">
+    
+<meta property="og:type" content="website">
+    
+<meta property="og:title" content="Periodic Continued Fraction -- from Wolfram MathWorld">
+    
+<meta property="og:description" content="A periodic continued fraction is a continued fraction (generally a regular continued fraction) whose terms eventually repeat from some point onwards. The minimal number of repeating terms is called the period of the continued fraction. All nontrivial periodic continued fractions represent irrational numbers. In general, an infinite simple fraction (periodic or otherwise) represents a unique irrational number, and each irrational number has a unique infinite continued fraction. The square...">
+    
+<meta name="twitter:card" content="summary_large_image">
+    
+<meta name="twitter:site" content="@WolframResearch">
+    
+<meta name="twitter:title" content="Periodic Continued Fraction -- from Wolfram MathWorld">
+    
+<meta name="twitter:description" content="A periodic continued fraction is a continued fraction (generally a regular continued fraction) whose terms eventually repeat from some point onwards. The minimal number of repeating terms is called the period of the continued fraction. All nontrivial periodic continued fractions represent irrational numbers. In general, an infinite simple fraction (periodic or otherwise) represents a unique irrational number, and each irrational number has a unique infinite continued fraction. The square...">
+    
+<meta name="twitter:image:src" content="https://mathworld.wolfram.com/images/socialmedia/share.png">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<script async="" src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/wal.js"></script><script src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/analytics.js"></script>
+	<script src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/cookie-consent.js"></script>
+	<script src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/walLoad.js"></script>
+	<link rel="stylesheet" href="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/styles.css">
+	<link rel="stylesheet" href="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/global.css">
+
+</head>
+<body id="topics">
+<main id="entry">
+    
+<div class="wrapper">
+        <section id="container">
+			<header class="text-align-c">
+				<div id="header-dropdown-menu">
+					<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/menu-icon.png" width="18" height="12">
+					<span class="display-n__600">TOPICS</span>
+				</div>
+
+				<a href="https://mathworld.wolfram.com/">
+					<picture id="logo">
+						<source media="(min-width: 601px)" srcset="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/mathworld-logo-tagline.svg 1x" width="100%">
+						<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/mathworld-logo.svg" alt="Wolfram MathWorld">
+					</picture>
+				</a>
+				<form method="get" action="/search/" name="search" id="search" accept-charset="UTF-8">
+					<input type="text" name="query" placeholder="Search">
+					<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/search-icon.png" class="search-btn" width="18px" height="18px">
+					<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/menu-close_002.png" id="search-close" class="close-btn" width="16" height="16">
+				</form>
+			</header>
+            <section class="left-side">
+				<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/menu-close.png" id="dropdown-topics-menu-close" class="close-btn" width="16" height="16">
+				<nav class="topics-nav">
+					<a href="https://mathworld.wolfram.com/topics/Algebra.html" id="sidebar-algebra">
+						Algebra					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/AppliedMathematics.html" id="sidebar-appliedmathematics">
+						Applied Mathematics					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/CalculusandAnalysis.html" id="sidebar-calculusandanalysis">
+						Calculus and Analysis					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/DiscreteMathematics.html" id="sidebar-discretemathematics">
+						Discrete Mathematics					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/FoundationsofMathematics.html" id="sidebar-foundationsofmathematics">
+						Foundations of Mathematics					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/Geometry.html" id="sidebar-geometry">
+						Geometry					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/HistoryandTerminology.html" id="sidebar-historyandterminology">
+						History and Terminology					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/NumberTheory.html" id="sidebar-numbertheory">
+						Number Theory					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/ProbabilityandStatistics.html" id="sidebar-probabilityandstatistics">
+						Probability and Statistics					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/RecreationalMathematics.html" id="sidebar-recreationalmathematics">
+						Recreational Mathematics					
+					</a>
+					<a href="https://mathworld.wolfram.com/topics/Topology.html" id="sidebar-topology">
+						Topology					
+					</a>
+				</nav>
+				<nav class="secondary-nav">
+					<a href="https://mathworld.wolfram.com/letters/">
+						Alphabetical Index
+					</a>
+					<a href="https://mathworld.wolfram.com/whatsnew/">
+						New in MathWorld
+					</a>
+				</nav>
+			</section>
+            <section id="content">
+			  
+<!-- Begin Subject -->
+<nav class="breadcrumbs"><ul class="breadcrumb">
+<li>
+<a href="https://mathworld.wolfram.com/topics/NumberTheory.html">Number Theory</a>
+</li>
+<li>
+<a href="https://mathworld.wolfram.com/topics/ContinuedFractions.html">Continued Fractions</a>
+</li>
+</ul></nav>
+<!-- End Subject -->
+<!-- Begin Title -->
+<h1>Periodic Continued Fraction</h1>
+<!-- End Title -->
+<hr class="margin-t-1-8 margin-b-3-4">
+<!-- Begin Total Content -->
+<div class="attachments text-align-r">
+<a href="https://mathworld.wolfram.com/notebooks/NumberTheory/PeriodicContinuedFraction.nb" download="PeriodicContinuedFraction.nb"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/download-notebook-icon.png" alt="DOWNLOAD Mathematica Notebook" width="26" height="27"><span>Download
+ <span class="display-i display-n__600">Wolfram&nbsp;</span>Notebook</span></a>
+</div>
+<!-- Begin Content -->
+<div class="entry-content">
+<p>
+A periodic continued fraction is a <a href="https://mathworld.wolfram.com/ContinuedFraction.html">continued fraction</a> (generally a <a href="https://mathworld.wolfram.com/RegularContinuedFraction.html">regular continued fraction</a>)
+ whose terms eventually repeat from some point onwards. The minimal number of repeating
+ terms is called the period of the continued fraction. All nontrivial periodic continued
+ fractions represent irrational numbers. In general, an infinite simple fraction (periodic
+ or otherwise) represents a unique irrational number, and each irrational number has
+ a unique infinite continued fraction.
+</p>
+<p>
+The <a href="https://mathworld.wolfram.com/SquareRoot.html">square root</a> of a <a href="https://mathworld.wolfram.com/Squarefree.html">squarefree</a> <a href="https://mathworld.wolfram.com/Integer.html">integer</a> has a periodic continued fraction <a href="https://mathworld.wolfram.com/OftheForm.html">of
+ the form</a>
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation1.svg" class="numberedequation" alt=" sqrt(n)=[a_0;a_1,a_2,a_3,...,a_2,a_1,2a_0^_] " width="262" height="25" border="0"></td><td width="3" align="right">
+<div id="eqn1" class="eqnum">
+(1)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+(Rose 1994, p.&nbsp;130), where the repeating portion (excluding the 
+last term) is symmetric upon reversal, and the central term may appear 
+either once or twice.
+</p>
+<p>
+If <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline1.svg" class="inlineformula" alt="D" width="14" height="21" border="0"> is not a <a href="https://mathworld.wolfram.com/SquareNumber.html">square
+ number</a>, then the terms of the continued fraction of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline2.svg" class="inlineformula" alt="sqrt(n)" width="29" height="23" border="0"> satisfy
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation2.svg" class="numberedequation" alt=" 0&lt;a_k&lt;2sqrt(n). " width="105" height="22" border="0"></td><td width="3" align="right">
+<div id="eqn2" class="eqnum">
+(2)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+An even stronger result is that a continued fraction is periodic <a href="https://mathworld.wolfram.com/Iff.html">iff</a> it is a <a href="https://mathworld.wolfram.com/Root.html">root</a> of a <a href="https://mathworld.wolfram.com/QuadraticPolynomial.html">quadratic
+ polynomial</a>. Calling the portion of a number <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline3.svg" class="inlineformula" alt="x" width="9" height="21" border="0"> remaining after
+ a given convergent the "tail," it must be true that the relationship between
+ the number <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline4.svg" class="inlineformula" alt="x" width="9" height="21" border="0"> and terms in its tail is <a href="https://mathworld.wolfram.com/OftheForm.html">of
+ the form</a>
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation3.svg" class="numberedequation" alt=" x=(ax+b)/(cx+d), " width="84" height="40" border="0"></td><td width="3" align="right">
+<div id="eqn3" class="eqnum">
+(3)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+which can only lead to a <a href="https://mathworld.wolfram.com/QuadraticEquation.html">quadratic equation</a>.
+</p>
+<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/PeriodicContinuedFractionPeriods_1000.svg" class="center-image" alt="PeriodicContinuedFractionPeriods" width="333.452" height="205.955">
+<p>
+The periods of the continued fractions of the square roots of the first 
+few nonsquare integers 2, 3, 5, 6, 7, 8, 10, 11, 12, 13, ... (OEIS <a href="http://oeis.org/A000037">A000037</a>)
+ are 1, 2, 1, 2, 4, 2, 1, 2, 2, 5, ... (OEIS <a href="http://oeis.org/A013943">A013943</a>;
+ Williams 1981, Jacobson <i>et al. </i>1995). These numbers and their continued fraction
+ representations are summarized in the following table.
+</p>
+<div class="table-responsive">
+<table class="mathworldtable" align="center">
+<tbody><tr style=""><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline5.svg" class="inlineformula" alt="N" width="14" height="21" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline6.svg" class="inlineformula" alt="alpha_(sqrt(N))" width="35" height="26" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline7.svg" class="inlineformula" alt="N" width="14" height="21" border="0"></td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline8.svg" class="inlineformula" alt="alpha_(sqrt(N))" width="35" height="26" border="0"></td></tr><tr style=""><td align="right">2</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline9.svg" class="inlineformula" alt="[1,2^_]" width="40" height="25" border="0"></td><td align="left">22</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline10.svg" class="inlineformula" alt="[4,1,2,4,2,1,8^_]" width="135" height="25" border="0"></td></tr><tr style=""><td align="right">3</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline11.svg" class="inlineformula" alt="[1,1,2^_]" width="59" height="25" border="0"></td><td align="left">23</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline12.svg" class="inlineformula" alt="[4,1,3,1,8^_]" width="97" height="25" border="0"></td></tr><tr style=""><td align="right">5</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline13.svg" class="inlineformula" alt="[2,4^_]" width="40" height="25" border="0"></td><td align="left">24</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline14.svg" class="inlineformula" alt="[4,1,8^_]" width="59" height="25" border="0"></td></tr><tr style=""><td align="right">6</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline15.svg" class="inlineformula" alt="[2,2,4^_]" width="59" height="25" border="0"></td><td align="left">26</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline16.svg" class="inlineformula" alt="[5,10^_]" width="49" height="25" border="0"></td></tr><tr style=""><td align="right">7</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline17.svg" class="inlineformula" alt="[2,1,1,1,4^_]" width="97" height="25" border="0"></td><td align="left">27</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline18.svg" class="inlineformula" alt="[5,5,10^_]" width="68" height="25" border="0"></td></tr><tr style=""><td align="right">8</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline19.svg" class="inlineformula" alt="[2,1,4^_]" width="59" height="25" border="0"></td><td align="left">28</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline20.svg" class="inlineformula" alt="[5,3,2,3,10^_]" width="106" height="25" border="0"></td></tr><tr style=""><td align="right">10</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline21.svg" class="inlineformula" alt="[3,6^_]" width="40" height="25" border="0"></td><td align="left">29</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline22.svg" class="inlineformula" alt="[5,2,1,1,2,10^_]" width="125" height="25" border="0"></td></tr><tr style=""><td align="right">11</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline23.svg" class="inlineformula" alt="[3,3,6^_]" width="59" height="25" border="0"></td><td align="left">30</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline24.svg" class="inlineformula" alt="[5,2,10^_]" width="68" height="25" border="0"></td></tr><tr style=""><td align="right">12</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline25.svg" class="inlineformula" alt="[3,2,6^_]" width="59" height="25" border="0"></td><td align="left">31</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline26.svg" class="inlineformula" alt="[5,1,1,3,5,3,1,1,10^_]" width="182" height="25" border="0"></td></tr><tr style=""><td align="right">13</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline27.svg" class="inlineformula" alt="[3,1,1,1,1,6^_]" width="116" height="25" border="0"></td><td align="left">32</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline28.svg" class="inlineformula" alt="[5,1,1,1,10^_]" width="106" height="25" border="0"></td></tr><tr style=""><td align="right">14</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline29.svg" class="inlineformula" alt="[3,1,2,1,6^_]" width="97" height="25" border="0"></td><td align="left">33</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline30.svg" class="inlineformula" alt="[5,1,2,1,10^_]" width="106" height="25" border="0"></td></tr><tr style=""><td align="right">15</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline31.svg" class="inlineformula" alt="[3,1,6^_]" width="59" height="25" border="0"></td><td align="left">34</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline32.svg" class="inlineformula" alt="[5,1,4,1,10^_]" width="106" height="25" border="0"></td></tr><tr style=""><td align="right">17</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline33.svg" class="inlineformula" alt="[4,8^_]" width="40" height="25" border="0"></td><td align="left">35</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline34.svg" class="inlineformula" alt="[5,1,10^_]" width="68" height="25" border="0"></td></tr><tr style=""><td align="right">18</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline35.svg" class="inlineformula" alt="[4,4,8^_]" width="59" height="25" border="0"></td><td align="left">37</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline36.svg" class="inlineformula" alt="[6,12^_]" width="49" height="25" border="0"></td></tr><tr style=""><td align="right">19</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline37.svg" class="inlineformula" alt="[4,2,1,3,1,2,8^_]" width="135" height="25" border="0"></td><td align="left">38</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline38.svg" class="inlineformula" alt="[6,6,12^_]" width="68" height="25" border="0"></td></tr><tr style=""><td align="right">20</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline39.svg" class="inlineformula" alt="[4,2,8^_]" width="59" height="25" border="0"></td><td align="left">39</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline40.svg" class="inlineformula" alt="[6,4,12^_]" width="68" height="25" border="0"></td></tr><tr style=""><td align="right">21</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline41.svg" class="inlineformula" alt="[4,1,1,2,1,1,8^_]" width="135" height="25" border="0"></td><td align="left">40</td><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline42.svg" class="inlineformula" alt="[6,3,12^_]" width="68" height="25" border="0"></td></tr>
+</tbody></table>
+</div>
+<p>
+An upper bound for the length of the period is roughly <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline43.svg" class="inlineformula" alt="O(lnDsqrt(D))" width="97" height="27" border="0">. The
+ least positive <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline44.svg" class="inlineformula" alt="n" width="9" height="21" border="0">s such that the
+ continued fraction of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline45.svg" class="inlineformula" alt="sqrt(n)" width="29" height="23" border="0"> has period
+ <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline46.svg" class="inlineformula" alt="p=1" width="41" height="22" border="0">, 2, ... are 2, 3, 41, 7, 13, 19, 58,
+ 31, 106, ... (OEIS <a href="http://oeis.org/A013646">A013646</a>). The first few
+ values of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline47.svg" class="inlineformula" alt="n" width="9" height="21" border="0"> such that the continued fraction of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline48.svg" class="inlineformula" alt="sqrt(n)" width="29" height="23" border="0"> has period <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline49.svg" class="inlineformula" alt="p" width="11" height="22" border="0"> are summarized
+ below for small <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline50.svg" class="inlineformula" alt="p" width="11" height="22" border="0">.
+</p>
+<div class="table-responsive">
+<table class="mathworldtable" align="center">
+<tbody><tr style=""><td align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline51.svg" class="inlineformula" alt="p" width="11" height="22" border="0"></td><td align="left">OEIS</td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline52.svg" class="inlineformula" alt="n" width="9" height="21" border="0"></td></tr><tr style=""><td align="right">1</td><td align="left"><a href="http://oeis.org/A002522">A002522</a></td><td align="left">2, 5, 10, 17, 26, 37, 50, 65, 82, 101, ...</td></tr><tr style=""><td align="right">2</td><td align="left"><a href="http://oeis.org/A013642">A013642</a></td><td align="left">3, 6, 8, 11, 12, 15, 18, 20, 24, 27, ...</td></tr><tr style=""><td align="right">3</td><td align="left"><a href="http://oeis.org/A013643">A013643</a></td><td align="left">41,
+ 130, 269, 370, 458, ...</td></tr><tr style=""><td align="right">4</td><td align="left"><a href="http://oeis.org/A013644">A013644</a></td><td align="left">7, 14, 23, 28, 32,
+ 33, 34, 47, 55, 60, ...</td></tr><tr style=""><td align="right">5</td><td align="left"><a href="http://oeis.org/A010337">A010337</a></td><td align="left">13, 29, 53, 74, 85,
+ 89, 125, 173, 185, 218, ...</td></tr><tr style=""><td align="right">6</td><td align="left"><a href="http://oeis.org/A020347">A020347</a></td><td align="left">19, 21, 22, 45, 52,
+ 54, 57, 59, 70, 77, ...</td></tr><tr style=""><td align="right">7</td><td align="left"><a href="http://oeis.org/A010338">A010338</a></td><td align="left">58, 73, 202, 250,
+ 274, 314, 349, 425, ...</td></tr><tr style=""><td align="right">8</td><td align="left"><a href="http://oeis.org/A020348">A020348</a></td><td align="left">31, 44, 69, 71, 91,
+ 92, 108, 135, 153, 158, ...</td></tr><tr style=""><td align="right">9</td><td align="left"><a href="http://oeis.org/A010339">A010339</a></td><td align="left">106, 113, 137, 149,
+ 265, 389, 493, ...</td></tr><tr style=""><td align="right">10</td><td align="left"><a href="http://oeis.org/A020349">A020349</a></td><td align="left">43, 67, 86, 93, 115,
+ 116, 118, 129, 154, 159, ...</td></tr>
+</tbody></table>
+</div>
+<p>
+The values of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline53.svg" class="inlineformula" alt="n" width="9" height="21" border="0"> at which the period
+ of the continued fraction of <img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline54.svg" class="inlineformula" alt="sqrt(n)" width="29" height="23" border="0"> increases
+ are 1, 2, 3, 7, 13, 19, 31, 43, 46, 94, 139, 151, 166, 211, 331, 421, 526, 571, ...
+ (OEIS <a href="http://oeis.org/A013645">A013645</a>).
+</p>
+<p>
+General identities for periodic continued fractions include
+</p>
+<div class="table-responsive-noborders">
+<table style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+<tbody><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline55.svg" class="displayformula" alt="[a^_]" width="19" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline56.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline57.svg" class="displayformula" alt="(a+sqrt(a^2+4))/2" width="90" height="47" border="0"></td><td width="10" align="right">
+<div id="eqn4" class="eqnum">
+(4)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline58.svg" class="displayformula" alt="[1,a^_]" width="37" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline59.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline60.svg" class="displayformula" alt="(2-a+sqrt(a^2+4))/2" width="115" height="47" border="0"></td><td width="10" align="right">
+<div id="eqn5" class="eqnum">
+(5)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline61.svg" class="displayformula" alt="[a,2a^_]" width="49" height="23" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline62.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline63.svg" class="displayformula" alt="sqrt(a^2+1)" width="60" height="25" border="0"></td><td width="10" align="right">
+<div id="eqn6" class="eqnum">
+(6)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline64.svg" class="displayformula" alt="[a,b^_]" width="37" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline65.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline66.svg" class="displayformula" alt="(-ab+sqrt(ab(ab+4)))/(2a)" width="152" height="45" border="0"></td><td width="10" align="right">
+<div id="eqn7" class="eqnum">
+(7)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline67.svg" class="displayformula" alt="[a_1,...,a_n^_]" width="76" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline68.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline69.svg" class="displayformula" alt="(-(q_(n-1)-p_n)+sqrt((q_(n-1)-p_n)^2+4q_np_(n-1)))/(2q_n)" width="279" height="54" border="0"></td><td width="10" align="right">
+<div id="eqn8" class="eqnum">
+(8)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline70.svg" class="displayformula" alt="[a_0,b_1,...,b_n^_]" width="101" height="23" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline71.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline72.svg" class="displayformula" alt="a_0+1/([b_1,...,b_n^_])" width="114" height="44" border="0"></td><td width="10" align="right">
+<div id="eqn9" class="eqnum">
+(9)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline73.svg" class="displayformula" alt="[b_1,...,b_n^_]" width="76" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline74.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline75.svg" class="displayformula" alt="([b_1,...,b_n^_]p_n+p_(n-1))/([b_1,...,b_n^_]q_n+q_(n-1))" width="148" height="48" border="0"></td><td width="10" align="right">
+<div id="eqn10" class="eqnum">
+(10)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+(Wall 1948, pp.&nbsp;39 and 83).
+</p>
+<p>
+The first follows from
+</p>
+<div class="table-responsive-noborders">
+<table style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+<tbody><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline76.svg" class="displayformula" alt="alpha" width="9" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline77.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline78.svg" class="displayformula" alt="a+1/(a+1/(a+1/(a+...)))" width="95" height="57" border="0"></td><td width="10" align="right">
+<div id="eqn11" class="eqnum">
+(11)
+</div>
+</td></tr><tr style=""><td width="1" align="right"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline79.svg" class="displayformula" alt="" width="12" height="20" border="0"></td><td width="14" align="center"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline80.svg" class="displayformula" alt="=" width="10" height="20" border="0"></td><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/Inline81.svg" class="displayformula" alt="a+1/(a+(1/(a+1/(a+...))))." width="111" height="61" border="0"></td><td width="10" align="right">
+<div id="eqn12" class="eqnum">
+(12)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+Therefore,
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation4.svg" class="numberedequation" alt=" alpha-a=1/(a+1/(a+1/(a+...))), " width="129" height="57" border="0"></td><td width="3" align="right">
+<div id="eqn13" class="eqnum">
+(13)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+so plugging (<a href="#eqn13">13</a>) into (<a href="#eqn12">12</a>) gives
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation5.svg" class="numberedequation" alt=" alpha=a+1/(a+(alpha-a))=a+1/alpha. " width="194" height="42" border="0"></td><td width="3" align="right">
+<div id="eqn14" class="eqnum">
+(14)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+Expanding
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation6.svg" class="numberedequation" alt=" alpha^2-aalpha-1=0, " width="112" height="21" border="0"></td><td width="3" align="right">
+<div id="eqn15" class="eqnum">
+(15)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+and solving using the <a href="https://mathworld.wolfram.com/QuadraticFormula.html">quadratic formula</a> gives
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation7.svg" class="numberedequation" alt=" alpha=(a+sqrt(a^2+4))/2. " width="124" height="47" border="0"></td><td width="3" align="right">
+<div id="eqn16" class="eqnum">
+(16)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+<p>
+The analog of this treatment in the general case gives
+</p>
+<div>
+<table summary="" style="padding-left: 50px" width="100%" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr><td align="left"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/NumberedEquation8.svg" class="numberedequation" alt=" alpha=(alphap_n+p_(n-1))/(alphaq_n+q_(n-1)). " width="115" height="40" border="0"></td><td width="3" align="right">
+<div id="eqn17" class="eqnum">
+(17)
+</div>
+</td></tr>
+</tbody></table>
+</div>
+</div>
+<!-- End Content -->
+<hr class="margin-b-1-1-4">
+<div class="c-777 entry-secondary-content">
+<!-- Begin See Also -->
+<h2>See also</h2><a href="https://mathworld.wolfram.com/ContinuedFraction.html">Continued Fraction</a>, <a href="https://mathworld.wolfram.com/Convergent.html">Convergent</a>, <a href="https://mathworld.wolfram.com/NearNobleNumber.html">Near Noble Number</a>, <a href="https://mathworld.wolfram.com/NobleNumber.html">Noble
+ Number</a>, <a href="https://mathworld.wolfram.com/QuadraticSurd.html">Quadratic Surd</a>, <a href="https://mathworld.wolfram.com/SimpleContinuedFraction.html">Simple
+ Continued Fraction</a>
+<!-- End See Also -->
+<!-- Begin CrossURL -->
+<!-- End CrossURL -->
+<!-- Begin Contributor -->
+<!-- End Contributor -->
+<!-- Begin Wolfram Alpha Pod -->
+<h2>Explore with Wolfram|Alpha</h2>
+<div id="WAwidget">
+<div class="WAwidget-wrapper">
+<img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/WA-logo.png" width="137">
+<form name="wolframalpha" action="https://www.wolframalpha.com/input/" target="_blank">
+      <input type="text" name="i" class="search" placeholder="Solve your math problems and get step-by-step solutions" value="continued fractions">
+       <button type="submit"></button>
+    </form>
+    
+</div>
+    
+<div class="WAwidget-wrapper try">
+    
+<p class="text-align-r">
+More things to try:
+</p>
+    <ul>
+<li>
+<a target="_blank" href="http://www.wolframalpha.com/input/?i=continued+fractions">
+continued fractions
+</a>
+</li>
+	   
+<li><a target="_blank" href="https://www.wolframalpha.com/input/?i=1%2F%2812%2B7i%29">1/(12+7i)</a></li>
+
+<li><a target="_blank" href="https://www.wolframalpha.com/input/?i=glome+of+radius+2">glome of radius 2</a></li>
+
+    </ul>
+</div>
+</div>
+<!-- End Wolfram Alpha Pod -->
+<!-- Begin References -->
+<h2>References</h2><cite>Liberman, H. <i>Simple Continued Fractions: An Elementary to Research Level Approach.</i> SMD Stock Analysts, 2003.</cite><cite>Rose, H.&nbsp;E.
+ <i><a href="http://www.amazon.com/exec/obidos/ASIN/0198523769/ref=nosim/ericstreasuretro">A
+ Course in Number Theory, 2nd ed.</a></i> Oxford, England: Oxford University Press,
+ 1994.</cite><cite>Rosen, K.&nbsp;H. <i><a href="http://www.amazon.com/exec/obidos/ASIN/0201578891/ref=nosim/ericstreasuretro">Elementary
+ Number Theory and Its Applications.</a></i> New York: Addison-Wesley, p.&nbsp;426,
+ 1980.</cite><cite>Sloane, N.&nbsp;J.&nbsp;A. Sequences  <a href="http://oeis.org/A010337">A010337</a>,
+ <a href="http://oeis.org/A010338">A010338</a>, <a href="http://oeis.org/A010339">A010339</a>,
+ <a href="http://oeis.org/A013642">A013642</a>, <a href="http://oeis.org/A013643">A013643</a>,
+ <a href="http://oeis.org/A013644">A013644</a>, <a href="http://oeis.org/A013645">A013645</a>,
+ <a href="http://oeis.org/A013646">A013646</a>, <a href="http://oeis.org/A020347">A020347</a>,
+ <a href="http://oeis.org/A020348">A020348</a>, and <a href="http://oeis.org/A020349">A020349</a>
+ in "The On-Line Encyclopedia of Integer Sequences."</cite><cite>Wall, H.&nbsp;S.
+ <i><a href="http://www.amazon.com/exec/obidos/ASIN/0828402078/ref=nosim/ericstreasuretro">Analytic
+ Theory of Continued Fractions.</a></i> New York: Chelsea, 1948.</cite><h2>Referenced
+ on Wolfram|Alpha</h2><a href="http://www.wolframalpha.com/entities/mathworld/periodic_continued_fraction/yy/qh/d3/" title="Periodic Continued Fraction" target="_blank">Periodic Continued Fraction</a>
+<!-- End References -->
+<!-- Begin CiteAs -->
+<h2>Cite this as:</h2>
+<p>
+<a href="https://mathworld.wolfram.com/about/author.html">Weisstein, Eric W.</a> "Periodic Continued Fraction."
+From <a href="https://mathworld.wolfram.com/"><i>MathWorld</i></a>--A Wolfram Web Resource. <a href="https://mathworld.wolfram.com/PeriodicContinuedFraction.html">https://mathworld.wolfram.com/PeriodicContinuedFraction.html</a>
+</p>
+<!-- End CiteAs -->
+<h2>Subject classifications</h2><nav class="breadcrumbs"><ul class="breadcrumb">
+<li>
+<a href="https://mathworld.wolfram.com/topics/NumberTheory.html">Number Theory</a>
+</li>
+<li>
+<a href="https://mathworld.wolfram.com/topics/ContinuedFractions.html">Continued Fractions</a>
+</li>
+</ul></nav>
+<!-- End Total Content -->
+</div>
+            </section>
+        </section> <!-- /container -->
+    
+</div>
+</main>
+<aside id="bottom">
+		<footer>
+			<ul>
+				<li><a href="https://mathworld.wolfram.com/about/">About MathWorld</a></li>
+				<li><a href="https://mathworld.wolfram.com/classroom/">MathWorld Classroom</a></li>
+				<li><a href="https://mathworld.wolfram.com/contact/">Send a Message</a></li>
+				<li><a href="https://www.amazon.com/exec/obidos/ASIN/1420072218/ref=nosim/weisstein-20" target="_blank">MathWorld Book</a></li>
+				<li class="display-n display-ib__600"><a href="https://www.wolfram.com/" target="_blank">wolfram.com</a></li>
+			</ul>
+			<ul>
+				<li><a href="https://mathworld.wolfram.com/whatsnew/">13,820 Entries</a></li>
+				<li><a href="https://mathworld.wolfram.com/whatsnew/">Last Updated: Fri May 13 2022</a></li>
+				<li><a href="https://www.wolfram.com/" target="_blank">©1999–2022 Wolfram Research, Inc.</a></li>
+				<li><a href="https://www.wolfram.com/legal/terms/mathworld.html" target="_blank">Terms of Use</a></li>
+			</ul>
+			<ul class="wolfram display-n__600">
+				<li class="display-n__900"><a href="https://www.wolfram.com/" target="_blank"><img src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/wolfram-logo.png" width="121"></a></li>
+				<li><a href="https://www.wolfram.com/" target="_blank">wolfram.com</a></li>
+				<li><a href="https://www.wolfram.com/language/" target="_blank">Wolfram Language</a></li>
+				<li><a href="https://www.wolfram.com/mathematica/" target="_blank">Mathematica</a></li>
+				<li><a href="https://demonstrations.wolfram.com/" target="_blank">Wolfram Demonstrations</a></li>
+				<li class=""><a href="https://www.wolfram.com/education/" target="_blank">Wolfram for Education</a></li>
+			</ul>
+		</footer>
+<section id="acknowledgment">
+	<i>Created, developed and nurtured by Eric Weisstein at Wolfram Research</i>
+</section>
+</aside>
+<script type="text/javascript" src="Periodic%20Continued%20Fraction%20--%20from%20Wolfram%20MathWorld_files/scripts.js"></script>
+
+
+</body></html>

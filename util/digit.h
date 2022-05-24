@@ -25,6 +25,15 @@ bool isSquare(long n)
 }
 
 inline
+long retSquare(long n)
+{
+	double sn = sqrt((double) n) + 0.2;
+	long   x = sn;
+	if (x * x == n) return sn;
+	return -1;
+}
+
+inline
 bool	isDigInNum(long n, int d)
 {
 	if (d < 0) return 0;
