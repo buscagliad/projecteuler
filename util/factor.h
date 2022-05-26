@@ -49,6 +49,7 @@ class factor {
 		long    numDistinctPrimes() { return facts.size(); };
 		vlong_t divisors(bool proper = true);
 		vlong_t common(factor &s);  // returns common factors for this and s
+		long	totient();	// returns phi(n)
 	private:
 		factor();
 		fact_val_t	*find(long n);	// returns NULL if n does not exist as a factor
@@ -58,6 +59,16 @@ class factor {
 		bool	have_merged;
 		long	orig_number;
 };
+
+inline	// returns n ^ p
+long xpower(long n, long p)
+{
+	long rv = 1;
+	while (p >= 1) { rv *= n; p--; }
+	return rv;
+}
+
+
 
 inline
 vlong_t factor::common(factor &s)  // returns common factors for this and s
@@ -93,16 +104,26 @@ long   factor::num()
 	return nf;
 }
 
-long xpower(long n, long p)
+//
+// returns totient of n (the number of values between 1 and n (indclusive)
+// that have a common factor with 'n'
+//
+inline
+long	factor::totient()	// returns phi(n)
 {
-	long rv = 1;
-	while (p >= 1) { rv *= n; p--; }
-	return rv;
+	long nf = 1;
+	for (size_t i = 0; i < facts.size(); i++)
+	{
+		nf *= xpower(facts[i].f, facts[i].dup - 1) * (facts[i].f - 1);
+	}
+	return nf;
 }
+
 
 //
 // uadd adds a number to a vlong_t ONLY if it does not currently exist
 //
+inline
 bool	addu(vlong_t &v, long value)
 {
 	for (size_t i = 0; i < v.size(); i++)
@@ -115,6 +136,7 @@ bool	addu(vlong_t &v, long value)
 // return all divisors of the given number
 // find all prime factors (including powers) and put them in an array
 // if there are N such numbers, then there are 2^N possible divisors
+inline
 vlong_t	factor::divisors(bool proper)
 {
 	// prime factors need to account for multiple powers
