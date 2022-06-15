@@ -33,7 +33,7 @@ What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 #include "vlong.h"
 #include "factor.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 int numones(vlong_t &c)
 {
@@ -76,13 +76,14 @@ void modify(vlong_t &c, long n)
 bool reset(vlong_t &v, bool shrink)
 {
 	//printf("RESET\n");
-	if (v[0] == v[1]) shrink = false;
+	if ( (v.size() - numones(v) == 2) || (v[0] == v[1]) ) shrink = false;
 	v[0]++;
 	v[1] = 2;
 	for(size_t i = 2; i < v.size(); i++)
 	{
 		if ( (shrink) && ( i > 2 ) && ( (v[i] == 1) || (i + 1 == v.size()) ) )
 		{
+			v[0] = 2;
 			v[i-1] = 1;
 			break;
 		}
@@ -210,7 +211,7 @@ bool findps(vlong_t &v, int index)
 	long s = sum(v);
 	if (v[index] == 1)
 	   return false;
-	pout("findps", v);
+	if (DEBUG) pout("findps", v);
 	if (p == s) return true;
 	else if (p > s)
 	{
@@ -234,31 +235,44 @@ bool work(vlong_t &v)
 
 int main()
 {
-	char s[100];
-	//for (long n = 2; n <= 12; n++)
-	long n = 10;
+	char str[100];
+	vlong sol;
+	long maxnum = 12;
+	for (long n = 2; n <= maxnum; n++)
+	//long n = 10;
 	{
 		vlong_t a = init(n);
 		if (DEBUG) pout("INIT", a);
 		if (product(a) == sum(a))
 		{
-		    sprintf(s, "k = %ld", n);
-		    pout(s, a);
+		    sprintf(str, "k = %ld", n);
+		    pout(str, a);
 		}
 		else
 		{
-		    sprintf(s, "k = %ld (INIT)", n);
+		    //sprintf(str, "k = %ld (INIT)", n);
 			//pout(s, a);
 			work(a);
+			sprintf(str, "k = %ld", n);
+			pout(str, a);
 			//findps(a, 0);
 			//if (DEBUG) pout("TEST", a);
-			if (product(a) == sum(a))
-			{
-				sprintf(s, "k = %ld", n);
-				if (DEBUG) pout(s, a);
-			}
+		}
+		long p = product(a);
+		long s = sum(a);
+		if (p == s)
+		{
+			if (!sol.exists(s)) sol.add(s);
+		}
+		else
+		{
+			printf("ERROR at k = %ld\n", n);
+			exit(1);
 		}
 	}
+	printf("Sum of unique minimal product-sum numbers from 2 thru %ld is %ld\n",
+		maxnum, sol.sum());
+		
 	return 0;
 }
 	
