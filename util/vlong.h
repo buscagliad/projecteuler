@@ -13,10 +13,13 @@ typedef std::vector<long>::iterator vlong_it;
 
 class	vlong : public vlong_t {
 	public:
-		vlong(vlong_t &v);
-		vlong();
+		vlong(vlong_t &v, bool ord = true);
+		vlong(bool ord = true);
+		vlong(long v1, long size);
+			
 		bool exists(long n);
 		void add(long v);
+		int  find(long n);	// returns index to element containing n, -1 if not found
 		long sum();
 		long product();
 		void out();
@@ -40,6 +43,7 @@ class	vlong : public vlong_t {
 					// subchoose selection will be filled int
 		vlong_t		*ch;
 		int          ch_size;
+		bool		ordered;	// if true, add will insert into ordered list
 };
 
 // if n > size() - return null list
@@ -104,6 +108,18 @@ int  vlong::index(long value)
 	return -1;
 }
 
+// return first index where cv[index] == value;
+// -1 if no such index
+
+inline
+int  vlong::find(long value) 
+{
+	int	n = 0;
+	for (vlong_it i = this->begin(); i != this->end(); i++, n++)
+	    if (*i == value) return n;
+	return -1;
+}
+
 // return true if value exists in vector
 //
 inline
@@ -125,16 +141,27 @@ vlong_it  vlong::index_it(long value)
 //inline long& vlong::operator[](int i){return cv[i];};
 
 inline
-vlong::vlong()
+vlong::vlong(long v, long size)
 {
+	ordered = false;
+	ch = NULL;
+	while (size--) add(v);
+}
+
+
+inline
+vlong::vlong(bool ord)
+{
+	ordered = ord;
 	ch = NULL;
 }
 
 inline
-vlong::vlong(vlong_t &b)
+vlong::vlong(vlong_t &b, bool ord)
 {
 	//
 	ch = NULL;
+	ordered = ord;
 	for (vlong_it it = b.begin(); it != b.end(); it++)
 	{
 		add(*it);
@@ -144,7 +171,7 @@ vlong::vlong(vlong_t &b)
 inline
 void	vlong::add(long v)
 {
-	if (this->size() == 0){this->push_back(v); return;}
+	if (!ordered || this->size() == 0){this->push_back(v); return;}
 	//
 	for (vlong_it it = this->begin(); it != this->end(); it++)
 	{
@@ -153,6 +180,7 @@ void	vlong::add(long v)
 	this->push_back(v);
 }
 
+inline
 void vl_out(vlong_t &v)
 {
 	printf("Elements: ");
@@ -163,6 +191,7 @@ void vl_out(vlong_t &v)
 	printf("\n");
 }
 
+inline
 void vlong::out()
 {
 	for (size_t i = 0; i < this->size(); i++)
@@ -171,6 +200,7 @@ void vlong::out()
 	}
 }
 
+inline
 long sum(vlong_t &v)
 {
 	long sumv = 0;
@@ -189,7 +219,7 @@ long vlong::sum()
 
 // prodf will return the product of the long vector
 //
-
+inline
 long product(vlong_t &v)
 {
 	long p = 1;

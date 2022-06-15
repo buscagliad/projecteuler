@@ -2,6 +2,7 @@
 #define __DIGIT_H__
 
 #include <math.h>
+#include <algorithm>
 
 #include "vlong.h"
 
@@ -88,6 +89,16 @@ bool	isPalindrome(vlong_t &v)
 	for (size_t k = 0; k < vsd2; k++)
 	    if (v[k] != v[vs-1-k]) return false;
 	return true;
+}
+
+int gcd(int x, int y)
+{
+    while (y > 0)
+    {
+        x %= y;
+        std::swap(x, y);
+    }
+    return x;
 }
 
 #define MAXTENDIGIT     9999999999l

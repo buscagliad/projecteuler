@@ -76,96 +76,100 @@ long generatePythTriple(long  m, long  n,
 }
 
 #define SQ(n)	 ((n)*(n))
-int cuboid(long a, long b, long c)
+bool cuboid(long a, long b, long c)
 {
-	int res = 0;
-	if (isSquare(SQ(a+c) + SQ(b))) res++;
-	if (isSquare(SQ(a+b) + SQ(c))) res++;
-	if (isSquare(SQ(b+c) + SQ(a))) res++;
-	return res;
+	if ( (a > b) || (b > c) ) printf("ERROR: a: %ld  b: %ld  c: %ld\n", a, b, c);
+	long ac = SQ(a+c) + SQ(b);
+	long bc = SQ(b+c) + SQ(a);
+	long ab = SQ(a+b) + SQ(c);
+	if (ab <= bc && ab <= ac) {
+		if (isSquare(ab))
+		{
+			return true;
+		}
+		//printf("(%ld,%ld,%ld) NOT A SQUARE: %ld\n", a, b, c, ab);
+		return false;
+	}
+	if ( (ac <= bc) && (ac <= ab) )
+	{
+		printf("ERROR ac :: %ld < %ld < %ld\n", ac, bc, ab);
+		return isSquare(ac);
+	}
+	else if ( (bc <= ac) && (bc <= ab) )
+	{
+		printf("ERROR bc\n");
+		return isSquare(bc);
+	}
+	printf("ERROR ab\n");
+	return isSquare(ab);
 }
 
-#define MAX_P 100l
-typedef struct {
-	long  a, b, c;
-	long  count;  // if > 1, not a unique triple
-} pythags;
 
-pythags pyTrips[MAX_P+1];
-
-void	init()
-{
-	for (long i = 0; i < MAX_P + 1; i++) pyTrips[i].count = 0;
-}
-
-
-int main()
+long cubaloids(long MAX_P)
 {
 	//memset(v, 0, (MAX_P+1)*sizeof(long));
-	init();
 	long A, B, C;
-	long pt = 0;
 	long cnt = 0;
 	for (long n = 1; n <= 200*MAX_P; n++)
 	{
 		for (long m = n + 1; m <= 200*MAX_P; m+=2) // m > n
 		{
 			generatePythTriple(m, n, A, B, C);
-			
-			// solutions come from A and B
-			// A < B ( we are going to assume a <= b <= c
-			// start with a = A, then (b+c) = B  -  which generates (B - A)/2 solutions
-			// start with a + b = A, then c = B  -  which generates A/2 solutions
-			// start with a + c = B, then b = A  - 
-			if (B > MAX_P) break;
+			if (A > MAX_P) break;
 			if (gcd(m,n) != 1) continue;
 			//if (B/2 + 1 >= A) continue;
 			long k = 1;
-			printf("A: %ld  B: %ld \n", A, B);
+			if (0) printf("A: %ld  B: %ld \n", A, B);
 			bool done = false;
+			// minimum occurs for a <= b <= c
+			// a+b <= c produces (a+b)/2 solutions
+			// if (a+b >= c, then we have c - (a + b)/2 +
+			
 			while (!done)
 			{
 				done = true;
 				long a, b, c;
-				a = k*A;
-				c = k*B - k*A;
-				for (b = k*A; b <= c && c <= MAX_P; b++, c--)
-				{
-					if (isSquare(SQ(b+c) + SQ(a))) cnt++;
-					done = false;
-					printf("XXX a: %ld  b: %ld  c: %ld :: solution: %s  length: %f\n",
-						a, b, c, isSquare(SQ(b+c) + SQ(a)) ? "YES": "NO ", sqrt(SQ(b+c) + SQ(a)));
-				}
-				pt += k*(B-A)/2;
+
+				// Either a + b <= c
 
 				b = k*A - 1;
 				c = k*B;
 				for (a = 1; a <= b && c <= MAX_P; a++, b--)
 				{
-					if (isSquare(SQ(a+b) + SQ(c))) cnt++;
 					done = false;
-					printf("YYY a: %ld  b: %ld  c: %ld :: solution: %s  length: %f\n",
-						a, b, c, isSquare(SQ(a+b) + SQ(c)) ? "YES" : "NO ", sqrt(SQ(a+b) + SQ(c)));
+					if (cuboid(a,b,c))
+					{
+						cnt ++;
+						if (0) printf("k: %ld  kA: %ld  kB: %ld  a: %ld  b: %ld  c: %ld  YYY\n", k, k*A, k*B, a, b, c);
+					}
 				}
-				//pt += k*(A-1)/2;
-
+				// or a + b > c
 				c = k*A;
 				a = k*B/2;
 				b = k*B-a;
 				for (; a <= b  && b <= c && c <= MAX_P; a--, b++)
 				{
-					if (isSquare(SQ(a+b) + SQ(c))) cnt++;
-					//long ss = SQ(a+b) + SQ(c);
 					done = false;
-					printf("ZZZ a: %ld  b: %ld  c: %ld  :: solution: %s  length: %f\n",
-						a, b, c, isSquare(SQ(a+b) + SQ(c)) ? "YES" : "NO ", sqrt(SQ(a+b) + SQ(c)));
+					if (cuboid(a,b,c))
+					{
+						cnt ++;
+						if (0) printf("k: %ld  kA: %ld  kB: %ld  a: %ld  b: %ld  c: %ld  ZZZ\n", k, k*A, k*B, a, b, c);
+					}
 				}
-				pt += k*(A);
 				k++;
 			}	
 		}
 	}
-	printf("For M + %ld  count is %ld  (%ld)\n", MAX_P, pt, cnt);
-	
+	return cnt;
+}
+
+int main()
+{
+	long numc = 0;
+	for (long k = 3; numc < 1000000 ; k ++)
+	{
+		numc = cubaloids(k);
+		printf("For M + %ld  count is %ld \n", k, numc);
+	}
 }
 

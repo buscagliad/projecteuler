@@ -1,0 +1,264 @@
+#ifdef PROBLEM_DESCRIPTION
+
+Product-sum numbers
+
+
+  [Show HTML problem content]  
+Problem 88
+
+A natural number, N, that can be written as the sum and product of a given set of at least two natural numbers, {a1, a2, ... , ak} is called a product-s
+
+
+um number: N = a1 + a2 + ... + ak = a1 × a2 × ... × ak.
+
+For example, 6 = 1 + 2 + 3 = 1 × 2 × 3.
+
+For a given set of size, k, we shall call the smallest N with this property a minimal product-sum number. The minimal product-sum numbers for sets of size, k = 2, 3, 4, 5, and 6 are as follows.
+
+k=2: 4 = 2 × 2 = 2 + 2
+k=3: 6 = 1 × 2 × 3 = 1 + 2 + 3
+k=4: 8 = 1 × 1 × 2 × 4 = 1 + 1 + 2 + 4
+k=5: 8 = 1 × 1 × 2 × 2 × 2 = 1 + 1 + 2 + 2 + 2
+k=6: 12 = 1 × 1 × 1 × 1 × 2 × 6 = 1 + 1 + 1 + 1 + 2 + 6
+
+Hence for 2≤k≤6, the sum of all the minimal product-sum numbers is 4+6+8+12 = 30; note that 8 is only counted once in the sum.
+
+In fact, as the complete set of minimal product-sum numbers for 2≤k≤12 is {4, 6, 8, 12, 15, 16}, the sum is 61.
+
+What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
+
+#endif
+
+#include <cstdio>
+#include "vlong.h"
+#include "factor.h"
+
+#define DEBUG 1
+
+int numones(vlong_t &c)
+{
+	int rv = 0;
+	for (size_t i = 0; i < c.size(); i++) if (c[i] == 1) rv++;
+	return rv;
+}
+
+void pout(const char *t, vlong_t &c)
+{
+	long s = sum(c);
+	long p = product(c);
+	int  no = numones(c);
+	int  nn = c.size() - no;
+	printf("k = %lu  %s  %ld = %ld", c.size(), t, s, c[0]);
+	for (int i = 1; i < nn; i++)
+	{
+		printf(" + %ld", c[i]); 
+	}
+	if (no) printf(" + (%d) 1 ", no);
+	
+	if (s == p) printf(" = ");
+	else printf(" || %ld = ", p);
+
+	printf("%ld", c[0]);
+	for (int i = 1; i < nn; i++)
+	{
+		printf(" * %ld", c[i]); 
+	}
+	if (no) printf(" * (%d) 1", no);
+	printf("\n");
+}
+
+void modify(vlong_t &c, long n)
+{
+	c[0]++;
+}
+
+
+bool reset(vlong_t &v, bool shrink)
+{
+	//printf("RESET\n");
+	if (v[0] == v[1]) shrink = false;
+	v[0]++;
+	v[1] = 2;
+	for(size_t i = 2; i < v.size(); i++)
+	{
+		if ( (shrink) && ( i > 2 ) && ( (v[i] == 1) || (i + 1 == v.size()) ) )
+		{
+			v[i-1] = 1;
+			break;
+		}
+		else if (v[i] > 1) v[i] = 2;
+	}
+	return true;
+}
+
+
+
+bool increment(vlong_t &c)
+{
+	for (size_t j = 0; j < c.size() - 1; j++)
+	{
+		if ( (c[j] > c[j+1]) && c[j+1] > 1) 
+		{
+			c[j+1]++;
+			return true;
+		}
+	}
+	return reset(c, false);
+}
+
+long    resolve(vlong_t &c, long n)
+{
+	long mult = product(c);
+	long add = sum(c);
+	if (add == mult) return add;
+	if (mult > add)
+	{
+		reset(c, true);
+		pout("RES", c);
+		return resolve(c, n);
+	}
+	// add > mult
+	modify(c, n);
+	pout("MOD", c);
+	return resolve(c, n);
+}
+
+long	prodsum(long k, vlong_t &v)	// start with k 1's
+{
+	//vlong_t v;
+	v.clear();
+	long n = k;
+	long res = 0;
+	long mres = 22222222220;
+	while (n--) v.push_back(1);
+	v[0] = 2;
+	v[1] = 2;
+	//while (res >= 0)
+	//{
+		res = resolve(v, n);
+		if (res < mres) mres = res;
+	//}
+	//pout("PRD", v);
+	return res;
+}
+
+bool  getProduct(long N, vlong_t &c, vlong_t &x)
+{
+	int left = 0;
+	int right = c.size()-1;
+	long msum = 999999999999999;
+	bool rv = false;
+	for (left = 0; left < (int) c.size() - 1; left++)
+	{
+		for (right = left+1; right < (int) c.size(); right ++)
+		{
+			long pl = c[left] * c[right];
+			long sum = c[left] + c[right] + (int) (c.size()) - 2;
+			printf("N = %ld   prod: %ld   sum: %ld\n", N, pl, sum);
+			if ( (pl == N) && (sum == N) )
+			{
+				if ( sum < msum )
+				{
+					x[0] = c[right];
+					x[1] = c[left];
+					rv = true;
+					printf("N = %ld   x0: %ld   x1: %ld\n", N, x[0], x[1]);
+				}
+			}
+		}
+	}
+	return rv;
+}
+
+// N is the target number of products/sums
+// numfs is the number of factors (non-ones)
+bool  getdiv2(long N, vlong_t &rv)
+{
+	long target = N - 2;
+	rv.clear();
+	if (N == 2)
+	{
+		rv.push_back(2);
+		rv.push_back(2);
+		return true;
+	}
+	else if (N == 3)
+	{
+		rv.push_back(3);
+		rv.push_back(2);
+		rv.push_back(1);
+		return true;
+	}
+	factor num(target);	// factors of N - 2 - using only two factors
+	vlong_t v = num.divisors();
+	bool gp = getProduct(target, v, rv);
+	return gp;
+}
+
+vlong_t init(long k)
+{
+	vlong_t  v(k, 1);
+	int      i = 0;
+	while(product(v) < sum(v))
+		v[i++] = 2;
+	return v;
+}
+	
+bool findps(vlong_t &v, int index)
+{
+	long p = product(v);
+	long s = sum(v);
+	if (v[index] == 1)
+	   return false;
+	pout("findps", v);
+	if (p == s) return true;
+	else if (p > s)
+	{
+		//increment(v);
+		reset(v, true);
+		return findps(v, 0);
+	}
+	if (!increment(v)) { reset(v, true); index = 0; }
+	return findps(v, index);
+}
+	
+bool work(vlong_t &v)
+{
+	size_t i = 0;
+	while(i < v.size() && v[i] != 1) i++;  // i - 1 points to last non-zero element
+	if (i > 0)  i--;
+	v[i] = 1;
+	v[0]++;
+	return findps(v, 0);
+}
+
+int main()
+{
+	char s[100];
+	//for (long n = 2; n <= 12; n++)
+	long n = 10;
+	{
+		vlong_t a = init(n);
+		if (DEBUG) pout("INIT", a);
+		if (product(a) == sum(a))
+		{
+		    sprintf(s, "k = %ld", n);
+		    pout(s, a);
+		}
+		else
+		{
+		    sprintf(s, "k = %ld (INIT)", n);
+			//pout(s, a);
+			work(a);
+			//findps(a, 0);
+			//if (DEBUG) pout("TEST", a);
+			if (product(a) == sum(a))
+			{
+				sprintf(s, "k = %ld", n);
+				if (DEBUG) pout(s, a);
+			}
+		}
+	}
+	return 0;
+}
+	

@@ -27,9 +27,10 @@ class base10 {
 		long	value();							// returns value
 		int		count(int dv);						// returns number of digits having dv
 		int		dvalue(int d);						// returns d-th digit - 0 is ones, etc.
-		bool	sameDigits(base10 &v);				// returns true if v has same digits as *this
+		bool	sameDigits(const base10 &v);				// returns true if v has same digits as *this
 		long    reverse();							// reverses digits of base10 object
 		bool    isPalindrome();						// returns true if number is a palindrome
+		base10	digfac();							// returns sum of factorials of digits
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
 		int		digLen;								// number of digits in dig
@@ -39,7 +40,7 @@ class base10 {
 };
 
 inline
-bool	base10::sameDigits(base10 &v)				// returns true if v has same digits as *this
+bool	base10::sameDigits(const base10 &v)				// returns true if v has same digits as *this
 {
 	if (v.digLen != this->digLen) return false;
 
@@ -55,6 +56,20 @@ bool	base10::sameDigits(base10 &v)				// returns true if v has same digits as *t
 	if (vdig == tdig) return true;	// if sorted arrays are equal, then they have the same digits
 	return false;
 }
+
+static
+long    DigFactors[10] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880};
+
+inline
+base10	base10::digfac()
+{
+	long sum = 0;
+	for (int n = 0; n < digLen; n++)
+	{
+		sum += DigFactors[(int)dig[n]];
+	}
+	return base10(sum);
+}	
 	
 
 inline

@@ -69,6 +69,7 @@ class BigInt
 		BigInt operator!() const;
 		inline BigInt operator*=(const BigInt&);
 		inline BigInt operator+=(const BigInt&);
+		inline BigInt operator-=(const BigInt&);
 		inline BigInt operator/=(const BigInt&);
 		inline BigInt operator%=(const BigInt&);
 		int num_digits();
@@ -179,6 +180,12 @@ inline BigInt BigInt::operator*=(const BigInt& m)
 inline BigInt BigInt::operator+=(const BigInt& m)
 {
 	*this = *this + m;
+	return *this;
+}
+ 
+inline BigInt BigInt::operator-=(const BigInt& m)
+{
+	*this = *this - m;
 	return *this;
 }
 

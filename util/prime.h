@@ -65,6 +65,10 @@ class Prime {
 						return prime_list[n];};		// if n < 0 or n >=
 						
 		void setIndex(int n) {index = n;};
+		int  getIndex(long p){  // returns index of prime <= p
+			isPrime(p);
+			return prime_next_index;
+			}	
 	private:
 		int index;
 };
@@ -122,6 +126,7 @@ Prime::Prime(long n)
 inline
 long Prime::next()
 {
+	//printf("index: %d    prime_next_index: %d\n", index, prime_next_index);
 	prime_next_index = index++;
 	return next_prime();
 }
@@ -129,7 +134,9 @@ long Prime::next()
 inline
 Prime::Prime(bool load_all)
 {
+	index = 0;
 	printf("ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
+
 		prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 	readFile(1);
 	if (load_all)
@@ -146,7 +153,9 @@ Prime::Prime(bool load_all)
 	}
 }
 
-
+//
+// searches monotonic increeasing array (array) for the index K
+// such that array[K] <= x <= array[K+1]
 inline
 int binarySearch(long array[], int x, int low, int high, int &ix) 
 {
@@ -168,6 +177,7 @@ int binarySearch(long array[], int x, int low, int high, int &ix)
 		else
 			high = mid - 1;
 	}
+	ix = (low + high) / 2;
 
 	return -1;
 }
