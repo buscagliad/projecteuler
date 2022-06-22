@@ -67,11 +67,6 @@ void pout(const char *t, vlong_t &c)
 	printf("\n");
 }
 
-void modify(vlong_t &c, long n)
-{
-	c[0]++;
-}
-
 
 bool reset(vlong_t &v, bool shrink)
 {
@@ -107,94 +102,7 @@ bool increment(vlong_t &c)
 	return reset(c, false);
 }
 
-long    resolve(vlong_t &c, long n)
-{
-	long mult = product(c);
-	long add = sum(c);
-	if (add == mult) return add;
-	if (mult > add)
-	{
-		reset(c, true);
-		pout("RES", c);
-		return resolve(c, n);
-	}
-	// add > mult
-	modify(c, n);
-	pout("MOD", c);
-	return resolve(c, n);
-}
 
-long	prodsum(long k, vlong_t &v)	// start with k 1's
-{
-	//vlong_t v;
-	v.clear();
-	long n = k;
-	long res = 0;
-	long mres = 22222222220;
-	while (n--) v.push_back(1);
-	v[0] = 2;
-	v[1] = 2;
-	//while (res >= 0)
-	//{
-		res = resolve(v, n);
-		if (res < mres) mres = res;
-	//}
-	//pout("PRD", v);
-	return res;
-}
-
-bool  getProduct(long N, vlong_t &c, vlong_t &x)
-{
-	int left = 0;
-	int right = c.size()-1;
-	long msum = 999999999999999;
-	bool rv = false;
-	for (left = 0; left < (int) c.size() - 1; left++)
-	{
-		for (right = left+1; right < (int) c.size(); right ++)
-		{
-			long pl = c[left] * c[right];
-			long sum = c[left] + c[right] + (int) (c.size()) - 2;
-			printf("N = %ld   prod: %ld   sum: %ld\n", N, pl, sum);
-			if ( (pl == N) && (sum == N) )
-			{
-				if ( sum < msum )
-				{
-					x[0] = c[right];
-					x[1] = c[left];
-					rv = true;
-					printf("N = %ld   x0: %ld   x1: %ld\n", N, x[0], x[1]);
-				}
-			}
-		}
-	}
-	return rv;
-}
-
-// N is the target number of products/sums
-// numfs is the number of factors (non-ones)
-bool  getdiv2(long N, vlong_t &rv)
-{
-	long target = N - 2;
-	rv.clear();
-	if (N == 2)
-	{
-		rv.push_back(2);
-		rv.push_back(2);
-		return true;
-	}
-	else if (N == 3)
-	{
-		rv.push_back(3);
-		rv.push_back(2);
-		rv.push_back(1);
-		return true;
-	}
-	factor num(target);	// factors of N - 2 - using only two factors
-	vlong_t v = num.divisors();
-	bool gp = getProduct(target, v, rv);
-	return gp;
-}
 
 vlong_t init(long k)
 {
@@ -237,7 +145,7 @@ int main()
 {
 	char str[100];
 	vlong sol;
-	long maxnum = 12;
+	long maxnum = 12000;
 	for (long n = 2; n <= maxnum; n++)
 	//long n = 10;
 	{
