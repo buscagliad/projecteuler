@@ -31,6 +31,7 @@ What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 
 #include <cstdio>
 #include <cmath>
+#include <algorithm>
 
 #include "vlong.h"
 #include "factor.h"
@@ -55,70 +56,6 @@ int insert(long k, long N)
 	
 	
 
-// p = a1 * a2 * a3 * ... * am
-// s = sum(a1, am) + k - m
-// N = p = s
-// N goes from k .. 2*k
-
-//
-// when prod is 1, then sum is the number of 1's, 
-// and sum + count would be k
-// N does not change
-int findk(long N, long sum, long prod, int count)
-{
-	if (isPrime(N))
-	{
-		sum -= N;
-		count ++;
-		prod = 1;
-	}
-	
-	if (sum < 0) return -1;
-	
-	if (prod == 1)
-	{
-		insert(sum + count - 1, N);
-		return sum + count;
-	}
-	factor f(N);
-	vlong_t v = f.divisors();	
-	
-	for (size_t i = 1; i < v.size(); i++)
-	{
-		findk(N, sum - v[i], prod / v[i], count + 1);
-	}
-	return -1;
-}
-
-bool calcN(vlong_t &v, size_t n)
-{
-	if (n > v.size()) return false;
-	else if (n == v.size())
-	{
-		long p;
-		long s;
-		long k;
-		long numones;
-		p = product(v);
-		s = sum(v);
-		numones = p - s;
-		k = numones + v.size();
-		printf("k: %ld   #1s: %ld  p: %ld   s: %ld\n", k, numones, p, s);
-		return true;
-	}
-		
-	return false;
-}
-
-void getk(long N)
-{
-	factor f(N);
-	vlong_t v = f.plist();	
-	printf("N = %5ld  ", N);
-	vl_out(v);
-	
-	calcN(v, 2);
-}
 
 class minv {
 	public:
@@ -126,6 +63,7 @@ class minv {
 		~minv();
 		bool	add(int k, long v);
 		long	sum();
+		long	uniquesum();
 		void    out();
 	private:
 		int size;
@@ -169,6 +107,30 @@ long minv::sum()
 	return ss;
 }
 
+long minv::uniquesum()
+{
+	long ss = 0;
+	vector<long> v(s, s+size);
+
+	vector<long>::iterator ip;
+  
+    // Sorting the array
+    std::sort(v.begin(), v.end());
+  
+    // Using std::unique
+    ip = std::unique(v.begin(), v.end());
+  
+    // Resizing the vector so as to remove the undefined terms
+    v.resize(std::distance(v.begin(), ip));
+  
+    // Displaying the vector after applying std::unique
+    for (ip = v.begin(); ip != v.end(); ++ip) {
+        ss += *ip;
+    }
+  	
+	return ss;
+}
+
 class prsum {
 	public:
 		prsum(int maxn);	// create a new n number list
@@ -181,17 +143,38 @@ class prsum {
 	private:
 		bool    finc();  // first increment n[0]++, reset are twos
 		void    shrink();  // shrink size by one, all twos
+		bool    xfinc();  // xfirst increment n[0]++, reset are twos
 		long	*n;
 		int     size;
 		int     curidx;
 		long    maxProduct;
+		long    lead;
+		long    depth;
 };
 
-bool prsum::finc()
+bool prsum::xfinc()
 {
 	n[0]++;
 	for (int i = 1; i < size; i++) { n[i] = 2; }
 	curidx = 1;
+	return (prod() > maxProduct * 2);
+}
+
+bool prsum::finc()
+{
+	n[1]++;
+	n[0] = n[1];
+	if (prod() > maxProduct * 2)
+	{
+		// find the first smallest number from left to right
+		long smn = n[0];
+		int  smi = 0;
+		for (int i = 2; i < size; i++) { if (n[i] < smn) { smn = n[i]; smi = i; break;}}
+		// increment smallest number
+		
+		smn++;
+		for (int i = 0; i <= smi; i++) n[i] = smn;
+	}
 	return (prod() > maxProduct * 2);
 }
 
@@ -204,7 +187,8 @@ void prsum::shrink()
 
 void prsum::out()
 {
-	printf("Size: %d  Idx: %d  ", size, curidx);
+	//printf("Size: %d  Idx: %d  ", size, curidx);
+	printf("Prod: %ld  ", prod());
 	for (int i = 0; i < size; i++) printf(" %ld ", n[i]);
 	printf("\n");
 }
@@ -242,57 +226,27 @@ bool    prsum::inc()
 	n[curidx]++;
 	if (prod() > 2*maxProduct)
 	{
-		if ( (curidx == 0) && (size == 2) ) // we're done!!
-		{
-			printf("BBBBBB\n");
-			return false;
-		}
 		if (n[1] > 2)  // reset and add to first
 		{
-			printf("WWWWWW\n");
-			out();
-			if (finc()) shrink();
+			//out();
+			if (finc())
+			{
+				if (size == 2) return false;
+				shrink();
+			}
 		}
 		else if ( (curidx == 0) && (size != 2) ) // reset and add to first
 		{
-			printf("AAAAAA\n");
 			finc();
 		}
 		else if (size == 2)  // reset and add to first
 		{
-			printf("CCCCCC\n");
 			finc();
 		}
 		else // shirnk
 		{
-			printf("DDDDDD\n");
 			shrink();
 			
-		}
-		//else if (curidx < size)
-		//{
-		//	printf("GGGGGGG\n");
-		//	for (int i = 1; i < size; i++) { n[i] = 2; }
-		//	curidx = 1;
-		//	inc();
-		//}
-		//else  // shrink
-		//{
-		//	printf("EEEEEE\n");
-		//	size--;
-		//	if (size == 1) return false;
-		//	for (int i = 0; i < size; i++) { n[i] = 2; }
-		//	curidx = 0;
-		//}
-	}
-	else
-	{
-		printf("FFFFFF\n");
-		if (n[curidx] < n[curidx-1]) 
-		{
-		curidx++;
-			curidx = 0;
-			for (int i = 1; i < size; i++) { n[i] = 2; }
 		}
 	}
 	return true;
@@ -309,23 +263,25 @@ int test(long n)
 		long s = pr.sum();
 		long k = p - s + pr.len();
 		mv.add(k, p);
-		printf("k: %ld (%d)    prod: %ld    sum: %ld\n", k, pr.len(), p, s);
+		//printf("k: %ld (%d)    prod: %ld    sum: %ld\n", k, pr.len(), p, s);
 		pr.out();
 		cont = pr.inc();
 	}
-	printf("Min sum-product value for %ld is %ld\n", n, mv.sum());
-	mv.out();
+	printf("Min sum-product value for %ld is %ld\n", n, mv.uniquesum());
+	//mv.out();
 	return 1;
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	test(12);
-	return 0;
-	for (int i = 0; i < MAXN; i++) kcount[i] = MAX_N_LARGE;
-	for (long N = 4; N < MAXN; N++)
-	{
-	    getk(N);
-	}
+	int num = 12000;
+	test(num);
+	return 1;
+	if (argc > 1) num = atoi(argv[1]);
+	for (num = 2; num < 100; num++)
+	test(num);
+	test(100);
+	test(1000);
+	test(12000);
 	return 0;
 }
