@@ -178,6 +178,7 @@ int main()
 			exit(1);
 		}
 	}
+	sol.out();
 	printf("Sum of unique minimal product-sum numbers from 2 thru %ld is %ld\n",
 		maxnum, sol.sum());
 		

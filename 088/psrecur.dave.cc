@@ -232,20 +232,29 @@ long prsum::sum()
 bool    prsum::inc()
 {
 	n[curidx]++;
-	curidx++;
-	if (curidx >= size) curidx = 0;
 	if (prod() > 2*maxProduct)
 	{
-		if (n[1] == 2)
+		if (n[1] > 2)  // reset and add to first
 		{
-			if (size != 2) shrink();
-			else return false; // we are done!
+			//out();
+			if (finc())
+			{
+				if (size == 2) return false;
+				shrink();
+			}
 		}
-		else // (n[1] > 2)  // reset and add to first
+		else if ( (curidx == 0) && (size != 2) ) // reset and add to first
 		{
-			n[0]++;
-		    for (int i = 1; i < size; i++) n[i] = 2;
-		    curidx = 1;
+			finc();
+		}
+		else if (size == 2)  // reset and add to first
+		{
+			finc();
+		}
+		else // shirnk
+		{
+			shrink();
+			
 		}
 	}
 	return true;
