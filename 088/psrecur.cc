@@ -27,6 +27,19 @@ In fact, as the complete set of minimal product-sum numbers for 2≤k≤12 is {4
 
 What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 
+NOTE: we generate all sequences of numbers a1 >= a2 >= a3 ... >= an
+for n = 2 ... log(max) * 2 / log(n) (we actually just iterate until 2^n > 2 * max
+
+then we compute product(ai) and sum(ai) and  then comput how many ones will it take to 
+add to sequence to make the sum and product equal (note: the product does not change
+by adding ones, only the sum).  Once they are equal, we have N (the product) and
+k = (current) n + number of ones
+
+we keep the smallest N value for each k, the sum over the UNIQUE Ns
+
+ALSO - stack size must be increased to ulimit -s 1000000
+smaller values might work, but, 1000000 worked.
+
 #endif
 
 #include <cstdio>
@@ -36,26 +49,8 @@ What is the sum of all the minimal product-sum numbers for 2≤k≤12000?
 #include "vlong.h"
 #include "factor.h"
 
-#define DEBUG 1
-#define MAXN 200
-#define MAX_N_LARGE 999999999
-
-int	kcount[MAXN];
-
-int insert(long k, long N)
-{
-	int rv = 0;
-	if ( (k < 1) || (k >= MAXN)) return 0;
-	if (kcount[k] > N) {
-		kcount[k] = N;
-		rv = N;
-		printf("k = %ld   N - %ld\n", k, N);
-	}
-	return rv;
-}
-	
-	
-
+#define DEBUG 0
+using namespace std;
 
 class minv {
 	public:
@@ -131,157 +126,52 @@ long minv::uniquesum()
 	return ss;
 }
 
-class prsum {
-	public:
-		prsum(int maxn);	// create a new n number list
-		~prsum();
-		long    prod();
-		long    sum();
-		bool    inc();
-		int     len() {return size;};
-		void	out();
-	private:
-		bool    finc();  // first increment n[0]++, reset are twos
-		void    shrink();  // shrink size by one, all twos
-		bool    xfinc();  // xfirst increment n[0]++, reset are twos
-		long	*n;
-		int     size;
-		int     curidx;
-		long    maxProduct;
-		long    lead;
-		long    depth;
-};
 
-bool prsum::xfinc()
-{
-	n[0]++;
-	for (int i = 1; i < size; i++) { n[i] = 2; }
-	curidx = 1;
-	return (prod() > maxProduct * 2);
-}
 
-bool prsum::finc()
+void rec(minv &mv, vlong_t &v, int &max)
 {
-	n[1]++;
-	n[0] = n[1];
-	if (prod() > maxProduct * 2)
+	long p = product(v);
+	long s = sum(v);
+	long k = p - s + v.size();
+	mv.add(k, p);
+	if (DEBUG) vl_out(v);
+	v[0]++;
+	if (product(v) < max)
 	{
-		// find the first smallest number from left to right
-		long smn = n[0];
-		int  smi = 0;
-		for (int i = 2; i < size; i++) 
-		{ 
-			if (n[i] < smn) 
-			{ 
-				smn = n[i]; 
-				smi = i; 
-				//break;
+		//rec(v, index+1, max);
+		rec(mv, v, max);
+	}
+	else
+	{
+		bool found = false;
+		for (size_t i = 1; i < v.size(); i++)
+		{
+			v[i]++;
+			for (size_t j = 0; j < i; j++)
+		        v[j] = v[i];
+		    if (product(v) < max) {
+				found = true;
+				break;
 			}
 		}
-		// increment smallest number
-		
-		smn++;
-		for (int i = 0; i <= smi; i++) n[i] = smn;
+		if (!found) return;
+		rec(mv, v, max);
 	}
-	return (prod() > maxProduct * 2);
-}
-
-void prsum::shrink()
-{
-	size--;
-	for (int i = 0; i < size; i++) { n[i] = 2; }
-	curidx = 0;
-}
-
-void prsum::out()
-{
-	//printf("Size: %d  Idx: %d  ", size, curidx);
-	printf("k = %ld  Prod: %ld  ", prod()-sum()+size, prod());
-	for (int i = 0; i < size; i++) printf(" %ld ", n[i]);
-	printf("\n");
-}
-
-prsum::~prsum()
-{
-	delete [] n;
-}
-
-prsum::prsum(int maxn)
-{
-	size = log(maxn)/log(2.0)+1;
-	n = new long[size];
-	maxProduct = maxn;
-	curidx = 0;
-	for (int i = 0; i < size; i++) { n[i] = 2; }
-}
-
-long prsum::prod()
-{
-	long p = 1;
-	for (int i = 0; i < size; i++) p *= n[i];
-	return p;
-}
-
-long prsum::sum()
-{
-	long s = 0;
-	for (int i = 0; i < size; i++) s += n[i];
-	return s;
-}
-
-bool    prsum::inc()
-{
-	n[curidx]++;
-	curidx++;
-	if (curidx >= size) curidx = 0;
-	if (prod() > 2*maxProduct)
-	{
-		if (n[1] == 2)
-		{
-			if (size != 2) shrink();
-			else return false; // we are done!
-		}
-		else // (n[1] > 2)  // reset and add to first
-		{
-			n[0]++;
-		    for (int i = 1; i < size; i++) n[i] = 2;
-		    curidx = 1;
-		}
-	}
-	return true;
-}
-
-int test(long n)
-{
-	prsum pr(n);
-	minv  mv(n);
-	bool  cont = true;
-	while (cont)
-	{
-		long p = pr.prod();
-		long s = pr.sum();
-		long k = p - s + pr.len();
-		mv.add(k, p);
-		//printf("k: %ld (%d)    prod: %ld    sum: %ld\n", k, pr.len(), p, s);
-		pr.out();
-		cont = pr.inc();
-	}
-	mv.out();
-	printf("Min sum-product value for %ld is %ld\n", n, mv.uniquesum());
-	//mv.out();
-	return 1;
 }
 
 int main(int argc, char **argv)
 {
-	int num = 12000;
-	test(num);
+	long maxn = 12000;
+	minv  mv(maxn);
+	for (int index = 2; index < 14; index++)
+	{
+		vlong_t v(index, 2);
+		if(product(v) > 2*maxn) break;
+		int max2 = 2*maxn;
+		rec(mv, v, max2);
+	}
+	if (DEBUG) mv.out();
+	printf("Min sum-product value for %ld is %ld\n", maxn, mv.uniquesum());
+
 	return 1;
-	if (argc > 1) num = atoi(argv[1]);
-	for (num = 2; num < 100; num++)
-	test(num);
-	test(100);
-	test(1000);
-	test(12000);
-	return 0;
 }
