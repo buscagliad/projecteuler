@@ -49,6 +49,7 @@ class factor {
 		long    numDistinctPrimes() { return facts.size(); };
 		vlong_t divisors(bool proper = true);
 		vlong_t common(factor &s);  // returns common factors for this and s
+		vlong_t plist();  // prime factor list
 		long	totient();	// returns phi(n)
 	private:
 		factor();
@@ -86,6 +87,23 @@ vlong_t factor::common(factor &s)  // returns common factors for this and s
 				rv.push_back(s.facts[i].f);
 				nm--;
 			}
+		}
+	}
+	return rv;
+}
+
+inline
+vlong_t factor::plist()  // returns list of primes that are factors for this and s
+{
+	vlong_t  	rv;
+
+	for (size_t i = 0; i < facts.size(); i++)
+	{
+		int nm = facts[i].dup;
+		while (nm)
+		{
+			rv.push_back(facts[i].f);
+			nm--;
 		}
 	}
 	return rv;
