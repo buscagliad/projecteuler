@@ -23,3 +23,120 @@ Find the set of four distinct digits, a < b < c < d, for which the longest set o
 
 #endif
 
+#include <cmath>
+#include <cstdio>
+#include <bits/stdc++.h>
+
+using namespace std;
+
+double add(double a, double b) { return a + b;}
+double mul(double a, double b) { return a * b;}
+double div(double a, double b) { return a / b;}
+double sub(double a, double b) { return a - b;}
+
+bool isInt(double a) {if ( fabs(a - trunc(a)) > 0.001) return false; return true;}
+
+#define MAXSOL 1000
+int solutions[MAXSOL];
+
+typedef double op_t(double, double);
+
+op_t *ops[] = {add, mul, sub, div};
+char  cops[] = {'+', '*', '-', '/'};
+
+int doall(int a[], op_t *oparr[])
+{
+	double v = oparr[0](a[0], a[1]);
+	v = oparr[1](v, a[2]);
+	v = oparr[2](v, a[3]);
+	if (isInt(v))
+	{
+		return (int)(v+0.5);
+	}
+	
+	return -1;
+}
+
+int produce(int dig[])
+{
+	op_t *top[3];
+	for (int i = 0; i < 4; i++)
+	{
+		top[0] = ops[i];
+		for (int j = 0; j < 4; j++)
+		{
+			top[1] = ops[j];
+			for (int k = 0; k < 4; k++)
+			{
+				top[2] = ops[k];
+				int ans = doall(dig, top);
+				if (ans > 0)
+				{
+					solutions[ans]++;
+					//printf("+++  %d %c %d %c %d %c %d = %d\n", dig[0], cops[i], dig[1], cops[j], dig[2], cops[k], dig[3], ans);
+				}
+			}
+		}
+	}
+	return 1;
+}
+
+int	arith(int a, int b, int c, int d)
+{
+	int	arr[] = {a, b, c, d};
+	sort(arr, arr+4);
+	do {
+        produce(arr);
+    } while(next_permutation(arr, arr + 4));
+    return 1;
+}
+
+void init()
+{
+	for (int i = 0; i < MAXSOL; i++) solutions[i] = 0;
+}
+
+void display(int &run, int &max)
+{
+	for (int i = 1; i < MAXSOL; i++) if (solutions[i]) max = i;
+	for (int i = 1; i < MAXSOL; i++) 
+	{
+		if (solutions[i]) run = i;
+		else break;
+	}
+}
+
+int trythis(int a, int b, int c, int d)
+{
+	int run, max;
+	init();
+	arith(a, b, c, d);
+	display(run, max);
+	printf("For: {%d,%d,%d,%d}  Run is 1 to %d, max number is %d\n", a, b, c, d, run, max);
+	return run;
+}
+		
+int main()
+{
+	int ga, gb, gc, gd, gm = 0;
+	for (int a = 1; a <= 6; a++)
+	{
+		for (int b = a+1; b <= 7; b++)
+		{
+			for (int c = b+1; c <= 8; c++)
+			{
+				for (int d = c+1; d <= 9; d++)
+				{
+					int x = trythis(a, b, c, d);
+					if (x > gm)
+					{
+						ga = a; gb = b; gc = c; gd = d;
+						gm = x;
+					}
+				}
+			}
+		}
+	}
+	printf("BEST RUN: {%d,%d,%d,%d}  Run is 1 to %d\n", ga, gb, gc, gd, gm);
+	
+}
