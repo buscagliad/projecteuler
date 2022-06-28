@@ -10,3 +10,16 @@ Find the last ten digits of this prime number.
 
 #endif
 
+#include <cstdio>
+
+int main()
+{
+	long tp = 1;
+	for (long i = 0; i < 7830457; i++)
+	{
+		tp = tp * 2 % 10000000000l;
+	}
+	tp = (tp * 28433l)% 10000000000l;
+	tp += 1;
+	printf("Last ten digits: %ld\n", tp);
+}

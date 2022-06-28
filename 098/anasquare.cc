@@ -16,3 +16,6 @@ NOTE: All anagrams formed must be contained in the given text file.
 
 #endif
 
+int sqrnum(int n)
+{
+	base10 bn[
