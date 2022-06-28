@@ -34,9 +34,9 @@ double mul(double a, double b) { return a * b;}
 double div(double a, double b) { return a / b;}
 double sub(double a, double b) { return a - b;}
 
-bool isInt(double a) {if ( fabs(a - trunc(a)) > 0.001) return false; return true;}
+bool isInt(double a) {if ( fabs(a - trunc(a)) > 0.00001) return false; return true;}
 
-#define MAXSOL 1000
+#define MAXSOL 5000
 int solutions[MAXSOL];
 
 typedef double op_t(double, double);
@@ -44,20 +44,36 @@ typedef double op_t(double, double);
 op_t *ops[] = {add, mul, sub, div};
 char  cops[] = {'+', '*', '-', '/'};
 
-int doall(int a[], op_t *oparr[])
+int computefl(int a[], op_t *oparr[], bool debug = false)
+{
+	double v = oparr[0](a[0], a[1]);
+	double u = oparr[2](a[2], a[3]);
+	v = oparr[1](v, u);
+	
+	int ans = (isInt(v)) ? (int)(v+0.5) : -1;
+	if (ans > 0)
+	{
+		solutions[ans]++;
+		if (debug) printf("***  (%d %c %d) %c (%d %c %d) = %d\n", a[0], cops[0], a[1], cops[1], a[2], cops[2], a[3], ans);
+	}
+	return ans;
+}
+
+int compute(int a[], op_t *oparr[], bool debug = false)
 {
 	double v = oparr[0](a[0], a[1]);
 	v = oparr[1](v, a[2]);
 	v = oparr[2](v, a[3]);
-	if (isInt(v))
+	int ans = isInt(v) ? (int)(v+0.5) : -1;
+	if (ans > 0)
 	{
-		return (int)(v+0.5);
+		solutions[ans]++;
+		if (debug) printf("+++  %d %c %d %c %d %c %d = %d\n", a[0], cops[0], a[1], cops[2], a[2], cops[3], a[3], ans);
 	}
-	
-	return -1;
+	return ans;
 }
 
-int produce(int dig[])
+int produce(int dig[], bool debug = false)
 {
 	op_t *top[3];
 	for (int i = 0; i < 4; i++)
@@ -69,24 +85,20 @@ int produce(int dig[])
 			for (int k = 0; k < 4; k++)
 			{
 				top[2] = ops[k];
-				int ans = doall(dig, top);
-				if (ans > 0)
-				{
-					solutions[ans]++;
-					//printf("+++  %d %c %d %c %d %c %d = %d\n", dig[0], cops[i], dig[1], cops[j], dig[2], cops[k], dig[3], ans);
-				}
+				compute(dig, top, debug);
+				computefl(dig, top, debug);
 			}
 		}
 	}
 	return 1;
 }
 
-int	arith(int a, int b, int c, int d)
+int	arith(int a, int b, int c, int d, bool debug = false)
 {
 	int	arr[] = {a, b, c, d};
 	sort(arr, arr+4);
 	do {
-        produce(arr);
+        produce(arr, debug);
     } while(next_permutation(arr, arr + 4));
     return 1;
 }
@@ -105,19 +117,24 @@ void display(int &run, int &max)
 		else break;
 	}
 }
+static int gcnt = 0;
 
-int trythis(int a, int b, int c, int d)
+int trythis(int a, int b, int c, int d, bool debug = false)
 {
 	int run, max;
 	init();
-	arith(a, b, c, d);
+	arith(a, b, c, d, debug);
 	display(run, max);
-	printf("For: {%d,%d,%d,%d}  Run is 1 to %d, max number is %d\n", a, b, c, d, run, max);
+	gcnt++;
+	printf("[%4d] For: {%d,%d,%d,%d}  Run is 1 to %d, max number is %d\n", gcnt, a, b, c, d, run, max);
 	return run;
 }
 		
 int main()
 {
+	//arith(1,2,5,8, true);
+	//arith(1,2,5,6, true);
+	//return 1;
 	int ga, gb, gc, gd, gm = 0;
 	for (int a = 1; a <= 6; a++)
 	{

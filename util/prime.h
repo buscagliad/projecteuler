@@ -321,11 +321,13 @@ inline
 void prime_factor( long number,  vlong_t &pf)
 {
 	INIT_FILE;
-	long n = div_prime_list(pf, number);
-	long prod = product(pf);
-	if (prod == number) return;
-	long k = next_prime(prime_max_value+2);
-
+	prime_next_index = 0;
+	//long n = div_prime_list(pf, number);
+	//long prod = product(pf);
+	//if (prod == number) return;
+	long k = 2;
+	long n = number;
+	long prod = 1;
 	//printf("++ k = %ld  n = %ld\n", k, n);
 	// if div_prime_list got ALL of the prime factors, then prod is number
 	// if not, need to find next primes after larges prime in the prime_list,
@@ -336,12 +338,12 @@ void prime_factor( long number,  vlong_t &pf)
 		{
 			prod *= k;
 			pf.push_back(k);
-			//long nn = n / k;
-			//printf("++ %ld has %ld as a factor - leaving %ld\n", 
-			//	n, k, nn);
+			// long nn = n / k;
+			// printf("++ %ld has %ld as a factor - leaving %ld\n", 
+			// 	n, k, nn);
 			n = n / k;
 		}
-		k = next_prime(k + 2);
+		k = next_prime();
 	}
 	//printf("Next prime after %ld is: %ld\n", prime_list_next, next_prime(prime_list_next+2));
 }

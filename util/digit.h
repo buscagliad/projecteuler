@@ -26,6 +26,15 @@ bool isSquare(long n)
 }
 
 inline
+bool isSquare(long n, long &sqrtn)
+{
+	double sn = sqrt((double) n) + 0.2;
+	sqrtn = sn;
+	if (sqrtn * sqrtn == n) return true;
+	return false;
+}
+
+inline
 long retSquare(long n)
 {
 	double sn = sqrt((double) n) + 0.2;
