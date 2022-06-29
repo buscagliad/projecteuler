@@ -27,7 +27,9 @@ class base10 {
 		long	value();							// returns value
 		int		count(int dv);						// returns number of digits having dv
 		int		dvalue(int d);						// returns d-th digit - 0 is ones, etc.
-		bool	sameDigits(const base10 &v);				// returns true if v has same digits as *this
+		bool	sameDigits(base10 v);				// returns true if v has same digits as *this
+		long	map(const base10 &v);				// returns the map from this -> v (if they have
+													// the same digits) returns 0 if not
 		long    reverse();							// reverses digits of base10 object
 		bool    isPalindrome();						// returns true if number is a palindrome
 		base10	digfac();							// returns sum of factorials of digits
@@ -57,9 +59,19 @@ bool	base10::sameDigits(const base10 &v)				// returns true if v has same digits
 	return false;
 }
 
+inline
+long	base10::map(base10 v)				// returns true if v has same digits as *this
+{
+	if (v.digLen != digLen) return 0;
+	
+}
+
 static
 long    DigFactors[10] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880};
 
+
+// sum each digit factorial - x = d1 d2 d3 ... dn
+// return d1! + d2! + d3! + ... + dn!
 inline
 base10	base10::digfac()
 {
