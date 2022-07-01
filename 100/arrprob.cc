@@ -15,6 +15,18 @@ By finding the first arrangement to contain over 10^12 = 1,000,000,000,000 discs
 problem 57 has the repeated fraction for root(2)
 
 
+: 707119501226.000000  n: 1000017988852.000000  diff: 201013723136.000000
+b: 707119501227.000000  n: 1000017988853.000000  diff: 1029455740928.000000
+b: 707119501228.000000  n: 1000017988855.000000  diff: 142138212352.000000
+b: 707119501229.000000  n: 1000017988856.000000  diff: 686303805440.000000
+b: 707119501230.000000  n: 1000017988857.000000  diff: 1514745823232.000000
+b: 707119501231.000000  n: 1000017988859.000000  diff: 343151869952.000000
+b: 707119501232.000000  n: 1000017988860.000000  diff: 1171593953280.000000
+b: 707119501233.000000  n: 1000017988862.000000  diff: 0.000000
+Probability of 1/2 for pulling 2 blue discs::  Blue discs: 707119501233   Total discs: 1000017988862
+
+
+
 #endif
 
 #include <cstdio>
@@ -59,9 +71,9 @@ void test2()
 void test3()
 {
 	//long double bd = 707106678118;
-	long double bd = 707106678118;
 	long double sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667973799;
-	long double nd = truncl(bd * sqrt2);
+	long double nd = 1000000000000;
+	long double bd = truncl(nd / sqrt2);
 	bool done = false;
 	while (!done)
 	{
@@ -75,8 +87,8 @@ void test3()
 			printf("Probability of 1/2 for pulling 2 blue discs::  Blue discs: %ld   Total discs: %ld\n", b, n);
 			return;
 		}
-		bd += 1.0;
-		nd = truncl(bd * sqrt2);
+		nd += 1.0;
+		bd = roundl(nd / sqrt2);
 	}
 }
 
