@@ -16,3 +16,42 @@ NOTE: The first two lines in the file represent the numbers in the example given
 
 #endif
 
+#include <cstdio>
+#include <cmath>
+
+double logv(int a, int b)
+{
+	return (double) b * log((double) a);
+}
+
+void init (const char *fname)
+{
+	FILE *f = fopen(fname, "r");
+	int a, b;
+	int ma = 0;
+	int mb = 0;
+	double ml = 0;
+	int mln = 0;
+	int ln = 0;
+	if (!f) return;
+	while (!feof(f))
+	{
+		ln++;
+		fscanf(f, "%d,%d", &a, &b);
+		double v = logv(a, b);
+		printf("log ( %d ^ %d ) = %.6f\n", a, b, v);
+		if (v > ml)
+		{
+			ml = v;
+			ma = a;
+			mb = b;
+			mln = ln;
+		}
+	}
+	printf("Largest value occurs at line number: %d   a = %d  b = %d\n", mln, ma, mb);
+}
+
+int main()
+{
+	init("p099_base_exp.txt");
+}
