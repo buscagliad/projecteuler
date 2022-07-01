@@ -96,7 +96,11 @@ inline fract fract::operator%=(const fract& m)
 // HELPER functions
 //
 
-
+void	fract::out(bool with_original)
+{
+	if (with_original) printf("%ld / %ld  ", orig_numerator, orig_denominator);
+	printf("%ld / %ld  ", red_numerator, red_denominator);
+}
 
 //
 // copy constructor - use default

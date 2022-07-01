@@ -27,7 +27,7 @@ class base10 {
 		long	value();							// returns value
 		int		count(int dv);						// returns number of digits having dv
 		int		dvalue(int d);						// returns d-th digit - 0 is ones, etc.
-		bool	sameDigits(base10 v);				// returns true if v has same digits as *this
+		bool	sameDigits(const base10 &v);		// returns true if v has same digits as *this
 		long	map(const base10 &v);				// returns the map from this -> v (if they have
 													// the same digits) returns 0 if not
 		long    reverse();							// reverses digits of base10 object
@@ -40,6 +40,34 @@ class base10 {
 		bool	valid;								// set to false if n <= 0
 		vlong	*perm;								// used for setChoose/getNext
 };
+
+inline
+long charmap (const char *s1, const char *s2, int len)
+{
+	int isset[len];
+
+	for (int i = 0; i < len; i++) isset[i] = -1;
+	for (int i = 0; i < len; i++)
+	{
+		for (int j = 0; j < len; j++)
+		{
+			if (s1[i] == s2[j])
+			{
+				if(isset[i] < 0) isset[i] = j;
+				break;
+			}
+		}
+	}
+	long rv = 0;
+	for (int i = 0; i < len; i++)
+	{
+		if (isset < 0) return 0;
+		rv = 10*rv + isset[i];
+	}
+	return rv;
+	
+}
+
 
 inline
 bool	base10::sameDigits(const base10 &v)				// returns true if v has same digits as *this
@@ -60,10 +88,10 @@ bool	base10::sameDigits(const base10 &v)				// returns true if v has same digits
 }
 
 inline
-long	base10::map(base10 v)				// returns true if v has same digits as *this
+long	base10::map(const base10 &v)				// returns true if v has same digits as *this
 {
 	if (v.digLen != digLen) return 0;
-	
+	return charmap(dig, v.dig, digLen);
 }
 
 static

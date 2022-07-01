@@ -86,14 +86,21 @@ void scale(vector<int> &s, vector<sqpair> &sc)
 	}
 }
 
-bool transmap(long n1, long n2)
+long transmap(long n1, long n2)
 {
-	base10 
+	base10 b1(n1);
+	base10 b2(n2);
+	return b1.map(b2);
+}
 	
 
 bool similar(long n1, string s1, long n2, string s2)
 {
-	return (transmap(n1, n2) == transmap(s1, s2))
+	long tn = transmap(n1, n2);
+	long ts = charmap(s1.c_str(), s2.c_str(), s1.size());
+	printf("N1: %ld   N2: %ld   tn: %ld    s1: %s  s2: %s  ts: %ld\n",
+		n1, n2, tn, s1.c_str(), s2.c_str(), ts);
+	return (tn == ts);
 }
 
 void test(vector<sqpair> &sc)
@@ -123,6 +130,13 @@ void test(vector<sqpair> &sc)
 
 int main()
 {
+	const char *s1 = "ABCDEFGC";
+	long n1 = 12345673;
+	const char *s2 = "EFGCABCD";
+	long n2 = 56731234;
+	printf("%s %ld   %s %ld  -- %s\n", s1, n1, s2, n2, similar(n1, s1, n2, s2) ? "YES" : "NO");
+	return 1;
+	
 	init("p098_words.txt");
 	for (size_t i = 0; i < words.size(); i++)
 	{
