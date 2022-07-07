@@ -65,8 +65,9 @@ typedef struct cell {
 
 #define DEBUG_ALL	  0xFFFF
 
-int		g_debug = DEBUG_CHECK; // DEBUG_CELL | DEBUG_BLOCK;
+int		g_debug = DEBUG_OFF; //DEBUG_CHECK; // DEBUG_CELL | DEBUG_BLOCK;
 #define IFDEBUG(dbg)		if (g_debug & dbg)
+#define BLOCK(cr) ((cr) < 3 ? 0 : (cr) < 6 ? 3 : 6)
 
 
 typedef	struct soduko {
@@ -82,6 +83,7 @@ void	cellInit(cellType *cell, int value)
 	cell->value = value;
 	if (value) cell->state = cellFixed;
 	else cell->state = cellEmpty;
+	for (int i = 0; i <= 9; i++) cell->notValues[i] = false;
 	//cell->nvc = 0;
 }
 
@@ -297,15 +299,18 @@ sState   setNotValueCell(sodukoType *s, int cr, int cc)
 	    if (i != cr)
 	    {
 			thatCell = sodukoGetValue(s, i, cc);
-			s->cell[cr][cc].notValues[thatCell] = true;
-			IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--UU: [%i,%i]=%i\n", i, cc, thatCell);
-			if (thisCell == thatCell)
+			if (thatCell != 0)
 			{
-				IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--ROW INVALID: thisCell: (%i,%i)=%i  "
-					"rowCell: (%i,%i)=%i\n",
-					cr, cc, thisCell,
-					i, cc, thatCell);
-				return sInvalid;
+				s->cell[cr][cc].notValues[thatCell] = true;
+				IFDEBUG(DEBUG_CHECK) printf("[%d,%d]::setNotValueCell--ROW: [%i,%i]=%i\n", cr, cc, i, cc, thatCell);
+				if (thisCell == thatCell)
+				{
+					IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--ROW INVALID: thisCell: (%i,%i)=%i  "
+						"rowCell: (%i,%i)=%i\n",
+						cr, cc, thisCell,
+						i, cc, thatCell);
+					return sInvalid;
+				}
 			}
 		}
 		
@@ -318,15 +323,18 @@ sState   setNotValueCell(sodukoType *s, int cr, int cc)
 	    if (i != cc)
 	    {
 			thatCell = sodukoGetValue(s, cr, i);
-			s->cell[cr][cc].notValues[thatCell] = true;
-			IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--UU: [%i,%i]=%i\n", cr, i, thatCell);
-			if (thisCell == thatCell)
+			if (thatCell != 0)
 			{
-				IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--COL INVALID: thisCell: (%i,%i)=%i  "
-					"colCell: (%i,%i)=%i\n",
-					cr, cc, thisCell,
-					cr,  i, thatCell);
-				return sInvalid;
+				s->cell[cr][cc].notValues[thatCell] = true;
+				IFDEBUG(DEBUG_CHECK) printf("[%d,%d]::setNotValueCell--COL: [%i,%i]=%i\n",  cr, cc, cr, i, thatCell);
+				if (thisCell == thatCell)
+				{
+					IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--COL INVALID: thisCell: (%i,%i)=%i  "
+						"colCell: (%i,%i)=%i\n",
+						cr, cc, thisCell,
+						cr,  i, thatCell);
+					return sInvalid;
+				}
 			}
 		}
 	}
@@ -340,16 +348,17 @@ sState   setNotValueCell(sodukoType *s, int cr, int cc)
 		printf("setNotValueCell--Row: %i  Col: %i -- BLOCK START:: Row: %i Col: %i\n",
 				cr, cc, cr%3, cc%3);
 	}
-	for (int c = (cc%3); c < (cc%3) + 3; c++)
+	for (int c = BLOCK(cc); c < BLOCK(cc) + 3; c++)
 	{
-	    for (int r = (cr%3); r < (cr%3) + 3; r++)
+	    for (int r = BLOCK(cr); r < BLOCK(cr) + 3; r++)
 	    {
 	        if (c == cc && r == cr) continue;
 	        thatCell = sodukoGetValue(s, r, c);
 		    if (!thatCell) continue;
+			IFDEBUG(DEBUG_CHECK) printf("[%d,%d]::setNotValueCell--BLOCK: [%i,%i]=%i\n", cr, cc, r, c, thatCell);
 	        if (thisCell == thatCell)
 	        {
-		        printf("setNotValueCell--BLOCK INVALID: thisCell: (%i,%i)=%i  "
+		        IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--BLOCK INVALID: thisCell: (%i,%i)=%i  "
 			        "rowCell: (%i,%i)=%i\n",
 			        cr, cc, thisCell,
 			         r,  c, thatCell);
@@ -460,12 +469,11 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 		printf("checkCell--Row: %i  Col: %i -- BLOCK START:: Row: %i Col: %i\n",
 				crow, ccol, crow%3, ccol%3);
 	}
-	#define BLOCK(cr) ((cr) < 3 ? 0 : (cr) < 6 ? 3 : 6)
 	for (c = BLOCK(ccol); c < BLOCK(ccol) + 3; c++)
 	{
 	    for (r = BLOCK(crow); r < BLOCK(crow) + 3; r++)
 	    {
-			printf("cr: %d  cc: %d  c: %d  r: %d\n", crow, ccol, c, r);
+			//printf("cr: %d  cc: %d  c: %d  r: %d\n", crow, ccol, c, r);
 	        if (c == ccol && r == crow) continue;
 	        thatCell = sodukoGetValue(s, r, c);
 		    if (!thatCell) continue;
