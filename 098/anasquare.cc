@@ -19,13 +19,16 @@ NOTE: All anagrams formed must be contained in the given text file.
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <cmath>
 #include <algorithm>
 
 #include "base10.h"
+#include "factor.h"
 
 using namespace std;
 
 vector<string> words;
+
 
 int init(const char *fname)
 {
@@ -54,102 +57,97 @@ int init(const char *fname)
 	return words.size();
 }
 
-bool anagram(string s1, string s2)
+long anagram(string s1, string s2)
 {
-	if (s1.size() != s2.size()) return false;
-	sort(s1.begin(), s1.end());
-	sort(s2.begin(), s2.end());
-	if (s1 == s2) return true;
-	return false;
+	if (s1.size() != s2.size()) return 0;
+	return charmap(s1.c_str(), s2.c_str(), s1.size());
 }
 
-typedef struct _sqpair {
-	long	sq1;
-	long	sq2;
-} sqpair;
 
-void scale(vector<int> &s, vector<sqpair> &sc)
+typedef struct _wdpair{
+	string  s1;
+	string  s2;
+	long    map;
+	vector<long> sql;
+} wdpair;
+
+
+
+bool canmap(const char *s, base10 b)
 {
-	for (size_t i = 0; i < s.size() - 1; i++)
-	{
-		base10  s1(s[i]);
-		for (size_t j = i+1; j < s.size(); j++)
-		{
-			base10 s2(s[j]);
-			if (s1.sameDigits(s2))
-			{
-				sqpair sp = {s1.value(), s2.value()};
-				sc.push_back(sp);
-				printf("Found anagram square:  %ld  and  %ld\n",s1.value(), s2.value() );
-			}
-		}
-	}
+	return b.canorder(s);
 }
 
-long transmap(long n1, long n2)
+bool compatible(const char *s, long n)
 {
-	base10 b1(n1);
-	base10 b2(n2);
-	return b1.map(b2);
-}
-	
-
-bool similar(long n1, string s1, long n2, string s2)
-{
-	long tn = transmap(n1, n2);
-	long ts = charmap(s1.c_str(), s2.c_str(), s1.size());
-	printf("N1: %ld   N2: %ld   tn: %ld    s1: %s  s2: %s  ts: %ld\n",
-		n1, n2, tn, s1.c_str(), s2.c_str(), ts);
-	return (tn == ts);
-}
-
-void test(vector<sqpair> &sc)
-{
-	vector<int> sq;
-	int min10 = 10;
-	int max10 = 100;
-	int curn = 4;
-	int c2 = curn * curn;
-	for (int numdigs = 2; numdigs <= 9; numdigs++)
-	{
-		sq.clear();
-		while (c2 < max10)
-		{
-			if (c2 > max10) break;
-			sq.push_back(c2);
-			curn++;
-			c2 = curn * curn;
-			printf("curn: %d   c2: %d    numdigs: %d\n", curn, c2, numdigs);
-		}
-		scale(sq, sc);
-		min10 *= 10;
-		max10 *= 10;
-	}
-	fflush(stdout);
+	return canmap(s, base10(n));
 }
 
 int main()
 {
-	const char *s1 = "ABCDEFGC";
-	long n1 = 12345673;
-	const char *s2 = "EFGCABCD";
-	long n2 = 56731234;
-	printf("%s %ld   %s %ld  -- %s\n", s1, n1, s2, n2, similar(n1, s1, n2, s2) ? "YES" : "NO");
-	return 1;
-	
+
+	long lw;
 	init("p098_words.txt");
+	vector<wdpair> wplist;
 	for (size_t i = 0; i < words.size(); i++)
 	{
 		for (size_t j = i+1; j < words.size(); j++)
 		{
-			if (anagram(words[i], words[j]))
+			if ((lw = anagram(words[i], words[j])))
 			{
-				printf("%s <--> %s\n", words[i].c_str(), words[j].c_str());
+				printf("%s <--> %s  [%ld]\n", words[i].c_str(), words[j].c_str(), lw);
+				wdpair  wp = {words[i], words[j], lw};
+				wplist.push_back(wp);
 			}
+
 		}
 	}
-	vector<sqpair> sq;
-	test(sq);
+	for (int len = 9; len >= 1; len--)
+	{
+		vector<int> pn;
+		for (size_t i = 0; i < wplist.size(); i++)
+		{
+			if ((int)wplist[i].s1.size() == len)
+			{
+				printf(">>> %s <--> %s  [%ld]\n", wplist[i].s1.c_str(), wplist[i].s2.c_str(), wplist[i].map);
+				long maxn = xpower(10, len);
+				long minn = xpower(10, len - 1);
+				long sqrtn = sqrt(maxn);
+				long sq = sqrtn * sqrtn;
+				while (sq > minn)
+				{
+					if ( (compatible(wplist[i].s1.c_str(), sq) ) && (compatible(wplist[i].s2.c_str(), sq) ) )
+					{
+						wplist[i].sql.push_back(sq);
+						printf("%ld is compatible with %s\n", sq, wplist[i].s1.c_str());
+					}
+					sqrtn--;
+					sq = sqrtn * sqrtn;
+				}
+				if (wplist[i].sql.size() == 0) continue;
+
+				for (size_t k = 0; k < wplist[i].sql.size() - 1; k++)
+				{
+					base10 b1(wplist[i].sql[k]);
+					for (size_t j = 0; j < wplist[i].sql.size(); j++)
+					{
+						if (j == k) continue;
+						base10 b2(wplist[i].sql[j]);
+						long mb1 = b1.map(b2);
+						printf("(len = %d)  wplist[%lu].sql[%lu] = %ld  wplist[%lu].sql[%lu] = %ld"
+							"     strmap: %ld   bmap: %ld\n",
+							len, i, k, wplist[i].sql[k], i, j, wplist[i].sql[j], wplist[i].map, mb1);
+						if (mb1 == wplist[i].map)
+						{
+							printf("HERE!!\n");
+							return 1;
+						}
+					}
+				}			
+			}			
+		}			
+	}
+		
 }
 
 				

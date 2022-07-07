@@ -14,90 +14,88 @@ By finding the first arrangement to contain over 10^12 = 1,000,000,000,000 discs
 
 problem 57 has the repeated fraction for root(2)
 
+   1   b: 3   N: 4
+   2   b: 15   N: 21
+   3   b: 85   N: 120
+   4   b: 493   N: 697
+   5   b: 2871   N: 4060
+   6   b: 16731   N: 23661
+   7   b: 97513   N: 137904
+   8   b: 568345   N: 803761
+   9   b: 3312555   N: 4684660
+  10   b: 19306983   N: 27304197
+  11   b: 112529341   N: 159140520
+  12   b: 655869061   N: 927538921
+  13   b: 3822685023   N: 5406093004
+  14   b: 22280241075   N: 31509019101
+  15   b: 129858761425   N: 183648021600
+  16   b: 756872327473   N: 1070379110497
 
-: 707119501226.000000  n: 1000017988852.000000  diff: 201013723136.000000
-b: 707119501227.000000  n: 1000017988853.000000  diff: 1029455740928.000000
-b: 707119501228.000000  n: 1000017988855.000000  diff: 142138212352.000000
-b: 707119501229.000000  n: 1000017988856.000000  diff: 686303805440.000000
-b: 707119501230.000000  n: 1000017988857.000000  diff: 1514745823232.000000
-b: 707119501231.000000  n: 1000017988859.000000  diff: 343151869952.000000
-b: 707119501232.000000  n: 1000017988860.000000  diff: 1171593953280.000000
-b: 707119501233.000000  n: 1000017988862.000000  diff: 0.000000
-Probability of 1/2 for pulling 2 blue discs::  Blue discs: 707119501233   Total discs: 1000017988862
+See this web site to solve generic quadratic diophantine equation:
+ A x² + B xy  C y² + D ⁢x + E y + F = 0
+https://www.alpertron.com.ar/QUAD.HTM
 
+ 2 ⁢x² - y² - 2 ⁢x + y = 0
 
+x = 1
+y = 1
+and also:
+
+x = 0
+y = 0
+
+Recursive solutions:
+
+xn+1 = 3 ⁢xn + 2 ⁢yn - 2 ⁢
+yn+1 = 4 ⁢xn + 3 ⁢yn - 3 ⁢
+
+and also:
+xn+1 = 3 ⁢xn - 2 ⁢yn
+yn+1 = - 4 ⁢xn + 3 ⁢yn +  1
 
 #endif
 
 #include <cstdio>
 #include <cmath>
-#include "fract.h"
 
 
+/*
+x = 1
+y = 1
+and also:
 
-bool validprob(long b, long n)
+x = 0
+y = 0
+
+Recursive solutions:
+
+xn+1 = 3 ⁢xn + 2 ⁢yn - 2 ⁢
+yn+1 = 4 ⁢xn + 3 ⁢yn - 3 ⁢
+
+and also:
+xn+1 = 3 ⁢xn - 2 ⁢yn
+yn+1 = - 4 ⁢xn + 3 ⁢yn +  1
+*/
+
+void solve(long MAX)
 {
-	fract f1(b, n);
-	fract f2(b-1, n-1);
-	fract p = f1 * f2;
+	long bn = 1;
+	long Nn = 1;
+	long bnp1, Nnp1;
+	int  cnt = 0;
 	
-	f1.out();
-	f2.out();
-	p.out();
-	printf("\n");
-	return p == fract(1, 2);
-}
-
-void	test(long b, long n)
-{
-	if (validprob(b,n))
-	    printf("Probability of 1/2 for pulling 2 blue discs::  Blue discs: %ld   Total discs: %ld\n", b, n);
-	else 
-	    printf("FAIL: Blue discs: %ld   Total discs: %ld\n", b, n);
-}
-
-void test2()
-{
-	long b = 707106678118;
-	double sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667973799;
-	long n = (double)b * sqrt2;
-	while (!validprob(b, n))
+	while (Nn < MAX)
 	{
-		b++;
-		n = (double)b * sqrt2;
-	}
-}
-
-void test3()
-{
-	//long double bd = 707106678118;
-	long double sqrt2 = 1.41421356237309504880168872420969807856967187537694807317667973799;
-	long double nd = 1000000000000;
-	long double bd = truncl(nd / sqrt2);
-	bool done = false;
-	while (!done)
-	{
-		long double left = 2 * bd * (bd - 1);
-		long double right = nd * (nd - 1);
-		printf("b: %Lf  n: %Lf  diff: %Lf\n", bd, nd, fabs(left-right));
-		if (fabsl(left-right) < 0.5)
-		{
-			long b = roundl(bd);
-			long n = roundl(nd);
-			printf("Probability of 1/2 for pulling 2 blue discs::  Blue discs: %ld   Total discs: %ld\n", b, n);
-			return;
-		}
-		nd += 1.0;
-		bd = roundl(nd / sqrt2);
+		bnp1 = 3l * bn + 2l * Nn - 2l;
+		Nnp1 = 4l * bn + 3l * Nn - 3l;
+		bn = bnp1;
+		Nn = Nnp1;
+		printf("%4d   b: %ld   N: %ld\n", ++cnt, bn, Nn);
 	}
 }
 
 int main()
 {
-	test(15, 21);
-	test(85, 120);
-	test(421, 621);
-	test3();
-	return 1;
-	test2();
+	solve(1000000000000l);
+
 }

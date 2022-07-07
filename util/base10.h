@@ -2,6 +2,7 @@
 #define __BASE_10_H__
 
 #include <vector>
+#include <cstring>
 #include "sequence.h"
 #include "vlong.h"
 
@@ -30,6 +31,7 @@ class base10 {
 		bool	sameDigits(const base10 &v);		// returns true if v has same digits as *this
 		long	map(const base10 &v);				// returns the map from this -> v (if they have
 													// the same digits) returns 0 if not
+		bool    canorder(const char *s);			// returns true if there is a mapping from s to base10
 		long    reverse();							// reverses digits of base10 object
 		bool    isPalindrome();						// returns true if number is a palindrome
 		base10	digfac();							// returns sum of factorials of digits
@@ -41,22 +43,27 @@ class base10 {
 		vlong	*perm;								// used for setChoose/getNext
 };
 
+
 inline
 long charmap (const char *s1, const char *s2, int len)
 {
 	int isset[len];
+	bool charfound = false;
 
 	for (int i = 0; i < len; i++) isset[i] = -1;
 	for (int i = 0; i < len; i++)
 	{
+		charfound = false;
 		for (int j = 0; j < len; j++)
 		{
-			if (s1[i] == s2[j])
+			if (s1[i] == s2[j] && isset[j]<0)
 			{
-				if(isset[i] < 0) isset[i] = j;
+				isset[j] = i;
+				charfound = true;
 				break;
 			}
 		}
+		if (!charfound) return 0;
 	}
 	long rv = 0;
 	for (int i = 0; i < len; i++)
@@ -64,10 +71,34 @@ long charmap (const char *s1, const char *s2, int len)
 		if (isset < 0) return 0;
 		rv = 10*rv + isset[i];
 	}
+	//printf("charmap::  s1: %s  s2: %s   map: %ld\n", s1, s2, rv);
 	return rv;
 	
 }
 
+//
+// can map looks at if there are the same pattern of repeating
+// characters in s and there are repeating digits in this
+//  ex:  6931604 and XWABXGD are mappable X->6, W-> 9, etc.
+//  
+
+inline
+bool  base10::canorder(const char *s)
+{
+	if ((int)strlen(s) != digLen) return false;
+
+	for (int i = 0; i < digLen - 1; i++)
+	{
+		for (int j = i + 1; j < digLen; j++)
+		{
+			//printf("canorder:: s[%d] = %c s[%d] = %c d[%d] = %d d[%d] = %d\n",
+			//    i, s[i], j, s[j], i, dig[i], j, dig[j]);
+			if ( (s[i] == s[j]) && (dig[i] != dig[j]) ) return false;
+			if ( (s[i] != s[j]) && (dig[i] == dig[j]) ) return false;
+		}
+	}
+	return true;
+}
 
 inline
 bool	base10::sameDigits(const base10 &v)				// returns true if v has same digits as *this
@@ -91,7 +122,16 @@ inline
 long	base10::map(const base10 &v)				// returns true if v has same digits as *this
 {
 	if (v.digLen != digLen) return 0;
-	return charmap(dig, v.dig, digLen);
+	char s1[digLen+1];
+	char s2[digLen+1];
+	for (int i = 0; i < digLen; i++)
+	{
+		s1[digLen-i-1] = dig[i] + '0';
+		s2[digLen-i-1] = v.dig[i] + '0';
+	}
+	s1[digLen] = 0;
+	s2[digLen] = 0;
+	return charmap(s1, s2, digLen);
 }
 
 static
