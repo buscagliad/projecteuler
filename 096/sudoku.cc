@@ -36,10 +36,15 @@ typedef	enum {
 
 typedef	enum {
 	sInvalid,
+	sEmpty,
 	sValid,
 	sComplete} sState;
 
-
+const char *STATE[] = {
+	"Empty",
+	"Active",
+	"Fixed",
+	"Found" };
 
 #define	CELL_ARRAY_NUM	9
 #define	ROW_NUM		9
@@ -49,7 +54,7 @@ typedef	enum {
 #define	COL_SIZE	(COL_NUM)
 
 
-typedef struct cell {
+typedef struct {
 	char		value;		/* if 0, cell is empty */
 	cellState	state;
 	bool		notValues[CELL_ARRAY_SIZE+1]; // pv[n] is false if n is possible
@@ -69,6 +74,7 @@ int		g_debug = DEBUG_OFF; //DEBUG_CHECK; // DEBUG_CELL | DEBUG_BLOCK;
 #define IFDEBUG(dbg)		if (g_debug & dbg)
 #define BLOCK(cr) ((cr) < 3 ? 0 : (cr) < 6 ? 3 : 6)
 
+int     gPuzzleNumber = 0;
 
 typedef	struct soduko {
 	cellType	cell[ROW_SIZE][COL_SIZE];
@@ -94,7 +100,7 @@ int	cellSet(cellType *cell, int value)
 	    if (i != value  && cell->notValues[i]) return 0;
 	if (cell->notValues[value])
 	{
-	    printf("Invalid cell state - all values not possible\n");
+	    printf("Invalid cell state - %d value not possible\n", value);
 	    return -1;
 	}
 	cell->state = cellFound;
@@ -119,7 +125,7 @@ int	cellGet(cellType *cell)
 int	getValues(FILE *f, sodukoType &s)
 {
 	static	char	fileLine[MAX_FILE_LINE];
-
+	gPuzzleNumber++;
 	if (!f) return -1;
 	fgets(fileLine, MAX_FILE_LINE, f);
 	for (int row = 0; row < ROW_NUM; row++)
@@ -148,72 +154,48 @@ int	sodukoGetState(sodukoType *s, int row, int col)
 
 }
 
-int	sodukoGetNextNotValue(sodukoType *s, int row, int col)
+int	sodukoGetNextNotValue(sodukoType *s, int row, int col, int &index)
 {
-	static	int	last_row = 0;
-	static	int	last_col = 0;
-	static	int index = 0;
 	cellType	*thisCell = &(s->cell[row][col]);
-	if (last_row != row  || last_col != col)
-	{
-		index = 0;
-		last_row = row;
-		last_col = col;
-	}
-	while (index < 9 && thisCell->notValues[index]) index++;
-	if (index >= 9) return 0;
-	return thisCell->notValues[index];
-
-}
-
-int	sodukoSetValue(sodukoType *s, int row, int col, int val)
-{
-
-	if (row < 1 || row > 9 ||
-	    col < 1 || col > 9)
-	{
-	    printf("ERROR - setValue - bad row/col:  %i/%i\n", row, col);
-	    return 0;
-	}
-	cellSet(&s->cell[row][col], val);
-	return val;
+	while (index <= 9 && thisCell->notValues[index]) index++;
+	if (index > 9) return 0;
+	return index++;
 }
 
 sState	setNotValues(sodukoType *s);
 
-int	sodukoInit(sodukoType *s, const char	*fName)
+FILE *sodukoInit(const char	*fName)
 {
 	FILE	*f = fopen(fName, "r");
-	if (!f) return -1;
+	if (!f) return NULL;
 	IFDEBUG(DEBUG_INIT) printf("opening file %s\n", fName);
 
-	getValues(f, *s);
-	setNotValues(s);
-	return 1;
+	return f;
 }
 
 /*
              111111111122222222223333333
    0123456789012345678901234567890123456
- 0 +===+===+===+===+===+===+===+===+===+
- 1 [   |   |   |   |   |   |   |   |   |
- 2 +---+---+---+---+---+---+---+---+---+
- 3 [   |   |   |   |   |   |   |   |   |
- 4 +---+---+---+---+---+---+---+---+---+
- 5 [   |   |   |   |   |   |   |   |   |
- 6 +===+===+===+===+===+===+===+===+===+
- 7 [   |   |   |   |   |   |   |   |   |
- 8 +---+---+---+---+---+---+---+---+---+
- 9 [   |   |   |   |   |   |   |   |   |
-10 +---+---+---+---+---+---+---+---+---+
-11 [   |   |   |   |   |   |   |   |   |
-12 +===+===+===+===+===+===+===+===+===+
-13 [   |   |   |   |   |   |   |   |   |
-14 +---+---+---+---+---+---+---+---+---+
-15 [   |   |   |   |   |   |   |   |   |
-16 +---+---+---+---+---+---+---+---+---+
-17 [   |   |   |   |   |   |   |   |   |
-18 +===+===+===+===+===+===+===+===+===+
+     0   1   2   3   4   5   6   7   8
+ 0 +===+===+===++===+===+===+===+===+===+
+ 1 [   |   |   ||   |   |   |   |   |   | 0
+ 2 +---+---+---++---+---+---+---+---+---+
+ 3 [   |   |   ||   |   |   |   |   |   | 1
+ 4 +---+---+---++---+---+---+---+---+---+
+ 5 [   |   |   ||   |   |   |   |   |   | 2
+ 6 +===+===+===++===+===+===+===+===+===+
+ 7 [   |   |   ||   |   |   |   |   |   | 3
+ 8 +---+---+---++---+---+---+---+---+---+
+ 9 [   |   |   ||   |   |   |   |   |   | 4
+10 +---+---+---++---+---+---+---+---+---+
+11 [   |   |   ||   |   |   |   |   |   | 5
+12 +===+===+===++===+===+===+===+===+===+
+13 [   |   |   ||   |   |   |   |   |   | 6
+14 +---+---+---++---+---+---+---+---+---+
+15 [   |   |   ||   |   |   |   |   |   | 7
+16 +---+---+---++---+---+---+---+---+---+
+17 [   |   |   ||   |   |   |   |   |   | 8
+18 +===+===+===++===+===+===+===+===+===+
 */
 
 void	sodukoDump(sodukoType *s)
@@ -222,10 +204,12 @@ void	sodukoDump(sodukoType *s)
 	int	c;
 	const char	*draw;
 	char	endch;
+	printf("Puzzle Number: %d\n", gPuzzleNumber);
+	printf("    0   1   2   3   4   5   6   7   8\n");
 
 	for (r = 0; r <= 9; r++)
 	{
-            if (r == 0 || r == 3 || r == 6 || r == 9)
+        if (r == 0 || r == 3 || r == 6 || r == 9)
 	    {
 	        draw = "+===";
 	        endch = '+';
@@ -236,7 +220,8 @@ void	sodukoDump(sodukoType *s)
 	        endch = '+';
 	    }
 
-	    for (c = 0; c < 9; c++)
+        printf("  %s", draw);
+	    for (c = 1; c < 9; c++)
 	    {
                 printf("%s", draw);
 	    }
@@ -244,28 +229,31 @@ void	sodukoDump(sodukoType *s)
 
 	    if (r != 9)
 	    {
-		for (c = 0; c < 9; c++)
-	        {
-		    int	v = sodukoGetValue(s, r, c);
-		    if (v) printf("| %i ", v);
-		    else printf("|   ");
-	        }
-	        printf("|\n");
+			printf("%d ", r);
+			for (c = 0; c < 9; c++)
+			{
+				int	v = sodukoGetValue(s, r, c);
+				if (v) printf("| %i ", v);
+				else printf("|   ");
+			}
+			printf("|\n");
 	    }
 	}
+	fflush(stdout);
 }
 void	sodukoDumpInvalid(sodukoType *s)
 {
 	int		r;
 	int		c;
-
+	int		nvIndex = 0;
 
 	for (r = 0; r < 9; r++)
 	{
 		for (c = 0; c < 9; c++)
 	    {
 		    int	v = sodukoGetValue(s, r, c);
-		    int nv = sodukoGetNextNotValue(s, r, c);
+		    nvIndex = 1;
+		    int nv = sodukoGetNextNotValue(s, r, c, nvIndex);
 		    printf("[%i,%i] = %i", r, c, v);
 		    switch (sodukoGetState(s, r, c))
 		    {
@@ -276,13 +264,15 @@ void	sodukoDumpInvalid(sodukoType *s)
 					printf(" - FOUND\n");
 					continue;
 				case cellActive:
+					printf(" - ACTIVE");
 				case cellEmpty:
 					break;
 		    }
 		    if (nv) printf(" - NV: %i", nv);
-		    else printf(" - NO INVALID CELLS\n");
-		    while ((nv = sodukoGetNextNotValue(s, r, c)))
+		    else printf(" - NO INVALID CELLS");
+		    while ((nv = sodukoGetNextNotValue(s, r, c, nvIndex)))
 		    	printf(", %i", nv);
+		    printf("\n");
 	    }
 	}
 }
@@ -346,7 +336,7 @@ sState   setNotValueCell(sodukoType *s, int cr, int cc)
 	IFDEBUG(DEBUG_BLOCK)
 	{
 		printf("setNotValueCell--Row: %i  Col: %i -- BLOCK START:: Row: %i Col: %i\n",
-				cr, cc, cr%3, cc%3);
+				cr, cc, BLOCK(cr), BLOCK(cc));
 	}
 	for (int c = BLOCK(cc); c < BLOCK(cc) + 3; c++)
 	{
@@ -354,40 +344,22 @@ sState   setNotValueCell(sodukoType *s, int cr, int cc)
 	    {
 	        if (c == cc && r == cr) continue;
 	        thatCell = sodukoGetValue(s, r, c);
-		    if (!thatCell) continue;
-			IFDEBUG(DEBUG_CHECK) printf("[%d,%d]::setNotValueCell--BLOCK: [%i,%i]=%i\n", cr, cc, r, c, thatCell);
-	        if (thisCell == thatCell)
-	        {
-		        IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--BLOCK INVALID: thisCell: (%i,%i)=%i  "
-			        "rowCell: (%i,%i)=%i\n",
-			        cr, cc, thisCell,
-			         r,  c, thatCell);
-		        return sInvalid;
-	        }
+		    if (thatCell != 0)
+		    {
+				s->cell[cr][cc].notValues[thatCell] = true;
+				IFDEBUG(DEBUG_CHECK) printf("[%d,%d]::setNotValueCell--BLOCK: [%i,%i]=%i\n", cr, cc, r, c, thatCell);
+				if (thisCell == thatCell)
+				{
+					IFDEBUG(DEBUG_CHECK) printf("setNotValueCell--BLOCK INVALID: thisCell: (%i,%i)=%i  "
+						"rowCell: (%i,%i)=%i\n",
+						cr, cc, thisCell,
+						 r,  c, thatCell);
+					return sInvalid;
+				}
+			}
 	    }
 	}
-	/*
-	 * Now we look at the 'not' values, if there is only one,
-	 * we will set the cell to 'Found'
-	 */
-	int ccount = 0;
-	for (int v = 1; v <= 9; v++)
-	{
-	    if (!s->cell[cr][cc].notValues[v])
-	    {
-			ccount++;
-			thisCell = v;
-	    }
-	}
-	if (ccount == 1) /* only 1 possible value */
-	{
-	    s->cell[cr][cc].value = thisCell;
-	    if (s->cell[cr][cc].state != cellFixed)
-			s->cell[cr][cc].state = cellFound;
-	    IFDEBUG(DEBUG_PROCESS)printf("setNotValueCell--Cell (%i,%i) set to value: %i\n",
-			cr, cc, thisCell);
-	    return sComplete;
-	}
+
 	return sValid;
 }
 	
@@ -416,12 +388,10 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 {
 	int	r;
 	int	c;
-	int	v;
 	int	thisCell = sodukoGetValue(s, crow, ccol);
 	int	thatCell;
-	int	ccount = 0;
 
-	if (thisCell == 0) return sValid;
+	if (thisCell == 0) return sEmpty;
 	/*
 	 * Check each row element for duplication (of course exclude
 	 * the row containing this element
@@ -434,10 +404,11 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 	    if (!thatCell) continue;
 	    if (thisCell == thatCell)
 	    {
-		    IFDEBUG(DEBUG_CHECK) printf("checkCell--ROW INVALID: thisCell: (%i,%i)=%i  "
+		    printf("checkCell--ROW INVALID: thisCell: (%i,%i)=%i  "
 			    "rowCell: (%i,%i)=%i\n",
 			    crow, ccol, thisCell,
 			    r, ccol, thatCell);
+			fflush(stdout);
 		    return sInvalid;
 	    }
 	}
@@ -457,6 +428,7 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 			    "rowCell: (%i,%i)=%i\n",
 			    crow, ccol, thisCell,
 			    r, ccol, thatCell);
+			fflush(stdout);
 		    return sInvalid;
 	    }
 	}
@@ -467,7 +439,7 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 	IFDEBUG(DEBUG_BLOCK)
 	{
 		printf("checkCell--Row: %i  Col: %i -- BLOCK START:: Row: %i Col: %i\n",
-				crow, ccol, crow%3, ccol%3);
+				crow, ccol, BLOCK(crow), BLOCK(ccol));
 	}
 	for (c = BLOCK(ccol); c < BLOCK(ccol) + 3; c++)
 	{
@@ -483,87 +455,15 @@ sState	checkCell(sodukoType *s, int crow, int ccol, sState rv)
 			        "rowCell: (%i,%i)=%i\n",
 			        crow, ccol, thisCell,
 			        r, c, thatCell);
+				fflush(stdout);
 		        return sInvalid;
 	        }
 	    }
-	}
-	/*
-	 * Now we look at the 'not' values, if there is only one,
-	 * we will set the cell to 'Found'
-	 */
-	ccount = 0;
-	for (v = 1; v <= 9; v++)
-	{
-	    if (!(s->cell[crow][ccol].notValues[v]))
-	    {
-			ccount++;
-			thisCell = v;
-	    }
-	}
-	if (ccount == 1) /* only 1 possible value */
-	{
-	    s->cell[crow][ccol].value = thisCell;
-	    if (s->cell[crow][ccol].state != cellFixed)
-			s->cell[crow][ccol].state = cellFound;
-	    IFDEBUG(DEBUG_PROCESS)printf("checkCell--Cell (%i,%i) set to value: %i\n",
-			crow, ccol, thisCell);
-	    return sComplete;
 	}
 	return sValid;
 
 }
 
-/*
- * Check each cell in the soduko game for validity
- */
-bool	guess(sodukoType *s)
-{
-	int	r;
-	int	c;
-	int mi = 100;
-	int mr;
-	int mc;
-
-	for (r = 0; r < 9; r++)
-	{
-	    for (c = 0; c < 9; c++)
-	    {
-		    if (s->cell[r][c].state == cellEmpty)
-			{
-				int mm = 0;
-				for (int k = 1; k <= 9; k++) 
-					if (!(s->cell[r][c].notValues[k])) mm++;
-				if (mm < mi)
-				{
-					mi = mm;
-					mr = r;
-					mc = c;
-				}
-			}
-	    }
-	}
-	printf("Empty cell count is %d at cell (%d,%d)\n", mi, mr, mc);
-	for (int k = 1; k <= 9; k++) 
-		printf("NV:%d - %d ", k, s->cell[mr][mc].notValues[k]);
-	printf("\n");
-	int index = 1;
-	while (index <= 9  &&  s->cell[mr][mc].notValues[index]) index++;
-	s->cell[mr][mc].value =  index;
-	for (int i = 0; i < 9; i++)
-	{
-		s->cell[i][mc].notValues[index] = true;
-		s->cell[mr][i].notValues[index] = true;
-	}
-	for (r = mr%3; r < mr%3 + 3; r++)
-	{
-		for (c = mc%3; c < mc%3 + 3; c++)
-		{
-			s->cell[r][c].notValues[index] = true;
-		}
-	}
-	printf("Setting cell [%d,%d] to %d\n", mr, mc, s->cell[mr][mc].value);
-	return true;
-}
 
 /*
  * Check each cell in the soduko game for validity
@@ -581,7 +481,7 @@ sState	check(sodukoType *s)
 	    {
 		    xv = checkCell(s, r, c, rv);
 		    if (xv == sInvalid) return xv;
-		    if (xv != sComplete && rv == sComplete)
+		    if (xv == sEmpty)
 		    {
 		    	rv = sValid;
 		    }
@@ -591,18 +491,187 @@ sState	check(sodukoType *s)
 	return rv;
 }
 
-bool solve(soduko s)
+/*
+ * Check each cell in the soduko game for validity
+ */
+ #define NO_GUESS_AVAILABLE 100
+bool	guess(sodukoType *s)
 {
-	if (check(&s) == sComplete) {
+	int	r;
+	int	c;
+	int mi = NO_GUESS_AVAILABLE;
+	int mr;
+	int mc;
+
+	for (r = 0; r < 9; r++)
+	{
+	    for (c = 0; c < 9; c++)
+	    {
+		    if (s->cell[r][c].state == cellEmpty)
+			{
+				int mm = 0;
+				for (int k = 1; k <= 9; k++) 
+					if (!(s->cell[r][c].notValues[k])) mm++;
+				if (mm == 0) continue;
+				if (mm < mi)
+				{
+					mi = mm;
+					mr = r;
+					mc = c;
+				}
+			}
+	    }
+	}
+	if (mi == NO_GUESS_AVAILABLE) return false;
+	printf("Empty cell count is %d at cell (%d,%d)\n", mi, mr, mc);
+	for (int k = 1; k <= 9; k++) 
+		printf("NV:%d - %d ", k, s->cell[mr][mc].notValues[k]);
+	printf("\n");
+	int index = 1;
+	while (index <= 9  &&  s->cell[mr][mc].notValues[index]) index++;
+	s->cell[mr][mc].value =  index;
+	s->cell[mr][mc].state = cellActive;
+	printf("%d:: Setting cell [%d,%d] to %d\n", __LINE__, mr, mc, s->cell[mr][mc].value);
+	for (int i = 0; i < 9; i++)
+	{
+		s->cell[i][mc].notValues[index] = true;
+		s->cell[mr][i].notValues[index] = true;
+	}
+	for (r = BLOCK(mr); r < BLOCK(mr) + 3; r++)
+	{
+		for (c = BLOCK(mc); c < BLOCK(mc) + 3; c++)
+		{
+			s->cell[r][c].notValues[index] = true;
+		}
+	}
+	fflush(stdout);
+	return true;
+}
+
+/*
+ * Check each cell in the soduko game for validity
+ */
+ #define NO_GUESS_AVAILABLE 100
+bool	getCellGuess(sodukoType &s, int &mr, int &mc, int &mi)
+{
+	int	r;
+	int	c;
+	mi = NO_GUESS_AVAILABLE;
+
+	for (r = 0; r < 9; r++)
+	{
+	    for (c = 0; c < 9; c++)
+	    {
+		    if (s.cell[r][c].state == cellEmpty)
+			{
+				int mm = 0;
+				for (int k = 1; k <= 9; k++) 
+					if (!(s.cell[r][c].notValues[k])) mm++;
+				if (mm == 0) continue;
+				if (mm < mi)
+				{
+					mi = mm;
+					mr = r;
+					mc = c;
+				}
+			}
+	    }
+	}
+	if (mi == NO_GUESS_AVAILABLE) return false;
+
+	return true;
+}
+
+/*
+ * Check each cell in the soduko game for validity
+ */
+ #define NO_GUESS_AVAILABLE 100
+bool	setCellGuess(sodukoType &s, int mr, int mc, int value, bool final)
+{
+	int	r;
+	int	c;
+
+	s.cell[mr][mc].value = value;
+	//if (final)
+	//	s.cell[mr][mc].state = cellFound;
+	//else
+		s.cell[mr][mc].state = cellActive;
+	for (int i = 0; i < 9; i++)
+	{
+		s.cell[i][mc].notValues[value] = true;
+		s.cell[mr][i].notValues[value] = true;
+	}
+	for (r = BLOCK(mr); r < BLOCK(mr) + 3; r++)
+	{
+		for (c = BLOCK(mc); c < BLOCK(mc) + 3; c++)
+		{
+			s.cell[r][c].notValues[value] = true;
+		}
+	}
+	fflush(stdout);
+	return true;
+}
+
+
+bool solveRec(soduko s)
+{
+	sState ch = check(&s);
+	int    mr, mc, mi;
+	if (ch == sComplete) {
+		printf("SOLVED!!!\n");
 		sodukoDump(&s);
 		return true;
 	}
+	else if (ch == sInvalid)
+	{
+		printf("BAD RESULT!!!\n");
+		return false;
+	}
 	
-	guess(&s);
+	if (!getCellGuess(s, mr, mc, mi)) return false;
+	for (int k = 1; k <= 9; k++)
+	{
+		if (s.cell[mr][mc].notValues[k]) continue;
+		setCellGuess(s, mr, mc, k, (mi == 1));
+		printf("%d:: Setting cell [%d,%d] to %d (%s)\n", __LINE__, mr, mc, s.cell[mr][mc].value, 
+			STATE[s.cell[mr][mc].state]);;
+		//sodukoDump(&s);
+		if (solveRec(s)) return true;
+	}
+	printf("Returning FALSE on (%d,%d)\n", mr, mc);
 	sodukoDump(&s);
-	solve(s);
-		
 	return false;
+}
+
+bool solve(soduko s)
+{
+	sState ch = check(&s);
+	if (ch == sComplete) {
+		printf("SOLVED!!!\n");
+		sodukoDump(&s);
+		return true;
+	}
+	else if (ch == sInvalid)
+	{
+		printf("BAD RESULT!!!\n");
+		return false;
+	}
+	
+	if (!guess(&s)) return false;
+	
+	sodukoDump(&s);
+	return solve(s);
+}
+
+void resolve(sodukoType *s)
+{
+	int r, c;
+	for (c = 0; c < 9; c++)
+	{
+		for (r = 0; r < 9; r++)
+		{
+		}
+	}
 }
 
 int	main(int argc, char *argv[])
@@ -610,7 +679,7 @@ int	main(int argc, char *argv[])
 	const char *fname = "p096_sudoku.txt";
 	sodukoType	s;
 	int			i;
-
+	FILE 		*f;
 
 	IFDEBUG(DEBUG_INIT)
 	{
@@ -618,18 +687,18 @@ int	main(int argc, char *argv[])
 			printf("argv[%i] = %s\n", i, argv[i]);
 	}
 
-	if (sodukoInit(&s, fname) < 0)
+	if ( (f = sodukoInit(fname)) == NULL)
 	{
 	     printf("ERROR - cannot open file %s\n", fname);
 	     return 1;
 	}
 
-	sodukoDump(&s);
-	solve(s);
-	for (i = 1; i <= -1; i++){
-		if (check(&s) == sComplete) printf("PUZZLE SOLVED!!!!\n");
-		sodukoDump(&s);
-		//sodukoDumpInvalid(&s);
+	getValues(f, s);
+	while (!feof(f)) {
+		setNotValues(&s);
+		sodukoDump(&s);//sodukoDumpInvalid(&s); 
+		solveRec(s);
+		getValues(f, s);
 	}
 	return 0;
 
