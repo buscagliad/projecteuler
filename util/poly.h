@@ -5,6 +5,9 @@
 //   poly(<type> *a, int nsize, bool interp);
 //
 
+#include <cstring>
+#include <cstdlib>
+
 template <class T>
 class poly {
 	private:
@@ -13,14 +16,15 @@ class poly {
 	public:
 		poly(T *a, size_t len)
 		{
-			c = (T) malloc( sizeof(T) * len );
+			c = (T *) malloc( sizeof(T) * len );
 			memcpy(c, a, sizeof(T) * len );
 			N = len - 1;
 		}
 		T	eval(T x) {
-			T res = x * a[N];
-			for (int i = N - 1; i >= 0; i--)
-				res = (a[i] + res) * x;
+			T res = x * c[N];
+			for (int i = N - 1; i >= 1; i--)
+				res = (c[i] + res) * x;
+			res += c[0];
 			return res;
 		}
 };
@@ -28,22 +32,21 @@ class poly {
 template <class T>
 class ipoly {
 	private:
-		T 		*x;		// coefficients
+		T 		*c;		// coefficients
 		T 		*fx;	// coefficients
 		int 	N;		// order of polynomial
 	public:
-		poly(T *a, size_t len)
+		ipoly(T *a, size_t len)
 		{
 			c = (T) malloc( sizeof(T) * len );
 			memcpy(c, a, sizeof(T) * len );
 			N = len - 1;
 		}
 		T	eval(T x) {
-			T res = x * a[N];
+			T res = x * c[N];
 			for (int i = N - 1; i >= 0; i--)
-				res = (a[i] + res) * x;
+				res = (c[i] + res) * x;
 			return res;
 		}
 };
 
-poly<int> p
