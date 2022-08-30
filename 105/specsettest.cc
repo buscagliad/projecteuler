@@ -426,13 +426,50 @@ void test7()
 	}
 }
 
+void swap(int *v, int i, int j)
+{
+	int s = v[i];
+	v[i] = v[j];
+	v[j] = s;
+}
+
+void vsort(int *v, int n)
+{
+	int	i, j;
+	for (i = 0; i < n-1; i++)
+	{
+		for (j = i+1; j < n; j++)
+		{
+			if (v[i] > v[j]) swap(v, i, j);
+		}
+	}
+}
+
+bool	getset(FILE *f, int *v, int &n, int &totalSum)
+{
+	char	inl[1000];
+	char	*nl = inl;
+	fgets(inl, 1000, f);
+	//fputs(inl, stdout);
+	if (feof(f)) return false;
+	n = 0;
+	while((v[n]=strtol(nl, &nl, 10))) { n++; nl++; };
+	vsort(v, n);
+	if (isSpecialSet(v, n)){
+		printf("SPECIAL SET:: ");
+		totalSum += SUM(v, n);
+	}
+	PVEC(v, n, SUM(v, n));
+	return true;
+}
 
 int main()
 {
-    //test();
-    test5();
-    fflush(stdout);
-    test6();
-    fflush(stdout);
-    test7();
+	int	v[100];
+	int n;
+	int ts = 0;
+	FILE *f = fopen("p105_sets.txt", "r");
+	if (!f) {printf("Cannot open file\n"); return -1; }
+	while (getset(f, v, n, ts));
+	printf("Total sum: %d\n", ts);
 }
