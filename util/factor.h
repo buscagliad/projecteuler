@@ -51,6 +51,7 @@ class factor {
 		vlong_t common(factor &s);  // returns common factors for this and s
 		vlong_t plist();  // prime factor list
 		long	totient();	// returns phi(n)
+		factor_t getfacts() { return facts; };
 	private:
 		factor();
 		fact_val_t	*find(long n);	// returns NULL if n does not exist as a factor
