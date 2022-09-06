@@ -200,25 +200,20 @@ bool isPrime(long n)
 		readFile(prime_file_index - 1);
 		return isPrime(n);
 	}
-	if ( (n > prime_max_value) && (prime_file_index < 50) )
+	if ( (n > prime_max_value * prime_max_value) && (prime_file_index < 50) )
 	{
 		printf(">isPrime(%ld) ReadFile: %s    Min: %ld   Max: %ld - %d elements\n",
 			n, prime_file_name, prime_min_value, prime_max_value, prime_list_size);
 		readFile(prime_file_index + 1);
 		return isPrime(n);
 	}
-	int  k = 0;
-	//while (k < PRIME_FILE_SIZE  &&  n > prime_list[k]) k++;
-	k = binarySearch(prime_list, n, 0, prime_max_index, prime_next_index);
-	
-	//printf("n = %ld  k = %d  P(k) = %ld \n", n, k, prime_list[k]);
-	if (k > -1)
+
+	for (int i = 0; i < prime_list_size; i++)
 	{
-		//printf("isPrime:: %ld is prime from file: %d at index %d\n",
-		//	n, prime_file_index, k);
-		return true;
-	}
-		
+		long p = prime_list[i];
+		if (p * p > n) return true;
+		if (n % p == 0) return false;
+	}		
 	return false;
 }
 
