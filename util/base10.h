@@ -34,6 +34,8 @@ class base10 {
 		bool    canorder(const char *s);			// returns true if there is a mapping from s to base10
 		long    reverse();							// reverses digits of base10 object
 		bool    isPalindrome();						// returns true if number is a palindrome
+		bool    isBouncy();							// returns true if number has digits that are both less and 
+													// greater than the one that precedes them
 		base10	digfac();							// returns sum of factorials of digits
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
@@ -43,7 +45,21 @@ class base10 {
 		vlong	*perm;								// used for setChoose/getNext
 };
 
-
+inline
+bool    base10::isBouncy()							// returns true if number has digits that are both less and 
+{
+	if (digLen < 3) return false;					// no bouncy numbers possible until three digits
+	bool inc = false;
+	bool dec = false;
+	for (int i = 0; i < digLen - 1; i++)
+	{
+		int	delta = (dig[i+1] - dig[i]);
+		if (delta > 0) inc = true;
+		else if (delta < 0) dec = true;
+	}
+	return (inc && dec);
+}
+	
 inline
 long charmap (const char *s1, const char *s2, int len)
 {
