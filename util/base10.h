@@ -34,8 +34,8 @@ class base10 {
 		bool    canorder(const char *s);			// returns true if there is a mapping from s to base10
 		long    reverse();							// reverses digits of base10 object
 		bool    isPalindrome();						// returns true if number is a palindrome
-		bool    isBouncy();							// returns true if number has digits that are both less and 
-													// greater than the one that precedes them
+		bool    isBouncy(bool &inc, bool &dec, bool &eq);		// returns true if number has digits that are both less and 
+		bool    isBouncy();							// greater than the one that precedes them
 		base10	digfac();							// returns sum of factorials of digits
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
@@ -45,21 +45,53 @@ class base10 {
 		vlong	*perm;								// used for setChoose/getNext
 };
 
+// inc is set to true if all digits are same
 inline
-bool    base10::isBouncy()							// returns true if number has digits that are both less and 
+bool    base10::isBouncy(bool &inc, bool &dec, bool &eq)							// returns true if number has digits that are both less and 
 {
-	if (digLen < 3) return false;					// no bouncy numbers possible until three digits
-	bool inc = false;
-	bool dec = false;
+	inc = false;
+	dec = false;
+	eq = false;
+	int neq = 1;
+	if (digLen < 2) {
+		eq = true;
+		return false;
+	}
+	if (digLen < 3)
+	{
+		inc = dig[1] < dig[0];					// no bouncy numbers possible until three digits
+		dec = dig[1] > dig[0];
+		eq = dig[1] == dig[0];
+		return false;
+	}
 	for (int i = 0; i < digLen - 1; i++)
 	{
 		int	delta = (dig[i+1] - dig[i]);
-		if (delta > 0) inc = true;
-		else if (delta < 0) dec = true;
+		if (delta < 0) { inc = true; }
+		else if (delta > 0) { dec = true;  }
+		else neq ++;
 	}
-	return (inc && dec);
+	if (neq == digLen) eq = true;
+	if (inc && dec)
+	{
+		inc = false;
+		dec = false;
+	}
+	return (!(inc || dec || eq));
+}
+
+
+inline
+bool    base10::isBouncy()							// returns true if number has digits that are both less and 
+{
+	bool inc = false;
+	bool dec = false;
+	bool eq = false;
+	return isBouncy(inc, dec, eq);
 }
 	
+
+
 inline
 long charmap (const char *s1, const char *s2, int len)
 {

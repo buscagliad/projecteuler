@@ -1,7 +1,5 @@
 
 
-#include <cstdio>
-#include "base10.h"
 
 int main()
 {

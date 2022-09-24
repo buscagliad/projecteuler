@@ -62,14 +62,6 @@ class factor {
 		long	orig_number;
 };
 
-inline	// returns n ^ p
-long xpower(long n, long p)
-{
-	long rv = 1;
-	while (p >= 1) { rv *= n; p--; }
-	return rv;
-}
-
 
 
 inline
