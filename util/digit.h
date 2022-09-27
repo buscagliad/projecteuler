@@ -90,6 +90,24 @@ bool	isPermutation(long a, long b)	// returns true if a and b are permuations
 	return true;		// if we get here - all digits matched
 }
 
+
+inline
+bool	repeatDigits(long a)	// returns true if a has a repeat digit
+{								// false indicates no repeats (0 - 9)
+	vlong_t	va = getDigits(a);
+
+	for (size_t i = 0; i < va.size() - 1; i++)
+	{
+		for (size_t j = i + 1; j < va.size(); j++)
+		{
+			if (va[j] == va[i]) {
+				return true;
+			}
+		}
+	}
+	return false;		// if we get here - no digits matched
+}
+
 inline
 bool	isPalindrome(vlong_t &v)
 {
