@@ -26,7 +26,7 @@ long  cprimes(string b)
 	do
 	{
 		if (isPrime(stol(b))){
-			printf("%ld\n", stol(b));
+			//printf("%ld\n", stol(b));
 			 rv++;
 		}
 	} while (next_permutation(start, end));
@@ -38,8 +38,9 @@ int	getplist(vector<long> &list, int n)	// get list of n-digit non-repeating dig
 	long minp = xpower(10, n-1);
 	long maxp = 10 * minp;
 	printf("n: %d  Min: %ld  Max: %ld\n", n, minp, maxp);
-	Prime	p(minp);
+	Prime	p(1l);
 	long	np = p.next();
+	while(np < minp) np = p.next();
 	do {
 		if (!repeatDigits(np))
 		{
@@ -66,15 +67,24 @@ long   eight()
 	return d;
 }
 
+typedef vector<long> vlt
+typedef vector<long>::iterator vil;
 
+long do2(vector<long> &a, vector<long> &b)
+{
+	int count = 0;
+	for (vil bi = b.begin(); gi != b.end(); bi++)
+	{
+		for (vil ai = 
 		
 			
 
 int main()
 {
-	
-	//printf("sets of 8 digits + 1 digit prime: %ld\n", eight());
+	long e = eight();
+	printf("sets of 8 digits + 1 digit prime: %ld\n", e);
 	vector<long> p7, p6, p5, p4, p3, p2;
+	vector<long> p1 = {2, 3, 5, 7};
 	getplist(p2, 2);
 	getplist(p3, 3);
 	getplist(p4, 4);
@@ -82,4 +92,27 @@ int main()
 	getplist(p6, 6);
 	getplist(p7, 7);
 }
+
+p7, p2
+p7, p1, p1
+p6, p3
+p6, p2, p1
+p6, p1, p1, p1
+p5, p4
+p5, p3. p1
+p5, p2, p2
+p5, p1. p1, p1, p1
+p4, p4, p1
+p4, p3, p2
+p4, p3, p1, p1
+p4, p2, p2, p1
+p4, p2, p1, p1, p1
+p3, p3, p3
+p3, p3, p2, p1
+p3, p3, p1, p1, p1
+p3, p2, p2, p2
+p3, p2, p2, p1, p1
+p3, p2, p1, p1, p1, p1
+p2, p2, p2, p2, p1
+p2, p2, p2, p1, p1, p1
 
