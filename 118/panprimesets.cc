@@ -67,17 +67,171 @@ long   eight()
 	return d;
 }
 
-typedef vector<long> vlt
+typedef vector<long> vlt;
 typedef vector<long>::iterator vil;
 
-long do2(vector<long> &a, vector<long> &b)
+	
+
+long do2(vlt &a, vlt &b, int bmult)
 {
 	int count = 0;
-	for (vil bi = b.begin(); gi != b.end(); bi++)
+	for (vil bi = b.begin(); bi != b.end(); bi++)
 	{
-		for (vil ai = 
+		for (vil ai = a.begin(); ai != a.end(); ai++)
+		{
+			if (isPandigital((*ai) + bmult * (*bi)))
+			{
+				//printf("Set: {%ld,%ld} is good!\n", *ai, *bi);
+				count++;
+			}
+			else
+			{
+				//printf("Set: {%ld,%ld} is BAD!\n", *ai, *bi);
+			}
+		}
+	}
+	return count;
+}
 		
-			
+long do3(vlt &a, vlt &b, long bmult, vlt &c, long cmult)
+{
+	int count = 0;
+	long num;
+	for (vil ci = c.begin(); ci != c.end(); ci++)
+	{
+		for (vil bi = b.begin(); bi != b.end(); bi++)
+		{
+			if (*bi <= *ci) continue;
+			for (vil ai = a.begin(); ai != a.end(); ai++)
+			{
+				if (*ai <= *bi) continue;
+				num = *ai * bmult * cmult + *bi * cmult + *ci;
+				if (isPandigital(num))
+				{
+					//printf("%ld - Set: {%ld,%ld,%ld} is GOOD!\n", num, *ai, *bi, *ci);
+					count++;
+				}
+				else
+				{
+					//printf("%ld - Set: {%ld,%ld,%ld} is BAD!\n", num, *ai, *bi, *ci);
+				}
+			}
+		}
+	}
+	return count;	
+}
+
+long do4(vlt &a, vlt &b, long bmult, vlt &c, long cmult, vlt &d, long dmult)
+{
+	int count = 0;
+	long num;
+	for (vil di = d.begin(); di != d.end(); di++)
+	{
+		for (vil ci = c.begin(); ci != c.end(); ci++)
+		{
+			if (*ci <= *di) continue;
+			for (vil bi = b.begin(); bi != b.end(); bi++)
+			{
+				if (*bi <= *ci) continue;
+				for (vil ai = a.begin(); ai != a.end(); ai++)
+				{
+					if (*ai <= *bi) continue;
+					num = *ai * bmult * cmult * dmult + *bi * cmult * dmult + *ci * dmult + *di;
+					if (isPandigital(num))
+					{
+						//printf("%ld - Set: {%ld,%ld,%ld,%ld} is GOOD!\n", num, *ai, *bi, *ci, *di);
+						count++;
+					}
+					else
+					{
+						//printf("%ld - Set: {%ld,%ld,%ld} is BAD!\n", num, *ai, *bi, *ci);
+					}
+				}
+			}
+		}
+	}
+	return count;	
+}
+
+long do5(vlt &a, vlt &b, long bmult, vlt &c, long cmult, vlt &d, long dmult, vlt &e, long emult)
+{
+	int count = 0;
+	long num;
+	for (vil ei = e.begin(); ei != e.end(); ei++)
+	{
+		for (vil di = d.begin(); di != d.end(); di++)
+		{
+			if (*di <= *ei) continue;
+			for (vil ci = c.begin(); ci != c.end(); ci++)
+			{
+				if (*ci <= *di) continue;
+				for (vil bi = b.begin(); bi != b.end(); bi++)
+				{
+					if (*bi <= *ci) continue;
+					for (vil ai = a.begin(); ai != a.end(); ai++)
+					{
+						if (*ai <= *bi) continue;
+						//num = *ai * bmult * cmult * dmult + *bi * cmult * dmult + *ci * dmult + *di;
+						num = ( ( (*ai * bmult + *bi) * cmult + *ci ) * dmult + *di) * emult + *ei;
+						if (isPandigital(num))
+						{
+							printf("%ld - Set: {%ld,%ld,%ld,%ld,%ld} is GOOD!\n", num, *ai, *bi, *ci, *di, *ei);
+							count++;
+						}
+						else
+						{
+							//printf("%ld - Set: {%ld,%ld,%ld} is BAD!\n", num, *ai, *bi, *ci);
+						}
+					}
+				}
+			}
+		}
+	}
+	return count;	
+}
+
+
+long do6(vlt &a, vlt &b, long bmult, vlt &c, long cmult, vlt &d, long dmult, vlt &e, long emult, vlt &f, long fmult)
+{
+	int count = 0;
+	long num;
+	for (vil fi = f.begin(); fi != f.end(); fi++)
+	{
+		for (vil ei = e.begin(); ei != e.end(); ei++)
+		{
+			if (*ei <= *fi) continue;
+			for (vil di = d.begin(); di != d.end(); di++)
+			{
+				if (*di <= *ei) continue;
+				for (vil ci = c.begin(); ci != c.end(); ci++)
+				{
+					if (*ci <= *di) continue;
+					for (vil bi = b.begin(); bi != b.end(); bi++)
+					{
+						if (*bi <= *ci) continue;
+						for (vil ai = a.begin(); ai != a.end(); ai++)
+						{
+							if (*ai <= *bi) continue;
+							//num = *ai * bmult * cmult * dmult + *bi * cmult * dmult + *ci * dmult + *di;
+							num = ( ( ( (*ai * bmult + *bi) * cmult + *ci ) * dmult + *di) * emult + *ei) * fmult + *fi;
+							if (isPandigital(num))
+							{
+								printf("%ld - Set: {%ld,%ld,%ld,%ld,%ld,%ld} is GOOD!\n", num, *ai, *bi, *ci, *di, *ei, *fi);
+								count++;
+							}
+							else
+							{
+								//printf("%ld - Set: {%ld,%ld,%ld} is BAD!\n", num, *ai, *bi, *ci);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return count;	
+}	
+
 
 int main()
 {
@@ -91,28 +245,33 @@ int main()
 	getplist(p5, 5);
 	getplist(p6, 6);
 	getplist(p7, 7);
+	e += do2(p7, p2, 10000000);
+	e += do2(p6, p3, 1000000);
+	e += do2(p5, p4, 100000);
+	
+	e += do3(p6, p2, 100, p1, 10);
+	e += do3(p7, p1, 10, p1, 10);
+	e += do3(p5, p3, 1000, p1, 10);
+	e += do3(p5, p2, 100, p2, 100);
+	e += do3(p4, p4, 10000, p1, 10);
+	e += do3(p4, p3, 1000, p2, 100);
+	e += do3(p3, p3, 1000, p3, 1000);
+	
+	e += do4(p6, p1, 10, p1, 10, p1, 10);
+	e += do4(p4, p3, 1000, p1, 10, p1, 10);
+	e += do4(p4, p2, 100, p2, 100, p1, 10);
+	e += do4(p3, p3, 1000, p2, 100, p1, 10);
+	e += do4(p3, p2, 100, p2, 100, p2, 100);
+	
+	e += do5(p5, p1, 10, p1, 10, p1, 10, p1, 10);
+	e += do5(p4, p2, 100, p1, 10, p1, 10, p1, 10);
+	e += do5(p3, p3, 1000, p1, 10, p1, 10, p1, 10);
+	e += do5(p3, p2, 100, p2, 100, p1, 10, p1, 10);
+	e += do5(p2, p2, 100, p2, 100, p2, 100, p1, 10);
+	
+	e += do6(p3, p2, 100, p1, 10, p1, 10, p1, 10, p1, 10);
+	e += do6(p2, p2, 100, p2, 100, p1, 10, p1, 10, p1, 10);
+	printf("Total number of prime sets: %ld\n", e);
 }
-
-p7, p2
-p7, p1, p1
-p6, p3
-p6, p2, p1
-p6, p1, p1, p1
-p5, p4
-p5, p3. p1
-p5, p2, p2
-p5, p1. p1, p1, p1
-p4, p4, p1
-p4, p3, p2
-p4, p3, p1, p1
-p4, p2, p2, p1
-p4, p2, p1, p1, p1
-p3, p3, p3
-p3, p3, p2, p1
-p3, p3, p1, p1, p1
-p3, p2, p2, p2
-p3, p2, p2, p1, p1
-p3, p2, p1, p1, p1, p1
-p2, p2, p2, p2, p1
-p2, p2, p2, p1, p1, p1
-
+/*
+*/
