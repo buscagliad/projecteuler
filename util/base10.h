@@ -37,6 +37,7 @@ class base10 {
 		bool    isBouncy(bool &inc, bool &dec, bool &eq);		// returns true if number has digits that are both less and 
 		bool    isBouncy();							// greater than the one that precedes them
 		base10	digfac();							// returns sum of factorials of digits
+		long    digsum();							// returns sum of the digits
 	private:
 		char	dig[21];							// dig[0] is ones digit, [1] tens,...
 		int		digLen;								// number of digits in dig
@@ -44,6 +45,14 @@ class base10 {
 		bool	valid;								// set to false if n <= 0
 		vlong	*perm;								// used for setChoose/getNext
 };
+
+inline
+long    base10::digsum()
+{
+	long sum = 0;
+	for (int i = 0; i < digLen; i++) sum += dig[i];
+	return sum;
+}
 
 // inc is set to true if all digits are same
 inline
