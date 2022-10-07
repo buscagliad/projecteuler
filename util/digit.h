@@ -118,7 +118,19 @@ bool	isPalindrome(vlong_t &v)
 	return true;
 }
 
+inline
 int gcd(int x, int y)
+{
+    while (y > 0)
+    {
+        x %= y;
+        std::swap(x, y);
+    }
+    return x;
+}
+
+inline
+long gcd(long x, long y)
 {
     while (y > 0)
     {

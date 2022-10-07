@@ -4,8 +4,11 @@
 #include <iostream>
 #include "factor.h"
 #include "vlong.h"
+#include "digit.h"
 
 using namespace std;
+
+
 
 class fract {
 	
@@ -50,15 +53,13 @@ class fract {
 inline
 fract::fract(long n, long d) : orig_numerator(n), orig_denominator(d)
 {
-	factor nf(n);
-	//printf("numerator: %ld     factors: ", n);
-	//nf.out();
-	factor nd(d);
-	//printf("numerator: %ld     factors: ", d);
-	//nd.out();
-	common_factors = nf.common(nd);
+	//factor nf(n);
+	//factor nd(d);
+	//common_factors = nf.common(nd);
 	//printf("common factors: "); vl_out(common_factors);
-	long  common_factor = product(common_factors);
+	//long  common_factor = product(common_factors);
+	long  common_factor = gcd(orig_numerator, orig_denominator);
+	//common_factor = 1;
 	red_numerator = orig_numerator / common_factor;
 	red_denominator = orig_denominator / common_factor;
 }
@@ -190,6 +191,15 @@ fract operator+(const fract& a, const fract& b)
 	
 	// need to find gcd between a denominator and b denominator
 	// then create return franction
+	//
+	//  a.n      b.n      a.n * b.d + a.d * b.n
+	//  ---   +  ---   =  ---------------------
+	//  a.d      b.d          a.d * b.d
+	//
+	 // find gcd of cb+ad and bd, divide and return
+	 
+	 return fract(a.red_numerator * b.red_denominator + a.red_denominator * b.red_numerator, 
+					a.red_denominator * b. red_denominator);
 
 	return a;
 }
