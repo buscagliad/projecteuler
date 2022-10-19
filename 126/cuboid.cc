@@ -1,5 +1,6 @@
 
 #include <cstdio>
+#include <cmath>
 #include <cstring>
 //
 // 	Step 1:  2 * (l*w + w*h + h*l) = L1
@@ -28,119 +29,105 @@
 //  Step 3 = 78 (+32)
 //  Step 4 = 118 (+40)
 
-long    L(long l, long w, long h, long &k, long &last)
+int    L(int l, int w, int h, int k, int &last)
 {
-	long lwh = l * w * h;
 	if (k == 0)
 	{
+		int lwh = l * w * h;
 		last = lwh;
-		k = 1;
 		return last;
 	}
+	int layer1 = 2 * (l*w + w*h + h*l);
 	if (k == 1)
 	{
-		last = 2 * (l*w + w*h + h*l);
-		k++;
+		last = layer1;
 		return last;
 	}
-	//      ones        
-	long ones = 4 * (k - 1) * (k - 1);
-	long hw = (2 + 4 * (k - 1)) * h * w;
-	long hl = (2 + 4 * (k - 1)) * h * l;
-	long lw = 2 * l * w;
+	//      ones       
+	//cubes = 2(ab+ac+bc) + 4(n-1)(x+y+z) + 4(n-1)(n-2) 
+	int ones = 4 * (k - 1) * (k - 2);
+	int hpwpl = 4 * (k - 1) * (h + l + w);
 	
-	last =  ones + hw + hl + lw;
-	//printf("k: %d  ones: %d  hw: %d  hl: %d  lw: %d  last: %d\n", k, ones, hw, hl, lw, last);
-	k++;
+	last =  ones + hpwpl + layer1;
+	if ((last == 130) || (last == 154)) printf("k: %d  ones: %d  hpwpl: %d   lwh: %d last: %d\n", k, ones, hpwpl, layer1, last);
 	return last;
 }
 #include <map>
 #include <vector>
 
-#define CSIZE 500
-#define STARTN 1
-#define LARGE 10000
-long C[CSIZE];
-//std::map<long, long> rec;
-typedef struct {
-	long	n;
-	long count;
-} cube_t;
-
-std::vector<cube_t> rec;
-void add(long n)
-{
-	C[n]++; return;
-	if (n < STARTN) return;
-	for (std::vector<cube_t>::iterator it = rec.begin(); it != rec.end(); it++)
-	{
-		if (it->n == n) 
-		{
-			it->count++;
-			return;
-		}
-	}
-	cube_t r = {n, 1};
-	rec.push_back(r);
-}
+#define CSIZE 1000000
+int C[CSIZE];
 
 void init()
 {
-	memset(C, 0, CSIZE*sizeof(long));
+	memset(C, 0, CSIZE*sizeof(int));
 }
 
-
-
-void out()
+void out(int x)
 {
-	long ix[] = {22, 46, 78, 118, 154};
-	for (long i = 0; i < 5; i++)
-	    printf("C[%ld] = %ld\n", ix[i], C[ix[i]]);
-
-	for (long  i = 0; i < CSIZE; i++)
+	for (int  i = 0; i < CSIZE; i++)
 	{
-		if (C[i]) printf("C[%ld] = %ld\n", i, C[i]);
+		if (C[i] == x) {
+			printf("C[%d] = %d\n", i, C[i]);
+			return;
+		}
 	}
 }
+
+int croot(int x)
+{
+	int y = log(x) / 3 + 2;
+	return y;
+}
+
 int	xmain()
 {
-	long	l, w, h, last;
+	int	l, w, h, last;
 	init();
-	for (h = 1; h <= CSIZE; h++)
+	//int hmax = croot(CSIZE);
+	//int wmax = sqrt(CSIZE) + 2;
+	//int lmax = CSIZE;
+	for (h = 1; L(h, h, h, 1, last) <= CSIZE; h++)
 	{
-		for (w = h; w < CSIZE; w++)
+		for (w = h; L(w, w, h, 1, last) <= CSIZE; w++)
 		{
-			for (l = w; l < CSIZE; l++)
+			for (l = w; L(l, w, h, 1, last) <= CSIZE; l++)
 			{
-				long k = 0;
-				long getL = L(l, w, h, k, last);
+				int k = 0;
+				int getL = L(l, w, h, k, last);
 				
 				while (getL < CSIZE)
 				{
+					k++;
 					getL = L(l, w, h, k, last);
-					if (getL == 22)	printf("getL: %ld   h: %ld  w: %ld  l: %ld\n", getL, h, w, l);
-					if (getL == 46)	printf("getL: %ld   h: %ld  w: %ld  l: %ld\n", getL, h, w, l);
+					if (getL == 130)	printf("getL: %d   h: %d  w: %d  l: %d\n", getL, h, w, l);
+					if (getL == 154)	printf("getL: %d   h: %d  w: %d  l: %d\n", getL, h, w, l);
+					//if (getL == 46)	printf("getL: %d   h: %d  w: %d  l: %d\n", getL, h, w, l);
 					//add(getL);
 					if (getL < CSIZE) C[getL]++;
 				}
-				printf("l: %ld  w: %ld  h: %ld  getL: %ld\n", l, w, h, getL);
+				//printf("l: %d  w: %d  h: %d  getL: %d\n", l, w, h, getL);
 			}
 		}
 	}
-	out();
+	int ix[] = {2, 4, 5, 8, 10};
+	for (int i = 0; i < 5; i++)
+	    out(ix[i]);
+	    
+	out(1000);
 	return 0;
 }
 			
 int main()
 {
-	long k = 0, last;
-	long getL;
-	#define J(l,w,h,a)	getL = L(l, w, h, k, last); printf("k: %ld  L: %ld  getKL %ld  (a = %d) %s\n", k, last, getL, a, (a == getL) ? "GOOD": "FAIL");
+	int k = 0, last;
+	int getL;
+	#define J(l,w,h,a)	getL = L(l, w, h, k++, last); printf("k: %d  L: %d  getKL %d  (a = %d) %s\n", k, last, getL, a, (a == getL) ? "GOOD": "FAIL");
 	J(3, 2, 1, 6);
 	J(3, 2, 1, 22);
 	J(3, 2, 1, 46);
 	J(3, 2, 1, 78);
 	J(3, 2, 1, 118);
-	xmain();
+	return xmain();
 }	
-				
+
