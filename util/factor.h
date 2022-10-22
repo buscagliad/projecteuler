@@ -39,6 +39,7 @@ class factor {
 		void	merge(long n);  // adds new factors 
 		void	merge(factor &f);  // adds new factors 
 		long	product();		// returns product of factors
+		long    rad();          // returns product of unique factors
 		void	out();	// print factors
 		bool	isPrime() {if (have_merged) return false;
 							if ( (facts.size() == 1) && facts[0].dup == 1) return true;
@@ -284,7 +285,18 @@ void	factor::merge(factor &f)
 	for (size_t i = 0; i < f.facts.size(); i++)
 		add_merge(f.facts[i].f, f.facts[i].dup);
 }
-		
+	
+			
+inline
+long	factor::rad()		// returns product of unique factors
+{
+	long prod = 1;
+	for (size_t i = 0; i < facts.size(); i++)
+			prod *= facts[i].f;
+
+	return prod;
+}
+	
 inline
 long	factor::product()		// returns product of factors
 {
