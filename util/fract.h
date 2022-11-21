@@ -2,6 +2,7 @@
 #define __FRACT_H__
 
 #include <iostream>
+#include <string>
 #include "factor.h"
 #include "vlong.h"
 #include "digit.h"
@@ -34,6 +35,7 @@ class fract {
 		long	original_numerator(){return orig_numerator;};
 		long	original_denominator(){return orig_denominator;};
 		void	out(bool with_original = false);
+		string  to_str();
 
 		fract operator-() const;
 		fract operator*=(const fract&);
@@ -101,6 +103,13 @@ void	fract::out(bool with_original)
 {
 	if (with_original) printf("%ld / %ld  ", orig_numerator, orig_denominator);
 	printf("%ld / %ld  ", red_numerator, red_denominator);
+}
+
+string	fract::to_str()
+{
+	string ts = to_string(red_numerator);
+	if (red_denominator > 1) ts += " / " + to_string(red_denominator);
+	return ts;
 }
 
 //
