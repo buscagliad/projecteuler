@@ -40,6 +40,8 @@ class factor {
 		void	merge(factor &f);  // adds new factors 
 		long	product();		// returns product of factors
 		long    rad();          // returns product of unique factors
+		long    value() {return orig_number;};		// returns 'n'
+		long    makesq();		// returns value:: value*n is a perfect square
 		void	out();	// print factors
 		bool	isPrime() {if (have_merged) return false;
 							if ( (facts.size() == 1) && facts[0].dup == 1) return true;
@@ -87,7 +89,8 @@ vlong_t factor::common(factor &s)  // returns common factors for this and s
 }
 
 inline
-vlong_t factor::plist()  // returns list of primes that are factors for this and s
+vlong_t factor::plist()  // returns list of primes that are factors for this with duplicates, such that
+						// rv.product() == n;
 {
 	vlong_t  	rv;
 
@@ -116,6 +119,20 @@ long   factor::num()
 	return nf;
 }
 
+//
+// returns the product of all 'odd' multiplicity factors fo n,
+// which means that n * nf is a perfect square
+inline
+long   factor::makesq()
+{
+	long nf = 1;
+	for (size_t i = 0; i < facts.size(); i++)
+	{
+		if (facts[i].dup % 2 == 1)
+			nf *= facts[i].f;
+	}
+	return nf;
+}
 //
 // returns totient of n (the number of values between 1 and n (indclusive)
 // that have a common factor with 'n'
