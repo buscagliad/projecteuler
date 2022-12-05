@@ -14,57 +14,6 @@ x + y, x − y, x + z, x − z, y + z, y − z are all perfect squares.
 
 #define SQR(x)  ((x)*(x))
 
-long generatePythTriple(long  m, long  n, 
-						long &a, long &b, long &c)
-{
-	long n2 = n*n;
-	long m2 = m*m;
-	a = m2 - n2;
-	if (a % 2 == 0)
-	{
-		b = a;
-		a = 2 * m * n;
-	}
-	else
-	    b = 2 * m * n;
-	c = n2 + m2;
-	if (a > b) std::swap(a, b);
-	return a + b + c;
-}
-
-#define MAX_P 1000l
-
-typedef struct 
-{
-	long a;
-	long b;
-} sqcol;
-
-//
-// look for a matching pair::
-//        there is some 'a' that matches y;
-//        then need to look at x - b and x + b
-//        to see if they are both squares
-
-vector<sqcol> vs;
-typedef vector<sqcol>::iterator sqit;
-
-long add(long x, long y)
-{
-	sqcol s={x, y};
-	for (sqit it = vs.begin(); it != vs.end(); it++)
-	{
-		if (it->a == y)
-		{
-			if (isSquare(x + it->b) && isSquare(x - it->b))
-			{
-				return x + y + it->b;
-			}
-		}
-	}
-	vs.push_back(s);
-	return 0;
-}
 
 bool check(long x, long y)
 {
@@ -78,153 +27,6 @@ bool check(long x, long y, long z)
 	    isSquare(x+z) && isSquare(x-z) &&
 	    isSquare(z+y) && isSquare(y-z) ) return true;
 	return false;
-}
-
-void generateXY(long m, long n, long k, long &x, long &y)
-{
-	long D, E, F;	// initial pythagorean triple
-	generatePythTriple(m, n, D, E, F);  // D < E < F and D^2 + E^2 = F^2
-	while (k % 4 == 0) k /= 4;
-	D *= k;
-	E *= k;
-	F *= k;
-	if (D % 2 == 0)
-	{
-		x = 2 * F;
-		y = 2 * E;
-	}
-	else
-	{
-		x = 2 * F;
-		y = 2 * D;
-	}
-	if (check(x,y)) printf("GOOD  x: %9ld  y: %9ld  k: %3ld\n", x, y, k);   
-	else printf("BAD   x: %9ld  y: %9ld  k: %3ld\n", x, y, k);   
-
-}
-
-void test()
-{
-	long m, n, k, x, y;
-	for (n = 1; n < 100; n++)
-	{
-		for ( m = n + 1; m < MAX_P; m+=2) // m > n
-		{
-			if (gcd(m, n) != 1) continue;
-			for ( long k1 = 1; k1 < 10; k1+=2)
-			{
-				k = k1 * k1;
-				generateXY(m, n, k, x, y);
-				if (check(x, y)) 
-					printf("   check\n");
-				else 	
-					printf("   FAIL\n");
-			}
-		}
-	}
-}
-			
-// returns x+y+z on success, 0 otherwise
-//
-long generateSOL(long mi, long ni, long ki, long &x, long &y, long &z)
-{
-	generateXY(mi, ni, ki, y, z);	// x < y < z
-	
-	printf("m: %ld  n: %ld    y: %ld    z: %ld\n", mi, ni, y, z);
-	fflush(stdout);
-	long yn;
-	for (long n = ni; n < MAX_P; n++)
-	{
-		for (long m = n + 1; m < MAX_P; m+=2) // m > n
-		{
-			if (gcd(m, n) != 1) continue;
-			for (long k = ki; k < 1000; k++)
-			{
-				generateXY(m, n, k, x, yn);
-				if (yn > y) break;
-				printf("--> m: %ld  n: %ld  k: %ld   x: %ld    yn: %ld\n", m, n, k, x, yn);
-	//fflush(stdout);
-				if (yn == y)
-				{
-					if (check(x, y, z)) return x+y+z;
-					break;
-				}
-			}
-		}
-	}
-	return 0;
-}
-
-// x > y > z > 0
-//
-// x + y = a^2
-// x - y = b^2
-// x + z = c^2
-// x - z = d^2
-// y + z = e^2
-// y - z = f^2
-//
-// clearly 
-//         a > b > c > d > e > f
-
-// for f = 1 to !!!
-//     for e = f+1 to !!!
-//         for d = e+1 to !!!//        for d = e+1 to !!!
-//            for c = d+1 to !!!
-//                for b = c+1 to !!!
-//                    for a = b+1 to !!!
-//						   a2 = a*a
-//						   b2 = b*b
-//						   c2 = c*c
-//						   d2 = d*d
-//						   e2 = e*e
-//						   f2 = f*f
-//							if ( (a2 + b2 == c2 + d2) &&
-//								 (a2 - b2 == e2 + f2) &&
-//								 (c2 - d2 == e2 - f2) )
-//								x = (a2 + b2) / 2
-//								y = (e2 + f2) / 2
-//								z = (e2 - f2) / 2
-//							    print - return x, y, z
-//
-#define MAX 1000
-void	getxyz(long &x, long &y, long &z)
-{
-	for (int f = 1; f < MAX; f++)
-	{
-		int f2 = f * f;
-		for (int e = f+2; e < MAX; e++)
-		{
-			int e2 = e * e;
-			for (int d = e+2; d < MAX; d++)
-			{
-				int d2 = d * d;
-				for (int c = d+2; c < MAX; c++)
-				{
-					int c2 = c * c;
-					for (int b = c+2; b < MAX; b++)
-					{
-						int b2 = b * b;
-						for (int a = b+2; a < MAX; a++)
-						{
-							int a2 = a * a;
-
-							if ( (a2 + b2) == (c2 + d2) &&
-								 (a2 - b2) == (e2 + f2) &&
-								 (c2 - d2) == (e2 - f2) )
-							{
-								x = (a2 + b2) / 2;
-								y = (e2 + f2) / 2;
-								z = (e2 - f2) / 2;
-								long sum = x + y + z;
-								printf("x: %ld  y: %ld  z: %ld  sum: %ld\n", x, y, z, sum);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 }
 
 typedef struct {
@@ -249,9 +51,28 @@ int add(long a, long b, vector<pythtrip_t> &p)
 	}
 	return p.size();
 }
-
+// NOTE:  B and C are such that B.a^2 + B.b^2 = B.c^2 and
+//                              C.a^2 + C.b^2 = C.c^2
+//  with B.c == C.c
+//
+// x y and z are generated from the pythagorean triples in p, all of whom have the same 
+//  hypotenuse.  For each distinct PT B and C, we can compute x, y and z as follows:
+//       e^2 = B.b^2 - C.b^2
+//       if e is a perfect square, then we have:
+//				x = (B.c^2 + e^2 ) / 2;
+//				y = (C.b^2 + B.a^2) / 2;
+//              z = (C.b^2 - B.a^2) / 2;
+//
+//    and x + y = 1/2 * (B.c^2 + e^2 + C.b^2 + B.a^2) 
+//              = 1/2 * (B.c^2 + B.b^2 + B.a^2)
+//              = 1/2 * (B.c^2 +     B.c^2)
+//              = B.c^2 (which is a perfect square)
+//    The rest of the calculations follow, so that x-y, y-z, x-z, x+z and y+z are all
+//              perfect squares.
+//
 bool	getxyz(vector<pythtrip_t> &p, long &x, long &y, long &z)
 {
+	bool rv = false;
 	for (size_t i = 0; i < p.size(); i++)
 	{
 		for (size_t j = i+1; j < p.size(); j++)
@@ -267,14 +88,48 @@ bool	getxyz(vector<pythtrip_t> &p, long &x, long &y, long &z)
 				x = (SQR(B.c) + SQR(e)  ) / 2;
 				y = (SQR(C.b) + SQR(B.a)) / 2;
 				z = (SQR(C.b) - SQR(B.a)) / 2;
-				printf("x: %ld  y: %ld  z: %ld  -- sum is %ld\n", x, y, z, x+y+z);
+				if ( (x > y && y > z) && check(x, y, z))
+				{
+					printf("B.a = %ld   B.b = %ld   B.c = %ld  \n", B.a, B.b, B.c);
+					printf("C.a = %ld   C.b = %ld   C.c = %ld  \n", C.a, C.b, C.c);
+					printf("x: %ld  y: %ld  z: %ld  -- sum is %ld\n", x, y, z, x+y+z);
+					rv = true;
+				}
 			}
 		}
 	}
-	return 0;
+	return rv;
 }
 
-size_t	getabs(long hyp, vector<pythtrip_t> &p)
+// getabs will, given an hypotenuse, produce all of the triples with
+// that have that hypotenuse
+//
+// if there are more than 1, we have:
+//    s^2 + r^2 = hyp^2
+//    q^2 + q^2 = hyp^2
+//
+//    Note that if: (b, f, hyp) and (
+//      x + y = a^2  (1)
+//      x + z = b^2  (2)
+//      y + z = c^2  (3)
+//      x - z = d^2  (4)
+//      x - y = e^2  (5)
+//      y - z = f^2  (6)
+//
+//    Adding equations (2) and (6) yield
+//      x + y = b^2 + f^2 = a^2
+//    Adding equations (3) and (4) yield
+//      x + y = c^2 + d^2 = a^2
+//
+//    Thus if a is our hyp in the algorithm, then the two solutions (b,f,a) and (c,d,a)
+//    yield two pyth triples with the same hypotenuse a.  We only need to verify that
+//    x - y is a perfect square (e^2).  But computing (2) - (3) we have
+//      x - y = b^2 - c^2, so if this is a perfect square, we have found our x, y and z:
+//    (see getxyz above for explanation)
+// https://www.quora.com/Trigonometry-mathematics-How-can-I-get-a-Pythagorean-triple-from-a-given-hypotenuse-if-it-exists
+//       that will produce all pyth triples for a given hypotenuse
+
+bool	getabs(long hyp, vector<pythtrip_t> &p)
 {
 // hyp:: An integer hypotenuse
 // Storing (a, b) s.t., a^2+b^2 = c^2
@@ -304,51 +159,23 @@ size_t	getabs(long hyp, vector<pythtrip_t> &p)
 			}
 		}
 	}
-	
+	#ifdef DO_DEBUG
 	for (size_t i = 0; i < p.size(); i++)
 	{
 		printf("a: %ld   b: %ld  c: %ld (%ld)\n", p[i].a, p[i].b, 
 		(long)sqrt(p[i].a*p[i].a + p[i].b*p[i].b), hyp);
 	}
-	return 0;
+	#endif
+	long x, y, z;
+	return getxyz(p, x, y, z);
 }
 
 
 int main()
 {
-	vector<long> a;
-	vector<long> b;
 	vector<pythtrip_t> p;
-	getabs(2210, p);
-	return 1;
-	long x, y, z;
-	getxyz(x, y, z);
-	return 1;
-	//test();
-	//return 0;
-	if (check(2843458,2040642,1761858))
-		printf("GOOD\n");
-	fflush(stdout);
-	//return 0;
-	for (long n = 1; n <= MAX_P; n++)
-	{
-		for (long m = n + 1; m <= MAX_P; m+=2) // m > n
-		{
-			if (gcd(m, n) != 1) continue;
-			for (long k = 1; k < 1000; k++)
-			{
-				long res = generateSOL(m, n, k, x, y, z);  
-				//printf("m: %ld  n: %ld  k: %ld  x: %ld  y: %ld  z: %ld  res: %ld\n",
-				//	m, n, k, x, y, z, res);
-				if (res > 0) 
-				{
-					printf("Smallest x+y+z is %ld + %ld + %ld = %ld\n", x, y, z, res);
-					return 0;
-				}
-			}
-		}
-	}
-
-	printf("Exitting\n");
+	for (long c = 2; c <= 2210; c++) 
+	    if (getabs(c, p)) break;
+	return 0;
 }
 
