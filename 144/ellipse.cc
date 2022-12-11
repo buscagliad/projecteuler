@@ -25,54 +25,67 @@ How many times does the beam hit the internal surface of the white cell before e
 #include <cmath>
 #include <cstdio>
 
-#define A(m) sqrt(25.0 * m * m + 100)
-#define Phi(m) atan2(2.0, -m)
-#define L(x,y,m) ( m * x - y)
+
+#define Am(m) sqrt(25.0 * m * m + 100)
+#define Phi(m) atan(2/m)
+#define Lm(x,y,m) ( y - m * x)
 
 #define SIGN(x) ((x) < 0 ? -1 : (x) > 0 ? 1 : 0)
+#define MINV 0.001
 
 bool getNext(double x, double y, double m, double &xn, double &yn, double &mn)
 {
-	// we will parameterize the ellipse 4x^2 + y^2 = 100
-	// by making the following transformation to t
-	// 	x = 5.0 * sin(t)    (1)
-	//	y = 10.0 * cos(t)   (2)
-	//  NOTE: these x,y pairs satisfy the ellipse for all t, and in particular
-	//  for -pi < t <= pi, the entire ellipse is generated.
-	//  assume tn is such that:
-	//     xn = 5.0 sin(tn) and yn = 10 cos(tn)  (3)
+	//  Goal is to take in x, y, and m and  compute (xn, yn) and mn
+	//  and compute the 'next' point after reflection
+	//    x <- xn, y <- yn
+	//    xn and yn will be newly computed
+	//
 	//  we know that m (the slope of the line segment from (x,y) to (xn,yn) is
 	//  given by:
 	//              yn - y
-	//              ------ = m           (4)
+	//              ------ = m           (1)
 	//              xn - x
 	//
-	//  which yields   10 cos(tn) - y
-	//                 -------------- = m     (5)
-	//                 5 sin(tn) - x
+	//  which yields the line equation involving xn, yn:
 	//
-	//  simplifying (5) yields:
-	//          10 cos(tn) - 5 m sin(tn) = y - m * x  (6)
+	//           yn = m(xn - x) + y      (2)
 	//
-	//    NOTE:  a cos t + b sin t = A sin (t + w)   (7)
-	//        where A = sqrt(a^2 + b^2)
-	//              w = atan2(a, b)
-	//  Using (7) we can simplify (6) as
+	//  but, xn, yn must satisfy:   
 	//
-	//       A sin (tn + w) = y - m * x       (8)
+	//           4xn^2 + yn^2 = 100        (3)
 	//
-	//  Solving (8) for tn yields:
-	//                   y - m * x
-	//       tn = arcsin ----------  -  w   (9)
-    //                       A
-    //
-    //  where 
-    //        A = sqrt(100 + 25 * m * m)
-    //        w = atan2(10, -5 * m)
+	//  Plugging (2) into (3) yields a quadratic in xn
 	//
-	//   We use (9) to compute tn,
-	//   then (1) and (2) to compute xn and yn
 	//
+	//       4xn^2 + {m(xn - x) + y}^2 - 100 = 0  (4)
+	//
+	//  Collecting like terms yields:
+	//
+	//      (4 + m^2) * xn^2 + 2m *(y - x*m) * xn +
+	//                 y^2 - 2*y*x*m +m^2*x^2  - 100 = 0
+	//
+	//       a xn^2 + b xn + c = 0
+	//
+	//             -b +/- sqrt(b^2 - 4*a*c)
+	//       xn = --------------------------
+	//                   2 a
+	//
+	//   We choose the sign + or - to assure xn != x
+	//
+	
+	double a = 4 + m * m;
+	double b = 2 * m * (y  - x * m);
+	double c = y * y - 2 * y * x * m + m * m * x * x - 100;
+	
+	double rad = sqrt(b * b - 4 * a * c);
+	double x1 = (-b - rad) / (2 * a);
+	double x2 = (-b + rad) / (2 * a);
+	if (fabs(x1 - x) > fabs(x2 - x) ) xn = x1; else xn = x2;
+	yn = (xn - x) * m + y;
+
+	printf("x: %.6f  y: %.6f   m: %.6f  xn: %.6f  yn: %.6f \n", x, y, m, xn, yn);
+	
+	
 	//   Now we need to compute mn, the slope of the reflective line segment
 	//   from (xn, yn) to the next point on the ellipse.
 	//
@@ -90,66 +103,49 @@ bool getNext(double x, double y, double m, double &xn, double &yn, double &mn)
 	//       tan(alpha) = -----------    (11)
 	//                    1 + m1 * m2
 	//   let m2 = m, m1 = mp, then
-	//                      m - mp
-	//       tan(alpha) = -----------     (12)
-	//                    1 + m * mp
+	//                          mp - m
+	//       alpha = arctan  -----------     (12)
+	//                        1 + m * mp
 	//
 	//   let m1 = m, m2 = mn, then we know these two lines are two * alpha 
 	//   apart, which yields:
 	//
-	//                          m - mn
+	//                          mn - m
 	//       tan(2 * alpha) = -----------   (13)
 	//                         1 + m * mn
 	//
 	//   Solving for mn in (13) yields:
 	//
-	//              m - tan(2 * alpha)
+	//              m + tan(2 * alpha)
 	//       mn = ----------------------     (14)
-    //            m * tan(2 * alpha) + 1	
+    //            1 - m * tan(2 * alpha)	
 	//
-	//                            2 tan(alpha)
-	//         tan(2 * alpha) = ----------------     (15)
-	//                          1 - tan(alpha)^2
-	//
-	//    So, we first compute tan(alpha) via (12)
-	//    Then plug in tan(alpha) into 15 to arrive at tan(2*alpha)
-	//    The take tan(2 * alpha) and plug it into (14) to yield mn.
-	//   
-
-	double tn = asin(L(x,y,m)/A(m)) - Phi(m);   // (9)
-	if ( (m < 0) && (fabs(tn) <= M_PI/2) ) tn += M_PI;
-	if ( (m > 0) && (fabs(tn) >= M_PI/2) ) tn += M_PI;
-	xn = 5.0 * sin(tn);							// (1)
-	yn = 10.0 * cos(tn);						// (2)
-	
-	// check xn, yn slope, if it doesn't match, then xn -> -xn   yn -> -yn
+	//    So, we first compute alpha via (12)
+	//    Then plug in alpha into 14 to yield mn.
+	//  	
 	
 
-	double mp = yn / xn / 4.0;					// (10)
-	//                      m - mp
-	//       tan(alpha) = -----------     (12)
-	//                    1 + m * mp
-	double talpha = (m - mp) / (1 + m * mp);
-	//                            2 tan(alpha)
-	//         tan(2 * alpha) = ----------------     (15)
-	//                          1 - tan(alpha)^2
-	double t2alpha = 2 * talpha / (1 - talpha * talpha);
-	//
-	//              m - tan(2 * alpha)
-	//       mn = ----------------------     (14)
-    //            m * tan(2 * alpha) + 1	
-	mn = (m - t2alpha) / (m * t2alpha + 1);
+	double mp = yn / (4.0 * xn);
+	double alpha = atan2((mp - m) , (1 + m * mp));
+	double t2alpha = tan(2*alpha);
 
-	printf("L: %.6f  A: %.6f  Phi: %.6f  t: %.6f  (%.6f,%.6f) @ %.6f   -->   (%.6f,%.6f) @ %.6f\n",
-		L(x,y,m), A(m), Phi(m), tn, x, y, m, xn, yn, mn);
+	mn = (m + t2alpha) / (1 - m * t2alpha);
+
+	printf("     mp: %.6f  alpha: %.6f  t2alpha: %.6f  mn: %.6f\n",
+		mp, alpha, t2alpha, mn);
 	return true;
 }
 
 int main()
 {
-	double xn, yn, mn;
+	double xn , yn, mn;
 	getNext(0, 10.1, -19.7/1.4, xn, yn, mn);
-	getNext(xn, yn, mn, xn, yn, mn);
-	getNext(xn, yn, mn, xn, yn, mn);
+	int reflections = 0;
+	while (xn < -0.01 || xn > 0.01 || yn < 0.0)
+	{
+		reflections++;
+		getNext(xn, yn, mn, xn, yn, mn);
+	}
+	printf("Number of reflections: %d\n", reflections);
 
 }
