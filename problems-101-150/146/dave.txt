@@ -1,0 +1,13 @@
+Found:  10
+Found:  315410
+Found:  927070
+Found:  2525870
+Found:  8146100
+Found:  16755190
+Found:  39313460
+Found:  97387280
+Found:  119571820
+Found:  121288430
+Found:  130116970
+Found:  139985660
+Sum is:  676333270

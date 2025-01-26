@@ -1,0 +1,8 @@
+{(4, 4), (2, 4), (4, 0), (0, 4), (6, 0), (6, 2), (0, 0), (3, 1), (1, 1), (2, 0), (6, 4), (4, 2), (5, 1), (0, 2), (3, 3), (2, 2), (5, 3), (1, 3)}
+18
+HORIZ:  1   VERT:  1   counthv:  1    countsland:  1
+HORIZ:  1   VERT:  2   counthv:  3    countsland:  3
+HORIZ:  2   VERT:  1   counthv:  3    countsland:  3
+HORIZ:  2   VERT:  2   counthv:  9    countsland:  9
+HORIZ:  3   VERT:  1   counthv:  6    countsland:  6
+HORIZ:  3   VERT:  2   counthv:  18    countsland:  18

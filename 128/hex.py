@@ -97,10 +97,13 @@ def createGrid(n):
 		pt = None	# previous tile
 		for i in range(n):
 			nt = Tile()
-			tt.northeast = nt
-			if not tt.north is None:  tt.north.southwest = nt
-			nt.southwest = tt
-			nt.southeast = tt.north
+			tt.southeast = nt
+			if not pt is None:  
+				tt.northeast = pt
+				pt.southwest = tt
+				
+			nt.northwest = tt
+			tt.southeast = nt
 
 			if pt is None:
 				upperMostCurrentColTile = nt
@@ -134,7 +137,7 @@ def renumber(maxnum):
 		tile = tile.north
 		endtile = tile
 		tilenumber += 1
-		print("Tile number changed from ", tile.tile, " to ", tilenumber)
+		#print("Tile number changed from ", tile.tile, " to ", tilenumber)
 		tile.tile = tilenumber
 		circleList.append(tile)
 		# (sw, s, se, ne, n, nw)
@@ -166,23 +169,23 @@ def renumber(maxnum):
 			tile.tile = tilenumber
 			circleList.append(tile)
 		for j in range(sequence):
-			tilenumber += 1
 			tile = tile.northwest
 			if  not endtile == tile:
+				tilenumber += 1
 				tile.tile = tilenumber
 				circleList.append(tile)
 
 	
 	
-createGrid(4)
-centerTile.display()
-centerTile.tile = 3023
-renumber(4
-)
-centerTile.display()
-circleList[0].display()
+createGrid(4000)
+M=1600000
+renumber(M)
 print ("cl size: ", len(circleList))
+n = 0
 for t in circleList:
 	c = checkNeighbors(t)
+	if t.tile > M: break
 	if c == 3:
-		print (t.tile, c)
+		n += 1
+		#circleList[t.tile-1].display()
+		print ("PD(",n,") = ",t.tile)

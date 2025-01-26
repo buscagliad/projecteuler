@@ -1,0 +1,8 @@
+Digits:  2   num rev:  20
+Digits:  3   num rev:  100
+Digits:  4   num rev:  600
+Digits:  5   num rev:  0
+Digits:  6   num rev:  18000
+Digits:  7   num rev:  50000
+Digits:  8   num rev:  540000
+Number of reversible numbers less than 1,000,000,000 is:  608720
