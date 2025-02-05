@@ -2,7 +2,18 @@ from itertools import combinations
 import math
 
 MAXNUM = 80
-primes = [7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79]
+primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79]
+
+def pfacs(n):
+    facs = []
+    for p in primes:
+        while n >= p and n % p == 0:
+            facs.append(p)
+            n //= p
+    return facs
+
+for n in range(2, 81):
+    print(n, pfacs(n))
 
 def prod(t):
     pr = 1
@@ -12,9 +23,12 @@ def prod(t):
 
 def pout(p, sumsq, nums):
     print("Prime: ", p, "  sumsq: ", sumsq, "  nums: ", end = "")
+    s =  0
     for l in nums:
+        n = int(math.sqrt(l))*p
         print(int(math.sqrt(l))*p, " ", end = "")
-    print()
+        s += 1 / n / n
+    print(s)
     
 
 def findrecips(p, MAXNUM):
@@ -46,7 +60,7 @@ def findrecips(p, MAXNUM):
                     # print(math.sqrt(d), " ", end = "")
                 # print()
 
-for p in primes:
+for p in primes[3:]:
     g = findrecips(p, MAXNUM)
     # for a in g:
         # print(a)
