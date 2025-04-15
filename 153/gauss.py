@@ -7,59 +7,24 @@ import time
 debug = False
 
 def complexGaussSum( N ):
-    global debug
-    debug = False
-    cgcnt = 0
-    rootN = int(math.sqrt(N) + 0.000001) 
-    A = rootN
-    cgsum = (N - A) * ( N + A + 3) // 2
-    #rootN = N // 2
-    if debug: print("******* Gauss Sum: ", N, rootN)
-    print("a,b,gcd,s,nn")
-    for a in range(1, rootN+1):
-        a2 = a * a
-        for b in range(1, a+1):  ## a >= b
-            s = a2 + b * b
-            gcd = np.gcd(a, b)
-            nn = s // gcd
-            if debug: print("a, b, s, nn:", a, b, s, nn)
-            if nn > N: continue
-            print(a, ",", b, ",", gcd, ",", gcd, ",", nn, sep="")
-            if a == b:
-                cgcnt += 2
-                Nsum = 2 * a * (N // nn)
-                cgsum += Nsum
-                if debug: print("a == b", " a=", a, " b=", b, " nn=", nn, " N=",  N, 
-                    " s=", s, " Nsum: ", Nsum,   " cgsum=", cgsum)
-            else: 
-                cgcnt += 4
-                Nsum = 2 * (a + b) * (N // nn)
-                cgsum += Nsum
-                if debug: print("a != b", " a=", a, " b=", b, " nn=", nn, " N=",  N, 
-                    " s=", s, " Nsum: ", Nsum,   " cgsum=", cgsum)
-    print ("Sum1:: Count gauss circle integer points at ", N, " is ", cgsum)
-    debug = False
-    return cgsum
+    # Add contributions from Gaussian integer divisors with b != 0
+    # Only consider (a + bi) with b > 0 and gcd(a, b) == 1
+    result = 0
+    max_c = int(math.isqrt(N))
+    for b in range(1, max_c + 1):
+        for a in range(1, max_c + 1):
+            if math.gcd(a, b) > 1:
+                continue
+            norm = a * a + b * b
+            if norm > N:
+                break
+            for k in range(1, N // norm + 1):
+                contrib = 2 * a * k * (N // (k * norm))
+                result += contrib
+    return result
 
-
-def sumfac(k):
-    factors = list( primefac.primefac(k) )
-    unique = set(factors)
-
-    ps = 1
-    for u in unique:
-        ai = factors.count(u)+1
-        ps *= (u ** ai - 1) // (u - 1)
-    return ps
-
-def sumsumfacold(N):
-    fs = 0
-    for k in range(1, N+1):
-        sf = sumfac(k)
-        fs += sf
-    return fs
     
-def sumsumfacnew(N):
+def sumFactors(N):
     fs = 0
     for d in range(1, N+1):
         sf = d * (N//d)
@@ -70,30 +35,22 @@ def gint(n):
     start = time.process_time()
     # your code here    
     debug = False
-    gc = 0
     gc = complexGaussSum(n)
-    print("complexGaussSum: ", time.process_time() - start)
-    # start = time.process_time()
-    # gs = sumsumfacold(n)
+    print("complexGaussSum: ", gc, " time: ", time.process_time() - start, "seconds")
     
-    # print("sumFactors OLD: ", gs, " time: ", time.process_time() - start)
     start = time.process_time()
-    gs = sumsumfacnew(n)
-    print("sumFactors NEW: ", gs, " time: ", time.process_time() - start)
+    gs = sumFactors(n)
+    print("sumFactors: ", gs, " time: ", time.process_time() - start, "seconds")
     print("Gauss sum: ", gs, "  Sum factors: ", gc, "  Total: ", gs+gc)
     return gs + gc
 
 
 ## NOTE: gint(10**5) should equal 17924657155
-print(gint(100000))
-#print(gint(5, False))
-exit(1)
-#print(n, complexGaussSum(n), countLattice(n)-1)
-#exit(1)
-# Sum1:: Count gauss circle integer points at  10000  is  95975212
-# complexGaussSum:  31.597766464000003
-# sumFactors:  0.027652417999998846
-# 82256014 95975212 178231226
-# 178231226
-##                                 8293695535
-## NOTE: gint(10**5) should equal 17924657155
+print(gint(10**5))
+
+# complexGaussSum:  9746583700166398  time:  63.485101259000004 seconds
+# sumFactors:  8224670422194237  time:  3.728455689999997 seconds
+# Gauss sum:  8224670422194237   Sum factors:  9746583700166398   Total:  17971254122360635
+# 17971254122360635
+
+
