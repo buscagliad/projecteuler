@@ -93,3 +93,8 @@ for m in range(N+1):
     #print(m, perm)
 print()
 print(early, total, combos)
+#
+# Answer is 479742450
+# Takes 68 mins 26 secs to run
+# 
+#
