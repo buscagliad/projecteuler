@@ -44,6 +44,17 @@ def compvalue(L, K):
         exit(1)
     return v
 
+from sympy.utilities.iterables import partitions
+
+def partitions_no_ones(n):
+    result = []
+    for p in partitions(n, k=None):
+        parts = sorted([k for k, v in p.items() for _ in range(v)], reverse=True)
+        if all(x > 1 for x in parts):
+            result.append(parts)
+    return result
+
+
 
 
 
@@ -131,6 +142,13 @@ g.sort()
 cnt = do_count(g)
 print("There are ", cnt, " unique circuits")
 
+
+# Get all partitions of 18 with no 1s
+for N in range (2, 19):
+    partitions_18_no_ones = partitions_no_ones(N)
+    unique_sorted_partitions = sorted(partitions_18_no_ones)
+
+    print(N, len(unique_sorted_partitions))
 
 exit(1)
 
