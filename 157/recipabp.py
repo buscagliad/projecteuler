@@ -46,7 +46,7 @@ def gint(n):
 
 
 ## NOTE: gint(10**5) should equal 17924657155
-print(gint(10**8))
+print(gint(10**5))
 
 # complexGaussSum:  9746583700166398  time:  63.485101259000004 seconds
 # sumFactors:  8224670422194237  time:  3.728455689999997 seconds
