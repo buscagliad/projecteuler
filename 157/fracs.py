@@ -28,7 +28,7 @@ def tfcount(n):
 #
 # a and b must be of the form:  s * 2^m * 5^k 
 # to be solutions of the diophantine equation
-# BUT: the value of A <= B and B <= 2 * 10^(N+1)
+# BUT: the value of A <= B and B <= 2 * 10^(N+Nadd)
 # Given N, how many s's exist that satisfy the
 # above constraints:
 #
@@ -37,16 +37,25 @@ Fives = [5**k for k in range(10)]
 print(Twos, Fives)
 def allcount(N):
     ssum = 0
-    for r in range(N+1):
+    Nadd = 1
+    for r in range(N+Nadd):
         A = Twos[r]
-        for q in range(N+1):
+        for q in range(N+Nadd):
             B = Fives[q]
             if B < A: continue
+            print(A,B)
+            ssum += (N - r + 1) * (N - q + 1)
+    for r in range(N+Nadd):
+        A = Fives[r]
+        for q in range(N+Nadd):
+            B = Twos[q]
+            if B < A: continue
+            print(A,B)
             ssum += (N - r + 1) * (N - q + 1)
     return ssum
 
 for N in range(1, 5):
-    print(N, allcount(N))
+    print(">>>>>>>>", N, allcount(N))
 exit(1)
             
        
