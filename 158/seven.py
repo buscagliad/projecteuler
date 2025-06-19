@@ -1,6 +1,6 @@
 from datetime import datetime
 from math import comb
-
+import numpy as np
 
 
 def choose(n, k):
@@ -110,7 +110,8 @@ def doseven():
     D = [0]*27   
     E = [0]*27   
     F = [0]*27   
-    G = [0]*27   
+    G = [0]*27
+    LR = np.zeros([8,8], dtype=int)
     for a in range(1, 27):
         print("a: ", a, datetime.now(), flush=True)
         for b in range(1, 27):
@@ -118,7 +119,8 @@ def doseven():
             print("b: ", b, datetime.now(), flush=True)
             for c in range(1, 27):
                 if b == c or a == c: continue
-                for d in range(1, 27):
+                #for d in range(1, 27):
+                for d in range(7,8):
                     if d == a or d == b or d == c: continue
                     for e in range(1, 27):
                         if e == a or e == b or e == c or e == d: continue
@@ -142,6 +144,7 @@ def doseven():
                                     #if d == 23:
                                     #    print(a, b, c, d)
                                     D[d] += 1
+                                    LR[c][e] += 1
                                 # a > b > c > d < E > f > g
                                 elif a > b and b > c and c > d and d < e and e > f and f > g:
                                     #if d == 23:
@@ -157,9 +160,14 @@ def doseven():
                                     #if d == 23:
                                     #    print(a, b, c, d)
                                     G[g] += 1
+
     for i in range(1, 27):
         print(i, B[i], C[i], D[i], E[i], F[i], G[i])
     print(sum(B), sum(C), sum(D), sum(E), sum(F), sum(G))
+    for l in range(1, 7):
+        for r in range(1, 7):
+            print(l, r, LR[l][r])
+    for a in LR: print(a, " : ", sum(a))
     return sum(B)+sum(C)+sum(D)+sum(E)+sum(F)+sum(G)
 
 K = 7
@@ -177,13 +185,15 @@ for l in range(1,K):
             # # also, if r is much less
             # extra = max(0, K - l - 1)
         if r > l:
-            v = choose(26 - 3 - B, A - 1) * choose(r - 1, B - 1)
+            extra = K - l - 1 - B
+            v = choose(26 - K + extra, A - 1) * choose(r - 2, B - 1)
+            #v += choose(26 - K - 1, A - 1) * choose(r - 1, B - 1)
             print("l<r:: r: ", r, "  l: ", l, "  v: ", v)
             sv += v
         else: # l > r
-            extra = K - l - 1
-            v = choose(26 - K - 1, A - 2) * extra * choose(r - 1, B - 1)
-            v += choose(26 - 3 - B, A - 1) * choose(r - 1, B - 1)
+            extra = K - r - 1
+            lesser = l - r - 1
+            v = choose(26 - K + extra, A - 1) * choose(r - 1 - lesser, B - 1)
             print("l>r:: r: ", r, "  l: ", l, "  v: ", v)
             sv += v
 
