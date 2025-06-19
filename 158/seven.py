@@ -184,17 +184,27 @@ for l in range(1,K):
             # # if there is any room between l and K, we have some choices
             # # also, if r is much less
             # extra = max(0, K - l - 1)
-        if r > l:
-            extra = K - l - 1 - B
-            v = choose(26 - K + extra, A - 1) * choose(r - 2, B - 1)
-            #v += choose(26 - K - 1, A - 1) * choose(r - 1, B - 1)
-            print("l<r:: r: ", r, "  l: ", l, "  v: ", v)
+        if l < r:
+            right_options = choose(r - 2, B - 1)
+            opts = 26 - K
+            left_options = choose(opts, A - 1)
+            # r-2 because l cannot be in the list
+            v = left_options * right_options
+            #
+            # we have all of the options from r+1, r+2, ..., l-1, l+1, ..., K - 1 a total of
+            # K - 1 - (r + 1) - 1 = K - r - 3
+            rks = max(0, K - r - 3) + opts
+            for j in range(K-r-1):
+                a = choose(rks+j, A-2)*right_options
+                v += a
+            
+            print("<<<:: l: ", l, " r: ", r, "  v: ", v)
             sv += v
         else: # l > r
             extra = K - r - 1
             lesser = l - r - 1
             v = choose(26 - K + extra, A - 1) * choose(r - 1 - lesser, B - 1)
-            print("l>r:: r: ", r, "  l: ", l, "  v: ", v)
+            # print(">>>::  l: ", l, " r: ", r, "  v: ", v)
             sv += v
 
 print("Sum: ", sv)
