@@ -1,5 +1,14 @@
 from datetime import datetime
+from math import comb
 
+
+
+def choose(n, k):
+    if k == 0: return 1
+    if n <= 0: return 0
+    if k <= 0: return 0
+    if n < k: return 0
+    return comb(n, k)
 
 def dothree():
     B = [0]*27
@@ -105,7 +114,7 @@ def doseven():
     for a in range(1, 27):
         print("a: ", a, datetime.now(), flush=True)
         for b in range(1, 27):
-            if a == b continue
+            if a == b: continue
             print("b: ", b, datetime.now(), flush=True)
             for c in range(1, 27):
                 if b == c or a == c: continue
@@ -153,5 +162,31 @@ def doseven():
     print(sum(B), sum(C), sum(D), sum(E), sum(F), sum(G))
     return sum(B)+sum(C)+sum(D)+sum(E)+sum(F)+sum(G)
 
-d7 = doseven()
-print("All seven char combos: ", d7)
+K = 7
+m = 4
+A = 3
+B = 3
+sv = 0
+for l in range(1,K):
+    print("*******  l: ", l, " ******************")
+    for r in range(1,K):
+        if l == r: continue
+        # if l > r:
+            # #
+            # # if there is any room between l and K, we have some choices
+            # # also, if r is much less
+            # extra = max(0, K - l - 1)
+        if r > l:
+            v = choose(26 - 3 - B, A - 1) * choose(r - 1, B - 1)
+            print("l<r:: r: ", r, "  l: ", l, "  v: ", v)
+            sv += v
+        else: # l > r
+            extra = K - l - 1
+            v = choose(26 - K - 1, A - 2) * extra * choose(r - 1, B - 1)
+            v += choose(26 - 3 - B, A - 1) * choose(r - 1, B - 1)
+            print("l>r:: r: ", r, "  l: ", l, "  v: ", v)
+            sv += v
+
+print("Sum: ", sv)
+#d7 = doseven()
+#print("All seven char combos: ", d7)
