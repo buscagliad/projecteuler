@@ -273,42 +273,29 @@ for l in range(1,K):
     print("*******  l: ", l, " ******************")
     for r in range(1,K):
         print(l, r, decSeqs(A, l, K, r, B))
-        '''
-        if l == r: continue
-        # if l > r:
-            # #
-            # # if there is any room between l and K, we have some choices
-            # # also, if r is much less
-            # extra = max(0, K - l - 1)
-        if l < r:
-            Bcombos = choose(r - 2, B - 1)
-            tot = choose(26 - K, A - 1) * Bcombos
-            print("total: ", tot)
+
+            right_options = choose(r - 2, B - 1)
+            opts = 26 - K
+            left_options = choose(opts, A - 1)
+            # r-2 because l cannot be in the list
+            v = left_options * right_options
             #
-            # add the l+1 to r-1 
-            # r, l and this new number take up 3 choices, thus, r - 3 choose B - 1 for the right
-            l2r = max(0, r - l - 1) * choose(26 - B - 3, A - 2) * choose(r - 3, B - 1)
-            if l2r: print("l2r: ", l2r)
-            tot += l2r
-            #
-            # add the r+1 to K-1
-            for Q in range(r+1, K):
-                toChooseFrom = B + 3 + Q - r
-                totx = choose(26-toChooseFrom, A-2) * Bcombos
-                tot += totx
-                print("Q: ", Q, "  totx: ", totx, " tot:", tot)
-            print("l<r:: l: ", l, "  r: ", r,  "  v: ", tot)
+            # we have all of the options from r+1, r+2, ..., l-1, l+1, ..., K - 1 a total of
+            # K - 1 - (r + 1) - 1 = K - r - 3
+            rks = max(0, K - r - 3) + opts
+            for j in range(K-r-1):
+                a = choose(rks+j, A-2)*right_options
+                v += a
             
+            print("<<<:: l: ", l, " r: ", r, "  v: ", v)
+            sv += v
         else: # l > r
-            #
-            # to left of l, all numbers bigger than K is 26 - K is choose(26-K,A-1)
-            # and to right of r is choose(r-1,B-1)
-            tot = choose(26 - K, A - 1) * choose(r - 1, B - 1)
-            for j in range(l+1, K):
-                tot += choose(26-l,A-2) * choose(r - 1, B - 1)
-            print("l>r:: l: ", l, "  r: ", r, "  v: ", tot)
-            sv += tot
-        '''
+            extra = K - r - 1
+            lesser = l - r - 1
+            v = choose(26 - K + extra, A - 1) * choose(r - 1 - lesser, B - 1)
+            # print(">>>::  l: ", l, " r: ", r, "  v: ", v)
+            sv += v
+>>>>>>> 58db47251583c02ceec1852ac28ea2059aa28700
 
 print("Sum: ", sv)
 #d7 = doseven()
