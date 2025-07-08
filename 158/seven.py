@@ -242,23 +242,17 @@ def decSeqs(A, l, K, r, B):
     # create sets for numbers to left of l, called, t, where
     # t < r, l < t < K, and t > K
     #
-    for t in range(1, K):  +# all posible numbers for t, creating {l + t}
-        elif l < r:
-            Right = choose(r - 3, B - 1)
+    s = 0
+    for t in range(K):  # all posible numbers for t, creating {l+1, l+2, ..., K-1}
+        if l > r:
+            Left = choose(26-K-t, A-t)
+            Middle = choose(K-l-t, t)
+            Right = choose(r-1, B)
         else:
-            Right = choose(r - 2, B - 1)
-        n = l + t
-        if n == r: continue
-        if n >= K: continue
-        #
-        # A - t is the size of the numbers to fill in with numbers 
-        sizeT = 26 - (t + 1) - (B + 2) + 1
-        if l+t < r:
-            Right = choose(r - 2 - t, B - 1)
-        elif l+t > r:
-            Right = choose(r - 3, B - 1)
-        Left = choose(sizeT, A - 1 - t)
-        Middle = choose(l - t, t)
+            Left = choose(26-K-t, A-t)
+            Middle = choose(l-r-t, t)
+            Right = choose(r-t-1, B)
+
         print("t: ", t, "  Left: ", Left, "  Middle: ", Middle, "  Right: ", Right)
         s += Left * Middle * Right
     return s
@@ -266,26 +260,26 @@ def decSeqs(A, l, K, r, B):
 
 K = 7
 m = 4
-A = 3
-B = 3
+A = 2
+B = 2
 sv = 0
 for l in range(1,K):
     print("*******  l: ", l, " ******************")
     for r in range(1,K):
         print(l, r, decSeqs(A, l, K, r, B))
 
-            right_options = choose(r - 2, B - 1)
-            opts = 26 - K
-            left_options = choose(opts, A - 1)
-            # r-2 because l cannot be in the list
-            v = left_options * right_options
-            #
-            # we have all of the options from r+1, r+2, ..., l-1, l+1, ..., K - 1 a total of
-            # K - 1 - (r + 1) - 1 = K - r - 3
-            rks = max(0, K - r - 3) + opts
-            for j in range(K-r-1):
-                a = choose(rks+j, A-2)*right_options
-                v += a
+        right_options = choose(r - 2, B - 1)
+        opts = 26 - K
+        left_options = choose(opts, A - 1)
+        # r-2 because l cannot be in the list
+        v = left_options * right_options
+        #
+        # we have all of the options from r+1, r+2, ..., l-1, l+1, ..., K - 1 a total of
+        # K - 1 - (r + 1) - 1 = K - r - 3
+        rks = max(0, K - r - 3) + opts
+        for j in range(K-r-1):
+            a = choose(rks+j, A-2)*right_options
+            v += a
             
             print("<<<:: l: ", l, " r: ", r, "  v: ", v)
             sv += v
@@ -295,7 +289,6 @@ for l in range(1,K):
             v = choose(26 - K + extra, A - 1) * choose(r - 1 - lesser, B - 1)
             # print(">>>::  l: ", l, " r: ", r, "  v: ", v)
             sv += v
->>>>>>> 58db47251583c02ceec1852ac28ea2059aa28700
 
 print("Sum: ", sv)
 #d7 = doseven()
