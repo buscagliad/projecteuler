@@ -4,7 +4,7 @@ import numpy as np
 
 
 def choose(n, k):
-    print("Choose: n: ", n, "  k: ", k)
+    #print("Choose: n: ", n, "  k: ", k)
     if k == 0: return 1
     if n <= 0: return 0
     if k <= 0: return 0
@@ -235,7 +235,7 @@ def decSeqs(A, l, K, r, B):
     return s
 '''
 
-def decSeqs(A, l, K, r, B):
+def decSeqsOLD(A, l, K, r, B):
     if l == r: return 0
 
     #
@@ -246,13 +246,17 @@ def decSeqs(A, l, K, r, B):
     ll = min(r+1,l+1)
     if l < r: rchoices = r - 2
     else: rchoices = r - 1
-    for leftpos in range(1, K-B-1):
-        for t in range(ll, K):  # all posible numbers for t, creating {l+1, l+2, ..., K-1}
+    for p in range(0, K-B-1):
+        for t in range(ll+p, K+1):  # all posible numbers for t, creating {l+1, l+2, ..., K-1}
             delta = t - ll
             if t == r or t == l: continue
-            if t > r:
-                Left = choose(26-K-delta, A-delta)
-                Middle = choose(K-l-t, leftpos)
+            if t == K: # 
+                Left = choose(26 - K - p, A - p)
+                Middle = 1
+                Right = choose(rchoices, B)
+            elif t > r:
+                Left = choose(26-t-1, A-p-1)
+                Middle = choose(K-t, p)
                 Right = choose(rchoices, B)
                 
             # else if l+t < r:
@@ -263,21 +267,59 @@ def decSeqs(A, l, K, r, B):
             else:
                 Left = choose(26-K-t, A-t)
                 Middle = choose(l-r-t, t)
-                Right = choose(r-t-2, B)
-
-            print("leftpos: ", leftpos, "  t: ", t, "l: ", l, " l: ", l, " K: ", K, " r: ", r, "  delta: ", delta, "  Left: ", Left, "  Middle: ", Middle, "  Right: ", Right)
-            s += Left * Middle * Right
-        if s > 0:
-            s += choose(26 - K, A) * choose(r - 1, B)
+                Right = choose(r-delta-2, B)
+                # Left = 0
+                # Middle = -1
+                # Right = -2
+            addthis = Left * Middle * Right
+            if addthis == 0: continue
+            s += addthis
+            print("S: ", s, "  add: ", addthis, "  leftpos: ", p, "  t: ", t, "l: ", l, " l: ", l, " K: ", K, " r: ", r, "  delta: ", delta, "  Left: ", Left, "  Middle: ", Middle, "  Right: ", Right)
+        # if s > 0:
+            # s += choose(26 - K, A) * choose(r - 1, B)
         
     return s
 
+def decSeqs(A, l, K, r, B):
+    if l == r: return 0
+
+    #
+    # create sets for numbers to left of l, called, t, where
+    # t < r, l < t < K, and t > K
+    #
+    s = 0
+    ll = min(r+1,l+1)
+    t = 0
+    if l < r: rchoices = r - 2
+    else: rchoices = r - 1
+    for p in range(0, K-B-1):
+        if l > r:
+            Left = choose(26 - K, A - p)
+            if p == 0:
+                Middle = choose(K - l - p, p)
+            Right = choose(rchoices, B)
+        else:
+            Left = choose(26-t-1, A-p-1)
+            Middle = choose(K-t, p)
+            Right = choose(rchoices, B)
+                
+ 
+        addthis = Left * Middle * Right
+        if addthis == 0: continue
+        s += addthis
+        print("S: ", s, "  add: ", addthis, "  leftpos: ", p, "  t: ", t, " l: ", l, " K: ", K, " r: ", r, "  Left: ", Left, "  Middle: ", Middle, "  Right: ", Right)
+
+    return s
 
 K = 7
 m = 4
 A = 2
 B = 2
 sv = 0
+l = 4
+r = 3
+print(l, r, decSeqs(A, l, K, r, B))
+exit(1)
 for l in range(1,2): #range(1,K):
     print("*******  l: ", l, " ******************")
     for r in range(4,5): #range(1,K):
