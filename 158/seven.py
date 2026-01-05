@@ -246,9 +246,10 @@ def decSeqs(A, l, K, r, B):
     ll = min(r+1,l+1)
     if l < r: rchoices = r - 2
     else: rchoices = r - 1
-    for leftpos in range(1, K-B-1):
-        for t in range(ll, K):  # all posible numbers for t, creating {l+1, l+2, ..., K-1}
-            delta = t - ll
+    for leftpos in range(0, A):
+        for t in range(l, K):  # all posible numbers for t, creating {l+1, l+2, ..., K-1}
+            # delta = t - ll
+            delta = 0
             if t == r or t == l: continue
             if t > r:
                 Left = choose(26-K-delta, A-delta)
