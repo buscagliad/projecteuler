@@ -23,15 +23,16 @@ def minarea(a, b, c):
     xs = np.linspace(0,a,120)
     ys = np.linspace(0,b,160)
     best, xy = search(triangle, xs, ys, r)
-    print(xs, ys, r, best, xy)
 
     for step in [0.2,0.05,0.01]:
         x0,y0=xy
         xs = np.linspace(x0-step,x0+step,80)
         ys = np.linspace(y0-step,y0+step,80)
         best, xy = search(triangle, xs, ys, r)
+    print(r, best, xy)
     return best
-print(minarea(3, 4, 6))
+print(minarea(1, 1, 1))
+print(minarea(3,4,5))
 exit(1)
 p966  = 0
 for a in range(1, 201):

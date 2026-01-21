@@ -70,7 +70,7 @@ def tricirc(x1, y1, x2, y2, xc, yc, r):
     ##
     arc1=arc2=tri=0
     if x2 == x1:
-        print("************ switcharoo")
+        #print("************ rotate")
         s = x1
         x1 = y1
         y1 = s
@@ -80,6 +80,14 @@ def tricirc(x1, y1, x2, y2, xc, yc, r):
         s = xc
         xc = yc
         yc = s
+    
+    if x1 > x2: 
+        s = x1
+        x1 = x2
+        x2 = s
+        s = y1
+        y1 = y2
+        y2 = s
         
     m = (y2 - y1) / (x2 - x1)
     a = m * m + 1
@@ -153,7 +161,8 @@ def tricirc(x1, y1, x2, y2, xc, yc, r):
         #return 0
     if arc1 < 0 or arc2 < 0 or tri < 0:
         print("Negative: ", arc1, arc2, arc3)
-    return arc1 + arc2 + tri
+    pos = arc1 + arc2 + tri
+    return pos
          
 
 # Define the function to maximize
@@ -188,7 +197,7 @@ def init_glob(a, b, c, debug = False):
     gx3 = ( a * a - b * b + c * c ) / ( 2 * a )
     gy3 = math.sqrt(c * c - gx3 * gx3)
     A = gy3 * a / 2
-    gr = math.sqrt((gy3 * a)/(2 * math.pi))
+    gr = math.sqrt(A / math.pi)
     if debug: print("INIT:  a, b, c: ", a, b, c)
     if debug: print("      A: ", gx1, gy1, "  B: ", gx2, gy2, "   C: ", gx3, gy3)
 
@@ -207,6 +216,15 @@ def maxsol(a, b, c):
     # Use the minimize function
     # The result will contain the optimal parameters in `x`
     result = minimize(f, initial_guess, method='Nelder-Mead')
+    print("a: ", a, " b: ", b, " c: ", c)
+    if result.success:
+        optimal_point = result.x
+        max_value = result.fun 
+        print(f"Found local maximum at x={optimal_point[0]:.2f}, y={optimal_point[1]:.2f}")
+        print(f"Maximum value: {max_value:.2f}")
+    else:
+        print(f"Optimization failed: {result.message}")
+
     return result
 
 
@@ -214,22 +232,21 @@ def maxsol(a, b, c):
 
 init_glob(1,1,1)
 debug=True
-print(f((0.5,1/math.sqrt(3)/2)))
-#exit(1)
+x = 0.5
+y=1/math.sqrt(3)/2
+print(x,y,f((x,y)))
+
+# print(f((x-0.1,y+0.1)), f((x,y+0.1)), f((x+0.1,y+0.1)))
+# print(f((x-0.1,y)),     f((x,y)),     f((x+0.1,y)))
+# print(f((x-0.1,y-0.1)), f((x,y-0.1)), f((x+0.1,y-0.1)))
+exit(1)
 
 
 
-
+debug = False
 result = maxsol(3, 4, 5)
 result = maxsol(3, 4, 6)
 result = maxsol(3, 5, 5)
-if result.success:
-    optimal_point = result.x
-    max_value = result.fun 
-    print(f"Found local maximum at x={optimal_point[0]:.2f}, y={optimal_point[1]:.2f}")
-    print(f"Maximum value: {max_value:.2f}")
-else:
-    print(f"Optimization failed: {result.message}")
 
 ans=4.592854956993022 
 xy=(1.0598361876396127, 1.2113446381657513)
