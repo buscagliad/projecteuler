@@ -16,15 +16,6 @@ def SofN(s, N):
     k = (N - 1)//2 
     return 4 - 3 * a(s, k+1)
 
-def find_pattern(s, maxn):
-    a = s[10]
-    b = s[11]
-    c = s[20]
-    d = s[21]
-    for k in range(20, maxn//2):
-        if [a,b,c,d] == [s[k], s[k+1], s[2*k], s[2*k+1]]:
-            print(k)
-
 class seq:
     def __init__(self, ft, maxn):
         self.a = [0] * (maxn + 2)
@@ -64,16 +55,4 @@ s = seq(1, 1000)
 for _ in range(1000):
     s.next()
 
-#find_pattern(s.sum, s.maxn)
-
-#s.list(100)
-# s.list(510)
-# for h in range(500, 510):
-    # print("h=", h, "  SofN(s, h)=", SofN(s, h), "  Long sum: ", s.sum[h])
-# for h in range(500, 510):
-    # print("h,a(h),s.a(h): ", h, a(s, h), s.a[h])
-# LIMIT = 100
-# a = np.zeros(2*LIMIT+1, dtype = int)
 print(SofN(s, 1000000000000))
-# 13998066704666624
-# 6999033352333316
