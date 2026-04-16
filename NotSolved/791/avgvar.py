@@ -1,5 +1,6 @@
 
 MAX=10**8
+MAX=10**2
 
 def av(t):
     m = sum(t)
@@ -14,28 +15,44 @@ def aaab ():
     x8 = 0
     k = 1
     while True: # x8 <= 8 * MAX :
-        x8 = 3 * k * k + 4 * k + 1
-        if x8//8 + k + 1 <= MAX:
-            if x8 % 8 == 0:
+        x8 = 3 * k * k - 2 * k
+        if x8 % 8 == 0:
+            if x8//8 + k + 1 <= MAX:
                 x = x8 // 8
-                c = k + 1
-                four = (x, x, x, x+c)
+                four = (x, x, x, x+k)
                 if (av(four)):
                     print(four)
-        else:
-            break
+            else:
+                break
         k += 1
 
 def aabb():
     k = 2
     while True:
-        x = (k*k - k) // 2
-        if x + k <= MAX:
-            a = k
-            four = (x, x, x+a, x+a)
-            if av(four):
-                print(four)
-        else:
-            break
+        t = (k*k - k)
+        if t % 2 == 0:
+            x = t // 2
+            if x + k <= MAX:
+                four = (x, x, x+k, x+k)
+                if av(four):
+                    print(t, k, four)
+            else:
+                break
         k += 1
+        
+def abbb():
+    k = 3
+    while True:
+        t = (3*k*k - 6*k)
+        if t % 8 == 0:
+            x = t // 8
+            if x + k <= MAX:
+                four = (x, x+k, x+k, x+k)
+                if av(four):
+                    print(t, k, four)
+            else:
+                break
+        k += 1
+aaab()
 aabb()
+abbb()
