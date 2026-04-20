@@ -1,6 +1,16 @@
 
 MAX=10**8
 MAX=10**2
+def solve_quad_mod8(a, b, c):
+    a, b, c = a%8, b%8, c%8
+    solutions = []
+    for x in range(8):
+        if (a * x * x + b * x + c) % 8 == 0:
+            solutions.append(x)
+    return solutions
+
+# Example
+#print(solve_quad_mod8(1, 1, 6))   # → [1, 6]
 
 def av(t):
     m = sum(t)
@@ -53,6 +63,46 @@ def abbb():
             else:
                 break
         k += 1
-aaab()
-aabb()
-abbb()
+# aaab()
+# aabb() 
+# abbb()
+
+MAX = 1000
+
+def abc():
+    MAX8 = 8*MAX
+    a = 0
+    b = 0
+    c = 0
+    qsum = 0
+    x = 0
+    for a in range(MAX):
+        if (3*a*a - 6*a > MAX8): break
+        print("a: ", a, flush=True)
+        for b in range(a, MAX):
+            f8 = 0
+            cs = solve_quad_mod8(3, -2 * (a + b + 1), 3 * (a*a + b*b) -2*(a*b + a + b))
+            if len(cs) == 0: continue
+            done = False
+            c = b
+            while not done:
+                for cm in cs:
+                    c = 8*f8 + cm
+                    if c < b: continue
+                    x8 = 3 * ( a*a + b*b + c*c ) - 2 * ( a*b + a*c + b*c ) - 2 * (a + b + c)
+                    #if x8 > MAX8: break
+                    if x8 < 8: continue
+                    x = x8 // 8
+                    if x+c > MAX: done = True
+                    else:
+                        four = (x, x+a, x+b, x+c)
+                        #if av(four):
+                        #    print(x, a, b, c, four)
+                        qsum += 4 * x + a + b + c
+                        qsum %= 433494437
+                f8 += 1
+
+    return qsum
+
+print(MAX, abc())
+                
