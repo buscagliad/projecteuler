@@ -18,9 +18,9 @@ def getNtriangle(n: int) -> int:
     root = math.isqrt(rad)
     return (root - 1) // 2
 
-for n in range(5,10):
+for n in range(0,11):
     tn = getTriangle(n)
-    on = getNtriangle/*(tn)
+    on = getTriangle(tn)
     print(n, tn, on)
 
 exit(1)

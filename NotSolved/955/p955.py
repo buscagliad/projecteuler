@@ -56,6 +56,9 @@ tri[0] = 0
 for i in range(1, MAX):
     tri[i] = i + tri[i-1]
 
+
+test()
+
 print(tri[MAX-1], trinum(MAX-1))
 print(tri[2], trinum(2))
 T = np.zeros([71], dtype = int)
@@ -77,3 +80,4 @@ for t in range(1, 12):
             index += tnum
             print("k: ", k, "  index: ", index, "  T[k]: ", T[k], "  d: ", d, "  s: ", s, flush=True)
             break
+

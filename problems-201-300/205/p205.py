@@ -9,6 +9,7 @@ What is the probability that Pyramidal Peter beats Cubic Colin?
 Give your answer rounded to seven decimal places in the form 0.abcdefg.
 """
 from collections import Counter
+import random
 
 def getRollsX(m, k):
     max_sum = m * k
@@ -65,5 +66,14 @@ for n, r in enumerate(rolls4):
     if (rolls6[n-1] > 0):
         for k in range(1, n):
             times4wins += r * rolls6[k]
-# 0.5731440767829815 
+# 0.5731440767829815 - this answer correct
+# 0.5731441 - is what gets entered into PE
+print(times4wins, num4rolls, num6rolls)
 print(times4wins/num4rolls/num6rolls)
+
+def rolls(sides, die):
+    k = 0
+    for _ in range(die):
+        k += random.randint(1, sides)
+    return k
+   
