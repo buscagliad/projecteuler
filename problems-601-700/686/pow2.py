@@ -10,7 +10,7 @@ logcheck = log124-log123
 
 def isa123(q, debug):
     Nflt = (q + log123)/log2
-    N = int(Nflt)
+    N = round(Nflt)
     #N = int(math.floor(Nflt))
     test = N * log2 - log123 - q
     if test >= 0 and test <= logcheck: 
@@ -37,7 +37,7 @@ def isa123(q, debug):
 count = 0
 q = 10
 n = 0
-debug = True
+debug = False
 while count < 678910:
 #while count < 45:
     n = isa123(q, debug)
