@@ -67,7 +67,7 @@ def abbb():
 # aabb() 
 # abbb()
 
-MAX = 1000
+MAX = 100000
 
 def abc():
     MAX8 = 8*MAX
@@ -76,29 +76,39 @@ def abc():
     c = 0
     qsum = 0
     x = 0
-    for a in range(MAX):
-        if (3*a*a - 6*a > MAX8): break
-        print("a: ", a, flush=True)
+    for a in range(0,MAX):
+        if (3*a*a + 6*a > MAX8): break
+        #print("a: ", a, flush=True)
         for b in range(a, MAX):
+            if (3 * a * a + 4 * b * b - 4 * a * b - 2 * a - 4 * b > MAX8): break
             f8 = 0
             cs = solve_quad_mod8(3, -2 * (a + b + 1), 3 * (a*a + b*b) -2*(a*b + a + b))
             if len(cs) == 0: continue
             done = False
-            c = b
+            #c = b
             while not done:
                 for cm in cs:
                     c = 8*f8 + cm
                     if c < b: continue
-                    x8 = 3 * ( a*a + b*b + c*c ) - 2 * ( a*b + a*c + b*c ) - 2 * (a + b + c)
-                    #if x8 > MAX8: break
+                    x8 = 3 * ( a*a + b*b + c*c ) - 2 * ( a*b + a*c + b*c ) + 2 * (a + b + c)
+                    if x8 > MAX8: 
+                        done = True
+                        break
                     if x8 < 8: continue
                     x = x8 // 8
-                    if x+c > MAX: done = True
+                    if x < 3: continue
+                    if x > MAX: 
+                        print("x: ", x, "a, b, c: ", a, b, c, "  x+c: ", x+c, "   f8: ", f8, "  (f8-1)*8 +cm = ", (f8-1)*8+cm)
+                        done = True
+                        break
                     else:
-                        four = (x, x+a, x+b, x+c)
+                        four = (x-c, x-b, x-a, x)
                         #if av(four):
-                        #    print(x, a, b, c, four)
-                        qsum += 4 * x + a + b + c
+                        if (x == MAX): 
+                            if (a == b): print("a=b", end="")
+                            if (b == c): print("b=c", end="")
+                            print(a, b-a, b, c-b, c, x, four)
+                        qsum += 4 * x - a - b - c
                         qsum %= 433494437
                 f8 += 1
 
@@ -106,3 +116,6 @@ def abc():
 
 print(MAX, abc())
                 
+#
+# NOTE: for MAX = 1000, sum is: 37048340
+# 1000000 374740769
